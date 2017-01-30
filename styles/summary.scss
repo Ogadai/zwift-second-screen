@@ -1,0 +1,25 @@
+﻿@import 'variables';
+
+.summary {
+    position: absolute;
+    box-sizing: border-box;
+    top: 0;
+    left: $slider-panel;
+    right: 0;
+    height: 100%;
+    text-align: center;
+    padding: $padding;
+
+    .logo {
+        width: 400px;
+        height: 60px;
+        background-image: url(/img/zwift.png);
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        margin: auto;
+    }
+
+    .player-name {
+        padding: $padding;
+    }
+}

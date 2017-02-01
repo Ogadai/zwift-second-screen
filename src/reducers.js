@@ -1,6 +1,6 @@
 ﻿import { combineReducers } from 'redux'
 
-import { RECEIVE_PROFILE, RECEIVE_FANSPEED } from './actions';
+import { RECEIVE_PROFILE, RECEIVE_STATUS } from './actions';
 
 function profile(state = {}, action) {
   switch (action.type) {
@@ -11,14 +11,9 @@ function profile(state = {}, action) {
   }
 }
 
-const defaultFanSpeed = {
-  speed: 0,
-  fan: 0
-};
-
-function fanSpeed(state = defaultFanSpeed, action) {
+function status(state = {}, action) {
   switch (action.type) {
-    case RECEIVE_FANSPEED:
+    case RECEIVE_STATUS:
       return Object.assign({}, state, action.data);
     default:
       return state;
@@ -27,7 +22,7 @@ function fanSpeed(state = defaultFanSpeed, action) {
 
 const rootReducer = combineReducers({
   profile,
-	fanSpeed
+	status
 })
 
 export default rootReducer

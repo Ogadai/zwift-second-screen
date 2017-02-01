@@ -1,9 +1,14 @@
-module.exports = [
+﻿module.exports = [
 	{
 		test: /\.jsx?$/,
 		exclude: /(node_modules|bower_components|public\/)/,
 		loader: "babel"
 	},
+  {
+    test: /\.html?$/,
+    exclude: /(node_modules|bower_components|public\/)/,
+    loader: "raw"
+  },
 	{
 		test: /\.eot(\?v=\d+\.\d+\.\d+)?$/,
 		exclude: /(node_modules|bower_components)/,
@@ -38,5 +43,13 @@ module.exports = [
 		test: /\.png/,
 		exclude: /(node_modules|bower_components)/,
 		loader: "url-loader?limit=10000&mimetype=image/png"
-	}
+  },
+  {
+    test: /\.css$/,
+    loaders: [
+      'style-loader',
+      'css-loader?importLoaders=1',
+      'postcss-loader'
+    ]
+  }
 ];

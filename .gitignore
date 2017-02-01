@@ -30,3 +30,4 @@ node_modules
 public
 
 .vs/
+npm-debug.log*

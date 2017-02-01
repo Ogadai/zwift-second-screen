@@ -4,6 +4,8 @@ import classnames from 'classnames';
 
 import { fetchProfile } from '../actions';
 
+import s from './summary.css';
+
 class Summary extends Component {
   static get propTypes() {
     return {
@@ -29,14 +31,9 @@ class Summary extends Component {
         <div className="logo"></div>
         <div className="player-name">
           {profile.firstName} {profile.lastName}
-          {profile.riding ? " is riding" : " is not riding"}
 				</div>
       </div>
     )
-  }
-
-  triggerFetch() {
-
   }
 	
 }

@@ -11,27 +11,21 @@ function receiveProfile(data) {
 
 export function fetchProfile() {
   return dispatch => {
-		axios.get('/profile/').then(response => dispatch(receiveProfile(response.data)));
+    axios.get('/profile/').then(response => dispatch(receiveProfile(response.data)));
   }
 }
 
-export const RECEIVE_FANSPEED = "RECEIVE_FANSPEED";
+export const RECEIVE_STATUS = "RECEIVE_STATUS";
 
-function receiveFanSpeed(data) {
+function receiveStatus(data) {
   return {
-    type: RECEIVE_FANSPEED,
+    type: RECEIVE_STATUS,
     data
   };
 }
 
-export function fetchFanSpeed() {
+export function fetchStatus() {
   return dispatch => {
-    axios.get('/fan/').then(response => dispatch(receiveFanSpeed(response.data)));
-  }
-}
-
-export function setFanSpeed(speed) {
-  return dispatch => {
-    axios.post('/fan/', { speed }).then(response => dispatch(receiveFanSpeed(response.data)));
+    axios.get('/status/').then(response => dispatch(receiveStatus(response.data)));
   }
 }

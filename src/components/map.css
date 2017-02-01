@@ -1,0 +1,150 @@
+﻿@import 'variables.css';
+
+.map {
+    position: absolute;
+    box-sizing: border-box;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+
+    & > div {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+    }
+
+    & svg {
+        width: 100%;
+        height: 100%;
+    }
+}
+
+g.pois {
+}
+
+.poi.white_line {
+    fill: white;
+}
+
+.poi.kom {
+}
+
+.poi.sprint {
+}
+
+.poi.lap {
+}
+
+.poi.other {
+}
+
+
+g.riders {
+}
+
+g.riders .me {
+}
+
+g.roads .roadline {
+    stroke: black !important;
+    stroke: #1192cc !important;
+    stroke: hsla(15, 100%, 50%, 1) !important;
+    stroke: white !important;
+    /*display: none;*/
+}
+
+.altitude_5000 {
+    stroke: hsla(25, 100%, 20%, 1) !important;
+}
+
+.altitude_10000 {
+    stroke: hsla(25, 100%, 23%, 1) !important;
+}
+
+.altitude_15000 {
+    stroke: hsla(25, 100%, 26%, 1) !important;
+}
+
+.altitude_20000 {
+    stroke: hsla(25, 100%, 29%, 1) !important;
+}
+
+.altitude_25000 {
+    stroke: hsla(25, 100%, 32%, 1) !important;
+}
+
+.altitude_30000 {
+    stroke: hsla(25, 100%, 35%, 1) !important;
+}
+
+.altitude_35000 {
+    stroke: hsla(25, 100%, 38%, 1) !important;
+}
+
+.altitude_40000 {
+    stroke: hsla(25, 100%, 41%, 1) !important;
+}
+
+.altitude_45000 {
+    stroke: hsla(25, 100%, 44%, 1) !important;
+}
+
+.altitude_50000 {
+    stroke: hsla(25, 100%, 48%, 1) !important;
+}
+
+.altitude_55000 {
+    stroke: hsla(25, 100%, 51%, 1) !important;
+}
+
+.altitude_60000 {
+    stroke: hsla(25, 100%, 54%, 1) !important;
+}
+
+.altitude_65000 {
+    stroke: hsla(25, 100%, 57%, 1) !important;
+}
+
+.altitude_70000 {
+    stroke: hsla(25, 100%, 60%, 1) !important;
+}
+
+.altitude_75000 {
+    stroke: hsla(25, 100%, 63%, 1) !important;
+}
+
+.altitude_80000 {
+    stroke: hsla(25, 100%, 66%, 1) !important;
+}
+
+.altitude_85000 {
+    stroke: hsla(25, 100%, 69%, 1) !important;
+}
+
+.altitude_90000 {
+    stroke: hsla(25, 100%, 72%, 1) !important;
+}
+
+.altitude_95000 {
+    stroke: hsla(25, 100%, 75%, 1) !important;
+}
+
+.altitude_100000 {
+    stroke: hsla(25, 100%, 78%, 1) !important;
+}
+
+.altitude_105000 {
+    stroke: hsla(25, 100%, 81%, 1) !important;
+}
+
+.altitude_110000 {
+    stroke: hsla(25, 100%, 84%, 1) !important;
+}
+
+.altitude_115000 {
+    stroke: hsla(25, 100%, 87%, 1) !important;
+}

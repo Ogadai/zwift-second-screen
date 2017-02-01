@@ -10,18 +10,11 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 const HOST = process.env.HOST || "127.0.0.1";
 const PORT = process.env.PORT || "8888";
 
-loaders.push({ 
-	test: /\.scss$/, 
-	loader: ExtractTextPlugin.extract('style', 'css?sourceMap&localIdentName=[local]___[hash:base64:5]!sass?outputStyle=expanded'),
-	exclude: ['node_modules']
-});
-
 module.exports = {
 	entry: [
 		'react-hot-loader/patch',
     './dev.config.js', // config for dev server
-    './src/index.jsx', // your app's entry point
-		'./styles/index.scss'
+    './src/index.jsx'
 	],
 	devtool: process.env.WEBPACK_DEVTOOL || 'eval-source-map',
 	output: {
@@ -34,7 +27,13 @@ module.exports = {
 	},
 	module: {
 		loaders
-	},
+  },
+  postcss: () => {
+    return [
+			require('postcss-import'),
+      require('postcss-cssnext')
+    ];
+  },
 	devServer: {
 		contentBase: "./public",
 		// do not print bundle build stats

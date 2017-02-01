@@ -7,16 +7,9 @@ var WebpackCleanupPlugin = require('webpack-cleanup-plugin');
 var ExtractTextPlugin = require('extract-text-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 
-loaders.push({ 
-	test: /\.scss$/, 
-	loader: ExtractTextPlugin.extract('style', 'css?sourceMap&localIdentName=[local]___[hash:base64:5]!sass?outputStyle=expanded'),
-	exclude: ['node_modules']
-});
-
 module.exports = {
 	entry: [
-		'./src/index.jsx',
-		'./styles/index.scss'
+		'./src/index.jsx'
 	],
 	output: {
 		publicPath: '/',
@@ -29,6 +22,12 @@ module.exports = {
 	module: {
 		loaders
 	},
+  postcss: () => {
+    return [
+      require('postcss-import'),
+      require('postcss-cssnext')
+    ];
+  },
 	plugins: [
 		new WebpackCleanupPlugin(),
 		new webpack.DefinePlugin({

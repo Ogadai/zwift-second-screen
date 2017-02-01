@@ -1,5 +1,6 @@
 body {
 	background: #ece7e7;
+    overflow: hidden;
 }
 
 .disabled {

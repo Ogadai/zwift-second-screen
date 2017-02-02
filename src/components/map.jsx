@@ -1,58 +1,94 @@
-﻿import React, { Component, PropTypes } from 'react';
+﻿import axios from 'axios';
+import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchStatus } from '../actions';
+import { fetchPositions, fetchMapSettings } from '../actions';
 
 import s from './map.css';
 
-import watopia from '../../maps/watopia.html';
-import richmond from '../../maps/richmond.html';
-import london from '../../maps/london.html';
+const riderColours = [
+  "#A81C07", //red
+	"#0077BE", //blue
+  "#317873", //green
+	"#FF8C00", //orange
+	"#B768A2" //pink
+];
 
-const maps = {
-  1: watopia,
-  2: richmond,
-	3: london
-};
+const powerMax = 750;
+const powerColours = [
+  "#0077BE", //blue
+  "#90EE90", //green
+  "#FFEF00", //yellow
+	"#FF8C00", //orange
+  "#E03C31", //red,
+	"#FFB0B0"  //white
+];
 
 class Map extends Component {
   static get propTypes() {
     return {
-      status: PropTypes.object,
-			riding: PropTypes.bool.isRequired,
-      world: PropTypes.number,
-      onFetch: PropTypes.func.isRequired
+      positions: PropTypes.array,
+			mapSettings: PropTypes.object,
+      onFetch: PropTypes.func.isRequired,
+      onFetchSettings: PropTypes.func.isRequired
     };
   }
 
   componentDidMount() {
-    const { onFetch } = this.props;
+    const { onFetch, onFetchSettings } = this.props;
     onFetch();
-    this.fetchInterval = setInterval(onFetch, 2000);
+    onFetchSettings();
+    this.fetchInterval = setInterval(onFetch, 5000);
   }
 
   componentWillUnmount() {
     clearInterval(this.fetchInterval);
   }
-
+	
   render() {
-    const { riding, world, status } = this.props;
-    if (!riding) return <div className="map"><div className="not-riding">Not riding</div></div>
-
+    const { positions, mapSettings } = this.props;
     return <div className="map">
-      <div dangerouslySetInnerHTML={{ __html: maps[world] }}></div>
-			<div>
-        <svg id="map-riders" viewBox={this.getSvgParam('viewBox="')}>
-          <g transform={'rotate' + this.getSvgParam('transform="rotate')}>
-            <g transform={'translate' + this.getSvgParam('transform="translate')}>
+      <div className="map-route">
+        <img className="full-size" src={`${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg`} />
+      </div>
+      {(positions && mapSettings.viewBox) ?
+        <div className="map-riders">
+          <svg className="full-size" viewBox={mapSettings.viewBox}>
+            <g transform={'rotate' + mapSettings.rotate}>
+              <g transform={'translate' + mapSettings.translate}>
 								<g id="pois" className="pois">
-                <circle id="rider" className="poi white_line" cx={status.x} cy={status.y} r="6000" stroke="black" strokeWidth="2000" fill="#ffffff"><title>rider</title></circle>
+									{ positions.map((p, i) => this.renderPosition(p, i)) }
 								</g>
 							</g>
 						</g>
 					</svg>
-				</div>
+        </div>
+        : undefined}
 			</div>
+  }
+
+  renderPosition(position, index) {
+    return <g key={`rider-${index}`}>
+      <circle 
+				cx={position.x} cy={position.y} r="6000"
+				stroke={this.getRiderColour(index)} strokeWidth="2000"
+				fill={this.getPowerColour(position.power)}>
+        <title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
+      </circle>
+      <text x={position.x + 7500} y={position.y + 1000} fontFamily="Verdana" fontSize="6000">
+        {position.firstName.substring(0, 1)} {position.lastName}
+      </text>
+    </g>
+  }
+
+  getRiderColour(index) {
+    return riderColours[index % riderColours.length];
+  }
+
+  getPowerColour(power) {
+    let powerIndex = Math.round(powerColours.length * power / powerMax);
+    console.log(powerIndex);
+    return powerColours[Math.min(powerIndex, powerColours.length - 1)];
   }
 
   getSvgParam(searchTerm) {
@@ -70,15 +106,15 @@ class Map extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    riding: !!state.profile.riding,
-    world: state.profile.worldId,
-    status: state.status
+    positions: state.positions,
+    mapSettings: state.mapSettings
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetch: () => dispatch(fetchStatus())
+    onFetchSettings: () => dispatch(fetchMapSettings()),
+    onFetch: () => dispatch(fetchPositions())
   }
 }
 

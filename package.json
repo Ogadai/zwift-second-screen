@@ -6,7 +6,10 @@
   "scripts": {
     "build": "webpack --config webpack.production.config.js --progress --profile --colors",
     "lint": "eslint --ext js --ext jsx src || exit 0",
-    "start": "webpack-dev-server"
+    "dev-server": "nodemon server/server.js",
+    "dev-client": "webpack-dev-server",
+    "dev": "concurrently --kill-others \"npm run dev-server\" \"npm run dev-client\"",
+    "start": "node server/server.js"
   },
   "repository": {
     "type": "git",
@@ -17,13 +20,16 @@
   "homepage": "https://github.com/Ogadai/zwift-second-screen",
   "dependencies": {
     "axios": "^0.15.3",
+    "body-parser": "^1.16.0",
     "classnames": "^2.2.5",
+    "express": "^4.14.1",
     "react": "15.4.2",
     "react-dom": "15.4.2",
     "react-redux": "^5.0.2",
     "react-slider": "^0.7.0",
     "redux": "^3.6.0",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "zwift-mobile-api": "^0.1.1"
   },
   "devDependencies": {
     "babel-core": "6.21.0",
@@ -34,6 +40,7 @@
     "babel-preset-es2015": "6.18.0",
     "babel-preset-react": "6.16.0",
     "babel-runtime": "^6.20.0",
+    "concurrently": "^3.1.0",
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "0.26.1",
     "extract-text-webpack-plugin": "^1.0.1",

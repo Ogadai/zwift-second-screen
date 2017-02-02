@@ -1,13 +1,20 @@
 ﻿const axios = require('axios');
 const fs = require('fs');
 
-const downloadUrl = 'http://api.zwifthacks.com/zwiftmap/app/world/',
-  cssUrl = 'http://api.zwifthacks.com/zwiftmap/app/world-web.css',
+const downloadUrl = '/zwiftmap/app/world',
+  cssUrl = '/zwiftmap/app/world-web.css',
   svgStart = '<svg ',
   svgEnd = '</svg>',
   addedAttributes = 'xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  version="1.2" baseProfile="tiny" ',
   styleStart = '<style>/* <![CDATA[ */',
   styleEnd = '/* ]]> */</style>';
+
+const requesOptions = {
+  baseURL: 'http://api.zwifthacks.com',
+  headers: {
+    "Accept-Encoding":"gzip, deflate, sdch"
+  }
+};
 
 class Map {
   getSvg() {
@@ -32,8 +39,8 @@ class Map {
 
   downloadMap() {
     const promises = [
-      axios.get(downloadUrl),
-      axios.get(cssUrl)
+      axios.get(downloadUrl, requesOptions),
+      axios.get(cssUrl, requesOptions)
     ];
 
     return Promise.all(promises).then(([ mapResponse, cssResponse ]) => {

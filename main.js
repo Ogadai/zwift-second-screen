@@ -9,7 +9,7 @@ let win
 
 function createWindow() {
   // Create the browser window.
-  win = new BrowserWindow({ x: 100, y: 100, width: 800, height: 600, frame: false, transparent: true, alwaysOnTop: true, webPreferences: { devTools: false } })
+  win = new BrowserWindow({ x: 300, y: 100, width: 800, height: 600, frame: false, transparent: true, alwaysOnTop: true, webPreferences: { devTools: false } })
 
   const port = settings.port | 3000;
   // and load the index.html of the app.

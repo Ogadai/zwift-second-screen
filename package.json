@@ -2,14 +2,15 @@
   "name": "zwift-second-screen",
   "version": "0.0.3",
   "description": "Second Screen companion application for Zwift",
-  "main": "''",
+  "main": "main.js",
   "scripts": {
     "build": "webpack --config webpack.production.config.js --progress --profile --colors",
     "lint": "eslint --ext js --ext jsx src || exit 0",
     "dev-server": "nodemon server/server.js",
     "dev-client": "webpack-dev-server",
     "dev": "concurrently --kill-others \"npm run dev-server\" \"npm run dev-client\"",
-    "start": "node server/server.js"
+    "start": "node server/server.js",
+    "electron": "electron ."
   },
   "repository": {
     "type": "git",
@@ -22,6 +23,7 @@
     "axios": "^0.15.3",
     "body-parser": "^1.16.0",
     "classnames": "^2.2.5",
+    "electron": "^1.4.15",
     "express": "^4.14.1",
     "react": "15.4.2",
     "react-dom": "15.4.2",

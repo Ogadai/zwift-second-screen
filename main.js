@@ -1,6 +1,7 @@
 ﻿const {app, BrowserWindow} = require('electron')
 const path = require('path')
 const url = require('url')
+const settings = require('./settings')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -10,9 +11,10 @@ function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({ x: 100, y: 100, width: 800, height: 600, frame: false, transparent: true, alwaysOnTop: true, webPreferences: { devTools: false } })
 
+  const port = settings.port | 3000;
   // and load the index.html of the app.
   win.loadURL(url.format({
-    pathname: 'localhost:8888',
+    pathname: `localhost:${port}`,
     protocol: 'http:',
     slashes: true
   }))

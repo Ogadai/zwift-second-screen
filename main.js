@@ -2,6 +2,7 @@
 const path = require('path')
 const url = require('url')
 const settings = require('./settings')
+const server = require('./server/server.js')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

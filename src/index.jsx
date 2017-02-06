@@ -5,7 +5,7 @@ import { Provider } from 'react-redux';
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import reducers from './reducers';
-import App from './components/app.jsx';
+import Root from './root';
 
 let store = createStore(reducers,
   applyMiddleware(thunkMiddleware)
@@ -13,9 +13,7 @@ let store = createStore(reducers,
 
 render(
   <AppContainer>
-    <Provider store={store}>
-      <App />
-		</Provider>
+    <Root store={store} />
   </AppContainer>,
   document.querySelector("#app")
 );

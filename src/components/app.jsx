@@ -1,11 +1,21 @@
 ﻿import React, { Component, PropTypes } from 'react';
+import { connect } from 'react-redux';
+
 import Summary from './summary';
 import Map from './map';
 
 import s from './app.css';
 
-export default class App extends Component {
+class App extends Component {
+  static get propTypes() {
+    return {
+      overlay: PropTypes.bool
+    };
+  }
+
   render() {
+    const { overlay } = this.props;
+
     return (
       <div className="zwift-app">
         <Summary />
@@ -14,3 +24,21 @@ export default class App extends Component {
     )
   }
 }
+
+const mapStateToProps = (state, ownProps) => {
+  const { filter } = ownProps.params;
+  return {
+    overlay: filter && (filter.toLowerCase() === 'overlay')
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+
+  }
+}
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App);

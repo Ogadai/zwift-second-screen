@@ -56,7 +56,7 @@ class Map extends Component {
           <svg className="full-size" viewBox={mapSettings.viewBox}>
             <g transform={'rotate' + mapSettings.rotate}>
               <g transform={'translate' + mapSettings.translate}>
-								<g id="pois" className="pois">
+								<g id="riders" className="riders">
 									{ positions.map((p, i) => this.renderPosition(p, i)) }
 								</g>
 							</g>
@@ -68,7 +68,7 @@ class Map extends Component {
   }
 
   renderPosition(position, index) {
-    return <g key={`rider-${index}`}>
+    return <g key={`rider-${index}`} className="rider-position">
       <circle 
 				cx={position.x} cy={position.y} r="6000"
 				stroke={this.getRiderColour(index)} strokeWidth="2000"

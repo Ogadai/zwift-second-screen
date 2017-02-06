@@ -1,6 +1,7 @@
 ﻿const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+var path = require('path');
 const ZwiftAccount = require('zwift-mobile-api');
 const settings = require('../settings');
 const Rider = require('./rider');
@@ -73,6 +74,24 @@ app.get('/mapSettings', function (req, res) {
 console.log(`static: ${__dirname}/../public`)
 app.use(express.static(`${__dirname}/../public`))
 
+app.use(function (req, res, next) {
+  // respond with html page
+  if (req.accepts('html')) {
+    res.sendFile(path.resolve(`${__dirname}/../public/index.html`));
+    return;
+  }
+
+  res.status(404);
+
+  // respond with json
+  if (req.accepts('json')) {
+    res.send({ error: 'Not found' });
+    return;
+  }
+  // default to plain-text. send()
+  res.type('txt').send('Not found');
+});
+
 app.listen(settings.port, function () {
   console.log(`Listening on port ${settings.port}!`)
 })
@@ -84,7 +103,7 @@ function respondJson(res) {
 }
 
 function sendJson(res, data) {
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888/');
   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.send(data);

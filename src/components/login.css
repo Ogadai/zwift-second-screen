@@ -1,0 +1,83 @@
+@import 'variables.css';
+
+.login {
+    border: 1px solid #4d4d4d;
+    background-color: #ede9e9;
+    
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 1px;
+    bottom: 1px;
+    
+    & h1 {
+        background-color: #3e3e3e;
+        color: white;
+        padding: 20px;
+        margin: 0;
+        text-align: center;
+        font-family: "ProximaNova-Black", Arial, Helvetica, sans-serif;
+        text-transform: uppercase;
+        border-top-left-radius: 20px;
+    }
+
+    & form {
+        -webkit-app-region: no-drag;
+        position: absolute;
+        left: calc(50% - 225px);
+        top: calc(50% - 160px);
+        width: 450px;
+        border: 1px solid #bfbebe;
+        background-color: white;
+        border-top-left-radius: 20px;
+        border-bottom-right-radius: 20px;
+        & fieldset {
+            margin-left: 60px;
+            margin-top: 20px;
+            border: none;
+            width: 300px;
+        }
+    }
+
+    & .error {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 1.2em;
+    }
+
+    & .logo {
+        width: 200px;
+        height: 30px;
+        background-image: url(/img/zwift.png);
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        margin: 10px;
+    }
+
+    & input {
+        display: block;
+        margin: 10px;
+        padding: 10px;
+        box-sizing: border-box;
+
+        border: 1px solid #808080;
+        border-radius: 6px;
+        outline: none;
+    }
+    & input[type=text], & input[type=password] {
+        width: 100%;
+    }
+
+    & input[type=submit] {
+        cursor: pointer;
+        margin: 0 auto 30px auto;
+        border: none;
+        background-color: #FC6719;
+        color: white;
+        text-transform: uppercase;
+
+        &:hover {
+            background-color: #B7B7B7;
+        }
+    }
+}

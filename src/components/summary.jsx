@@ -26,15 +26,14 @@ class Summary extends Component {
 
   render() {
     const { profile } = this.props;
-    return <div />;
-    //return (
-    //  <div className={classnames("summary", { disabled: !profile.riding })}>
-    //    <div className="logo"></div>
-    //    <div className="player-name">
-    //      {profile.firstName} {profile.lastName}
-				//</div>
-    //  </div>
-    //)
+    return (
+      <div className={classnames("summary", { disabled: !profile.riding })}>
+        <div className="logo"></div>
+        <div className="player-name">
+          {profile.firstName} {profile.lastName}
+				</div>
+      </div>
+    )
   }
 	
 }

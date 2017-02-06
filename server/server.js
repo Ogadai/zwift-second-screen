@@ -2,14 +2,13 @@
 const bodyParser = require('body-parser');
 const app = express();
 var path = require('path');
-const ZwiftAccount = require('zwift-mobile-api');
 const settings = require('../settings');
 const Rider = require('./rider');
 const Map = require('./map');
+const Login = require('./login');
 
-const account = new ZwiftAccount(settings.username, settings.password);
-const rider = new Rider(account, settings.player);
 const map = new Map();
+const login = new Login();
 
 app.use(bodyParser.json());
 
@@ -51,17 +50,26 @@ app.get('/json/', function (req, res) {
         });
 })
 
-app.get('/profile', function (req, res) {
-  rider.getProfile().then(respondJson(res));
+app.options('/login', respondCORS)
+app.post('/login', function (req, res) {
+  const { username, password } = req.body;
+	console.log(`login: ${username}`)
+  login.login(username, password)
+    .then(result => {
+			console.log('login successful')
+	    sendJson(res, { message: 'ok' })
+    })
+    .catch(err => {
+			console.log('login failed - ', err)
+      const { status, statusText } = err.response;
+      res.status(status);
+      sendJson(res, { status, statusText });
+    })
 })
 
-app.get('/friends', function (req, res) {
-  rider.getRiders().then(respondJson(res));
-})
-
-app.get('/positions', function (req, res) {
-  rider.getPositions().then(respondJson(res));
-})
+app.get('/profile', processRider(rider => rider.getProfile()))
+app.get('/friends', processRider(rider => rider.getRiders()))
+app.get('/positions', processRider(rider => rider.getPositions()))
 
 app.get('/map.svg', function (req, res) {
   map.getSvg().then(data => sendImg(res, data, 'image/svg+xml'));
@@ -96,14 +104,30 @@ app.listen(settings.port, function () {
   console.log(`Listening on port ${settings.port}!`)
 })
 
+function processRider(callbackFn) {
+  return function (req, res) {
+    const rider = login.getRider('');
+    if (rider) {
+      callbackFn(rider, req).then(respondJson(res));
+    } else {
+      res.status(401);
+      sendJson(res, { status: 401, statusText: 'Unauthorised' });
+    }
+  }
+}
+
 function respondJson(res) {
   return function (data) {
     sendJson(res, data);
   }
 }
 
+function respondCORS(req, res) {
+  sendJson(res, {});
+}
+
 function sendJson(res, data) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888/');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.send(data);

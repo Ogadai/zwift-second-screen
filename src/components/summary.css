@@ -22,3 +22,11 @@
         padding: var(--padding);
     }
 }
+
+.overlay .summary {
+    opacity: 0;
+    transition: opacity ease 1s;
+}
+.overlay.hovering .summary {
+    opacity: 1;
+}

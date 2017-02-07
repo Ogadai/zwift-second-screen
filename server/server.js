@@ -6,9 +6,11 @@ const settings = require('../settings');
 const Rider = require('./rider');
 const Map = require('./map');
 const Login = require('./login');
+const Host = require('./host');
 
 const map = new Map();
 const login = new Login();
+const host = new Host(settings);
 
 app.use(bodyParser.json());
 
@@ -77,6 +79,11 @@ app.get('/map.svg', function (req, res) {
 
 app.get('/mapSettings', function (req, res) {
   map.getSettings().then(respondJson(res));
+})
+
+
+app.get('/host', function (req, res) {
+  host.getHostInfo().then(respondJson(res));
 })
 
 console.log(`static: ${__dirname}/../public`)

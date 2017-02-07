@@ -56,7 +56,7 @@ class App extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    overlay: navigator.userAgent.toLowerCase().indexOf('electron') !== -1
+    overlay: state.environment.electron
   }
 }
 

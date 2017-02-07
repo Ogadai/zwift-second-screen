@@ -45,11 +45,19 @@ function login(state = {}, action) {
   }
 }
 
+const defaultEnv = {
+  electron: navigator.userAgent.toLowerCase().indexOf('electron') !== -1
+};
+function environment(state = defaultEnv, action) {
+  return state;
+}
+
 const rootReducer = combineReducers({
   profile,
   positions,
   mapSettings,
   login,
+  environment,
   routing: routerReducer
 })
 

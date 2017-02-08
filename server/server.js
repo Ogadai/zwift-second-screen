@@ -8,8 +8,8 @@ const Map = require('./map');
 const Login = require('./login');
 const Host = require('./host');
 
-const map = new Map();
 const login = new Login();
+const map = new Map(settings);
 const host = new Host(settings);
 
 app.use(bodyParser.json());

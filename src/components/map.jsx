@@ -27,6 +27,7 @@ const powerColours = [
 class Map extends Component {
   static get propTypes() {
     return {
+			overlay: PropTypes.bool,
       positions: PropTypes.array,
 			mapSettings: PropTypes.object,
       onFetch: PropTypes.func.isRequired,
@@ -46,39 +47,78 @@ class Map extends Component {
   }
 	
   render() {
-    const { positions, mapSettings } = this.props;
+    const { overlay, positions, mapSettings } = this.props;
+    const transforms = !overlay && mapSettings.transforms ? mapSettings.transforms : [];
+
     return <div className="map">
+      {(overlay || !mapSettings.png)
+        ? <div className="map-route">
+					  <img className="full-size svg-map" src={`${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg`} />
+					</div>
+        : <div className="map-route">
+	          <img className="full-size png-map" src={mapSettings.png} />
+					</div>
+      }
+
       <div className="map-route">
-        <img className="full-size" src={`${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg`} />
+        <img className="full-size svg-map" src={`${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg`} />
       </div>
+      
       {(positions && mapSettings.viewBox) ?
         <div className="map-riders">
-          <svg className="full-size" viewBox={mapSettings.viewBox}>
-            <g transform={'rotate' + mapSettings.rotate}>
-              <g transform={'translate' + mapSettings.translate}>
-								<g id="riders" className="riders">
-									{ positions.map((p, i) => this.renderPosition(p, i)) }
-								</g>
-							</g>
-						</g>
+          <svg className="full-size svg-map" viewBox={mapSettings.viewBox}>
+            {this.renderTransforms(transforms, 0)}
 					</svg>
         </div>
         : undefined}
 			</div>
   }
 
+  renderTransforms(transforms, index) {
+    return (index < transforms.length)
+      ? <g transform={transforms[index]}>{this.renderTransforms(transforms, index + 1)}</g>
+      : this.renderRiders()
+  }
+
+  renderRiders() {
+    let { positions, mapSettings } = this.props;
+
+    positions = [
+      { x: 143948, y: -240914, power: 100, speed: 25000000, firstName: "Andy", lastName: "Lee" }
+    ];
+
+    return <g transform={'rotate' + mapSettings.rotate}>
+      <g transform={'translate' + mapSettings.translate}>
+        <g id="riders" className="riders">
+          {positions.map((p, i) => this.renderPosition(p, i))}
+        </g>
+      </g>
+    </g>
+  }
+
   renderPosition(position, index) {
-    return <g key={`rider-${index}`} className="rider-position">
+    return <g key={`rider-${index}`}
+      className="rider-position"
+      transform={`translate(${position.x},${position.y})`}>
       <circle 
-				cx={position.x} cy={position.y} r="6000"
+				cx="0" cy="0" r="6000"
 				stroke={this.getRiderColour(index)} strokeWidth="2000"
 				fill={this.getPowerColour(position.power)}>
         <title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
       </circle>
-      <text x={position.x + 7500} y={position.y + 1000} fontFamily="Verdana" fontSize="7000" fontWeight="600">
+      <text x={7500} y={1000} fontFamily="Verdana" fontSize="7000" fontWeight="600" transform={this.getRiderRotate()}>
         {position.firstName.substring(0, 1)} {position.lastName}
       </text>
     </g>
+  }
+
+  getRiderRotate() {
+    const { rotate } = this.props.mapSettings;
+    const start = rotate.indexOf('(') + 1;
+    const end = rotate.indexOf(',', start);
+    const angle = parseInt(rotate.substring(start, end));
+
+    return `rotate(${-angle})`;
   }
 
   getRiderColour(index) {
@@ -106,6 +146,7 @@ class Map extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    overlay: state.environment.electron,
     positions: state.positions,
     mapSettings: state.mapSettings
   }

@@ -1,7 +1,7 @@
 ﻿const axios = require('axios');
 const fs = require('fs');
 
-const downloadUrl = '/zwiftmap/app/world',
+const downloadUrl = '/zwiftmap/app/world/',
   cssUrl = '/zwiftmap/app/world-web.css',
   svgStart = '<svg ',
   svgEnd = '</svg>',
@@ -17,6 +17,10 @@ const requesOptions = {
 };
 
 class Map {
+  constructor(settings) {
+    this.worlds = settings.worlds;
+  }
+
   getSvg() {
     const cached = this.getCachedMap();
     if (cached) {
@@ -51,10 +55,15 @@ class Map {
         const end = map.indexOf(svgEnd, start);
 
         if (end !== -1) {
-          const svgData = map.substring(start, end);
+          const endTag = map.indexOf('>', start);
+          const svgStartTag = map.substring(start, endTag + 1);
+
+          const svgData = map.substring(endTag + 1, end);
           const mapStyle = this.getMapStyle(cssResponse.data);
 
-          return `${svgStart}${addedAttributes}${svgData}${mapStyle}${svgEnd}`;
+          const transformTags = this.getTransformTags(map);
+
+          return `${svgStart}${addedAttributes}${svgStartTag}${transformTags.start}${svgData}${mapStyle}${transformTags.end}${svgEnd}`;
         }
       }
       return Promise.reject("Couldn't parse map data");
@@ -67,10 +76,14 @@ class Map {
 
   getSettings() {
     return this.getSvg().then(map => {
+      const worldId = this.getWorldId(map);
       return {
+        world: worldId,
+        png: (this.worlds && this.worlds[worldId]) ? this.worlds[worldId].png : null,
         viewBox: this.getSvgParam(map, 'viewBox="'),
         rotate: this.getSvgParam(map, 'transform="rotate'),
-        translate: this.getSvgParam(map, 'transform="translate')
+        translate: this.getSvgParam(map, 'transform="translate'),
+        transforms: this.getWorldTransforms(worldId)
       };
     });
   }
@@ -83,6 +96,35 @@ class Map {
       return map.substring(start, end);
     }
     return '';
+  }
+
+  getWorldId(map) {
+    return parseInt(this.getSvgParam(map, 'id="world_'));
+  }
+
+  getWorldTransforms(worldId) {
+    if (this.worlds && this.worlds[worldId]) {
+      return this.worlds[worldId].transforms;
+    }
+    return null;
+  }
+
+  getTransformTags(map) {
+    let start = '';
+    let end = '';
+    //const transforms = this.getWorldTransforms(this.getWorldId(map));
+
+    //if (transforms && transforms.length) {
+    //  transforms.forEach(t => {
+    //    start += `<g transform="${t}">`;
+    //    end += '</g>';
+    //  });
+    //}
+
+    return {
+      start,
+      end
+    };
   }
 }
 module.exports = Map;

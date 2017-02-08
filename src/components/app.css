@@ -28,7 +28,7 @@ body {
     border-radius: 15px;
     -webkit-app-region: no-drag;
 
-    &:hover; {
+    &:hover {
         color: #FC6719;
         border-color: #FC6719;
     }

@@ -21,4 +21,29 @@
         width: 100%;
         height: 100%;
     }
+
+    & .map-attribute {
+        position: absolute;
+        top: 5px;
+        right: 20px;
+
+        color: #808080;
+
+        & a {
+            text-decoration: none;
+            color: #6e7af8;
+            font-weight: bold;
+        }
+    }
+}
+
+.overlay {
+    & .map-attribute {
+        opacity: 0;
+        transition: opacity ease 1s;
+    }
+
+    &.hovering .map-attribute {
+        opacity: 1;
+    }
 }

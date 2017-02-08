@@ -64,7 +64,10 @@ class Map extends Component {
 					</svg>
         </div>
         : undefined}
-			</div>
+      <div className="map-attribute">
+        Map from <a href="http://zwifthacks.com/" target="_blank">zwifthacks.com</a>
+      </div>
+		</div>
   }
 
   renderPosition(position, index) {

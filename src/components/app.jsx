@@ -5,12 +5,15 @@ import classnames from 'classnames';
 import Summary from './summary';
 import Map from './map';
 
+import { closeApp } from '../actions';
+
 import s from './app.css';
 
 class App extends Component {
   static get propTypes() {
     return {
-      overlay: PropTypes.bool
+      overlay: PropTypes.bool,
+      onCloseApp: PropTypes.func
     };
   }
 
@@ -23,12 +26,15 @@ class App extends Component {
   }
 
   render() {
-    const { overlay } = this.props;
+    const { overlay, onCloseApp } = this.props;
     const { hovering } = this.state;
 
     return (
       <div className={classnames("zwift-app", { overlay, hovering })}>
-        <h1 className="title-bar">Zwift GPS</h1>
+        <h1 className="title-bar">
+          Zwift GPS
+					<a className="close-button" href="#" onClick={onCloseApp}>X</a>
+				</h1>
         <div className="content" onMouseMove={() => this.onMouseMove()}>
 					<Summary />
 					<Map />
@@ -62,7 +68,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-
+    onCloseApp: closeApp
   }
 }
 

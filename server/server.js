@@ -81,7 +81,6 @@ app.get('/mapSettings', function (req, res) {
   map.getSettings().then(respondJson(res));
 })
 
-
 app.get('/host', function (req, res) {
   host.getHostInfo().then(respondJson(res));
 })

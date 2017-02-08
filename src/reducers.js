@@ -1,7 +1,10 @@
 ﻿import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
-import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_MAPSETTINGS, INITIALISE_LOGIN, RECEIVE_LOGINFAILURE } from './actions';
+import {
+  RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_MAPSETTINGS,
+  INITIALISE_LOGIN, RECEIVE_LOGINFAILURE, RECEIVE_HOST
+} from './actions';
 
 function profile(state = {}, action) {
   switch (action.type) {
@@ -45,11 +48,22 @@ function login(state = {}, action) {
   }
 }
 
-const defaultEnv = {
-  electron: navigator.userAgent.toLowerCase().indexOf('electron') !== -1
-};
-function environment(state = defaultEnv, action) {
-  return state;
+function environment(state, action) {
+  switch (action.type) {
+    default:
+      return {
+        electron: navigator.userAgent.toLowerCase().indexOf('electron') !== -1
+      };
+  }
+}
+
+function host(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_HOST:
+      return action.data;
+    default:
+      return state;
+  }
 }
 
 const rootReducer = combineReducers({
@@ -58,6 +72,7 @@ const rootReducer = combineReducers({
   mapSettings,
   login,
   environment,
+  host,
   routing: routerReducer
 })
 

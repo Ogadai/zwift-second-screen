@@ -2,6 +2,41 @@ body {
     background: transparent;
     overflow: hidden;
     margin: 0;
+    font-family: "ProximaNova-Black", Arial, Helvetica, sans-serif;
+}
+
+.title-bar {
+    background-color: #FC6719;
+    color: white;
+    text-align: center;
+    margin: 0;
+    padding: 5px;
+    -webkit-app-region: drag;
+    position: relative;
+}
+
+.close-button {
+    display: inline-block;
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    padding: 5px 8px;
+    text-decoration: none;
+    color: #808080;
+    font-size: 0.5em;
+    border: 2px #808080 solid;
+    border-radius: 15px;
+    -webkit-app-region: no-drag;
+
+    &:hover; {
+        color: #FC6719;
+        border-color: #FC6719;
+    }
+
+    .title-bar &:hover {
+        color: white;
+        border-color: white;
+    }
 }
 
 .zwift-app {
@@ -14,11 +49,6 @@ body {
 
     & .title-bar {
         display: none;
-        background-color: #FC6719;
-        color: white;
-        text-align: center;
-        margin: 0;
-        padding: 5px;
     }
     & .content {
         position: relative;

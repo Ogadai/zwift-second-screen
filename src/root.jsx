@@ -4,11 +4,13 @@ import { Router, Route } from 'react-router';
 
 import App from './components/app.jsx';
 import Login from './components/login.jsx';
+import Host from './components/host.jsx';
 
 const Root = ({ store, history }) => {
   return <Provider store={ store }>
     <Router history={history}>
       <Route path="/Login(/:filter)" component={Login} />
+      <Route path="/Host(/:filter)" component={Host} />
       <Route path="/(:filter)" component={App} />
     </Router>
   </Provider>

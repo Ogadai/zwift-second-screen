@@ -20,6 +20,11 @@
         border-top-left-radius: 20px;
     }
 
+    & .close-button:hover {
+        color: #FC6719;
+        border-color: #FC6719;
+    }
+
     & form, & .host {
         -webkit-app-region: no-drag;
         background-color: white;

@@ -28,15 +28,10 @@ body {
     border-radius: 15px;
     -webkit-app-region: no-drag;
 
-    &:hover {
-        color: #FC6719;
-        border-color: #FC6719;
-    }
-
-    .title-bar &:hover {
-        color: white;
-        border-color: white;
-    }
+}
+.title-bar .close-button:hover {
+    color: white;
+    border-color: white;
 }
 
 .zwift-app {

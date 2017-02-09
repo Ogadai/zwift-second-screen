@@ -1,7 +1,7 @@
 ﻿const axios = require('axios');
 const fs = require('fs');
 
-const downloadUrl = '/zwiftmap/app/world',
+const downloadUrl = '/zwiftmap/svg/world',
   cssUrl = '/zwiftmap/app/world-web.css',
   svgStart = '<svg ',
   svgEnd = '</svg>',

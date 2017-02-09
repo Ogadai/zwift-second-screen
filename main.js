@@ -1,12 +1,18 @@
-﻿const {app, BrowserWindow} = require('electron')
-const path = require('path')
-const url = require('url')
-const settings = require('./settings')
-const server = require('./server/server.js')
+﻿const {app, BrowserWindow} = require('electron');
+const path = require('path');
+const url = require('url');
+const open = require('open');
+const Server = require('./server/server');
+const Login = require('./server/login');
+const Host = require('./server/host');
+const settings = require('./settings');
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
+
+const server = new Server(new Login(), new Host(settings.port));
+server.start(settings.port);
 
 function createWindow() {
   // Create the browser window.
@@ -22,6 +28,11 @@ function createWindow() {
 
   // Open the DevTools.
   win.webContents.openDevTools()
+
+  win.webContents.on('new-window', function (event, url) {
+    event.preventDefault();
+    open(url);
+  });
 
   // Emitted when the window is closed.
   win.on('closed', () => {

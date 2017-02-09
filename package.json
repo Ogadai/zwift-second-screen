@@ -5,11 +5,12 @@
   "main": "main.js",
   "scripts": {
     "build": "webpack --config webpack.production.config.js --progress --profile --colors",
+    "prepublish": "npm run build",
     "lint": "eslint --ext js --ext jsx src || exit 0",
-    "dev-server": "nodemon server/server.js",
+    "dev-server": "nodemon index.js",
     "dev-client": "webpack-dev-server",
     "dev": "concurrently --kill-others \"npm run dev-server\" \"npm run dev-client\"",
-    "start": "node server/server.js",
+    "start": "node index.js",
     "electron": "electron ."
   },
   "repository": {
@@ -51,6 +52,7 @@
     "file-loader": "0.9.0",
     "html-webpack-plugin": "^2.26.0",
     "nodemon": "^1.11.0",
+    "open": "0.0.5",
     "postcss-cssnext": "^2.9.0",
     "postcss-import": "^9.1.0",
     "postcss-loader": "^1.2.2",

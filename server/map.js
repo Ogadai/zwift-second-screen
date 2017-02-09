@@ -17,6 +17,13 @@ const requesOptions = {
 };
 
 class Map {
+  setWorld(id) {
+    this.worldId = id;
+
+    this.map = null;
+    this.mapDate = null;
+  }
+
   getSvg() {
     const cached = this.getCachedMap();
     if (cached) {
@@ -38,8 +45,9 @@ class Map {
   }
 
   downloadMap() {
+    const worldParam = this.worldId ? `/${this.worldId}` : '';
     const promises = [
-      axios.get(downloadUrl, requesOptions),
+      axios.get(`${downloadUrl}${worldParam}`, requesOptions),
       axios.get(cssUrl, requesOptions)
     ];
 

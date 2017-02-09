@@ -2,32 +2,27 @@
 var dns = require('dns');
 
 class Host {
-  constructor(settings) {
-    this.port = settings.port;
+  constructor(port) {
+    this.port = port;
   }
 
   getHostInfo() {
     return new Promise((resolve, reject) => {
-      if (!this.username) {
-        const hostName = os.hostname();
-        let resolved = false;
+      const hostName = os.hostname();
+      let resolved = false;
 
-        dns.lookup(hostName, (err, address) => {
-          if (!resolved) {
-            resolved = true;
+      dns.lookup(hostName, (err, address) => {
+        if (!resolved) {
+          resolved = true;
 
-            resolve({
-              hosts: [
-                this.formatHost(hostName),
-                this.formatHost(address)
-              ]
-            });
-          }
-        });
-      } else {
-				// Not using local hosting
-        resolve({});
-      }
+          resolve({
+            hosts: [
+              this.formatHost(hostName),
+              this.formatHost(address)
+            ]
+          });
+        }
+      });
     });
   }
 

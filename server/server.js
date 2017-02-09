@@ -1,126 +1,151 @@
 ﻿const express = require('express');
 const bodyParser = require('body-parser');
-const app = express();
-var path = require('path');
-const settings = require('../settings');
-const Rider = require('./rider');
+const path = require('path');
+
 const Map = require('./map');
-const Login = require('./login');
-const Host = require('./host');
 
-const map = new Map();
-const login = new Login();
-const host = new Host(settings);
+class Server {
+  constructor(riderProvider, hostData) {
+    this.app = express();
 
-app.use(bodyParser.json());
+    this.map = new Map();
+    this.riderProvider = riderProvider;
+    this.hostData = hostData;
 
-app.get('/followers/', function (req, res) {
-    var playerId = req.query.player || settings.player;
-    account.getProfile(playerId).followers().then(function (data) {
-        res.send(asHtml(data))
-    });
-})
+    this.initialise();
+  }
 
-app.get('/followees/', function (req, res) {
-    var playerId = req.query.player || settings.player;
-    account.getProfile(playerId).followees().then(function (data) {
-        res.send(asHtml(data))
-    });
-})
+  initialise() {
+    this.app.use(bodyParser.json());
 
-app.get('/riders/', function (req, res) {
-  var worldId = req.query.world || 1;
-  account.getWorld(worldId).riders().then(respondJson(res));
-})
-
-app.get('/status/', function (req, res) {
-  var worldId = req.query.world || 1;
-  var playerId = req.query.player || settings.player;
-  account.getWorld(worldId).riderStatus(playerId).then(respondJson(res));
-})
-
-app.get('/json/', function (req, res) {
-    var path = req.query.path;
-    console.log(`Request: ${path}`);
-    account.getRequest().json(path)
-        .then(function (data) {
-            res.send(asHtml(data))
+		// Enable CORS for post login
+    this.app.options('/login', respondCORS)
+    this.app.post('/login', (req, res) => {
+      const { username, password } = req.body;
+      console.log(`login: ${username}`)
+      this.riderProvider.login(username, password)
+        .then(result => {
+          console.log('login successful')
+          sendJson(res, { message: 'ok' })
         })
-        .catch(function (err) {
-            console.log(err.response);
-            res.status(err.response.status).send(`${err.response.status} - ${err.response.statusText}`);
-        });
-})
-
-app.options('/login', respondCORS)
-app.post('/login', function (req, res) {
-  const { username, password } = req.body;
-	console.log(`login: ${username}`)
-  login.login(username, password)
-    .then(result => {
-			console.log('login successful')
-	    sendJson(res, { message: 'ok' })
+        .catch(err => {
+          console.log('login failed - ', err)
+          const { status, statusText } = err.response;
+          res.status(status);
+          sendJson(res, { status, statusText });
+        })
     })
-    .catch(err => {
-			console.log('login failed - ', err)
-      const { status, statusText } = err.response;
-      res.status(status);
-      sendJson(res, { status, statusText });
+
+    this.app.get('/profile', this.processRider(rider => rider.getProfile()))
+    this.app.get('/positions', this.processRider(rider => rider.getPositions()))
+
+    this.app.get('/map.svg', (req, res) => {
+      this.map.getSvg().then(data => sendImg(res, data, 'image/svg+xml'));
     })
-})
 
-app.get('/profile', processRider(rider => rider.getProfile()))
-app.get('/friends', processRider(rider => rider.getRiders()))
-app.get('/positions', processRider(rider => rider.getPositions()))
+    this.app.get('/mapSettings', (req, res) => {
+      this.map.getSettings().then(respondJson(res));
+    })
 
-app.get('/map.svg', function (req, res) {
-  map.getSvg().then(data => sendImg(res, data, 'image/svg+xml'));
-})
+    this.app.get('/host', (req, res) => {
+      if (this.hostData) {
+        this.hostData.getHostInfo().then(respondJson(res));
+      } else {
+        sendJson(res, {});
+      }
+    })
 
-app.get('/mapSettings', function (req, res) {
-  map.getSettings().then(respondJson(res));
-})
+		// Static hosting for web client
+    this.app.use(express.static(`${__dirname}/../public`))
+		// Handle 404s (React app routing)
+    this.app.use((req, res) => {
+      if (req.accepts('html')) {
+				// respond with html index page
+        res.sendFile(path.resolve(`${__dirname}/../public/index.html`));
+        return;
+      }
 
-app.get('/host', function (req, res) {
-  host.getHostInfo().then(respondJson(res));
-})
+      res.status(404);
 
-console.log(`static: ${__dirname}/../public`)
-app.use(express.static(`${__dirname}/../public`))
-
-app.use(function (req, res, next) {
-  // respond with html page
-  if (req.accepts('html')) {
-    res.sendFile(path.resolve(`${__dirname}/../public/index.html`));
-    return;
+      // respond with json
+      if (req.accepts('json')) {
+        res.send({ error: 'Not found' });
+        return;
+      }
+      // default to plain-text. send()
+      res.type('txt').send('Not found');
+    });
   }
 
-  res.status(404);
-
-  // respond with json
-  if (req.accepts('json')) {
-    res.send({ error: 'Not found' });
-    return;
+  start(port) {
+    this.app.listen(port, () => {
+      console.log(`Listening on port ${port}`)
+    })
   }
-  // default to plain-text. send()
-  res.type('txt').send('Not found');
-});
 
-app.listen(settings.port, function () {
-  console.log(`Listening on port ${settings.port}!`)
-})
+  stop() {
 
-function processRider(callbackFn) {
-  return function (req, res) {
-    const rider = login.getRider('');
-    if (rider) {
-      callbackFn(rider, req).then(respondJson(res));
-    } else {
-      res.status(401);
-      sendJson(res, { status: 401, statusText: 'Unauthorised' });
-    }
   }
+
+	processRider(callbackFn) {
+		return (req, res) => {
+      const rider = this.riderProvider.getRider('');
+			if (rider) {
+				callbackFn(rider, req).then(respondJson(res));
+			} else {
+				res.status(401);
+				sendJson(res, { status: 401, statusText: 'Unauthorised' });
+			}
+		}
+	}
+
 }
+module.exports = Server;
+
+
+
+//app.get('/followers/', function (req, res) {
+//    var playerId = req.query.player || settings.player;
+//    account.getProfile(playerId).followers().then(function (data) {
+//        res.send(asHtml(data))
+//    });
+//})
+
+//app.get('/followees/', function (req, res) {
+//    var playerId = req.query.player || settings.player;
+//    account.getProfile(playerId).followees().then(function (data) {
+//        res.send(asHtml(data))
+//    });
+//})
+
+//app.get('/riders/', function (req, res) {
+//  var worldId = req.query.world || 1;
+//  account.getWorld(worldId).riders().then(respondJson(res));
+//})
+
+//app.get('/status/', function (req, res) {
+//  var worldId = req.query.world || 1;
+//  var playerId = req.query.player || settings.player;
+//  account.getWorld(worldId).riderStatus(playerId).then(respondJson(res));
+//})
+
+//app.get('/json/', function (req, res) {
+//    var path = req.query.path;
+//    console.log(`Request: ${path}`);
+//    account.getRequest().json(path)
+//        .then(function (data) {
+//            res.send(asHtml(data))
+//        })
+//        .catch(function (err) {
+//            console.log(err.response);
+//            res.status(err.response.status).send(`${err.response.status} - ${err.response.statusText}`);
+//        });
+//})
+
+//function asHtml(data) {
+//  return '<html><body><pre><code>' + JSON.stringify(data, null, 4) + '</code></pre></body></html>'
+//}
+
 
 function respondJson(res) {
   return function (data) {
@@ -144,8 +169,4 @@ function sendImg(res, data, contentType) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Content-Type', contentType);
   res.send(data);
-}
-
-function asHtml(data) {
-  return '<html><body><pre><code>' + JSON.stringify(data, null, 4) + '</code></pre></body></html>'
 }

@@ -1,1 +1,14 @@
-﻿
+﻿logs
+*.log
+pids
+*.pid
+*.seed
+coverage
+node_modules
+npm-debug.log*
+.editorconfig
+
+.vs
+img
+src
+settings.js

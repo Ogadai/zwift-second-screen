@@ -9,6 +9,6 @@ npm-debug.log*
 .editorconfig
 
 .vs
-img
-src
+/img
+/src
 settings.js

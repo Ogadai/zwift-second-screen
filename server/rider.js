@@ -5,6 +5,14 @@ class Rider {
     this.riderId = riderId;
   }
 
+  setWorld() {
+		// not implemented
+  }
+  getWorld() {
+		// not implemented
+    return undefined
+  }
+
   getProfile() {
     return this.account.getProfile(this.riderId).profile();
   }

@@ -2,7 +2,7 @@
 import { routerReducer } from 'react-router-redux'
 
 import {
-  RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_MAPSETTINGS,
+  RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_MAPSETTINGS,
   INITIALISE_LOGIN, RECEIVE_LOGINFAILURE, RECEIVE_HOST
 } from './actions';
 
@@ -18,6 +18,15 @@ function profile(state = {}, action) {
 function positions(state = [], action) {
   switch (action.type) {
     case RECEIVE_POSITIONS:
+      return action.data;
+    default:
+      return state;
+  }
+}
+
+function world(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_WORLD:
       return action.data;
     default:
       return state;
@@ -69,6 +78,7 @@ function host(state = {}, action) {
 const rootReducer = combineReducers({
   profile,
   positions,
+  world,
   mapSettings,
   login,
   environment,

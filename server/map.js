@@ -17,35 +17,41 @@ const requesOptions = {
 };
 
 class Map {
-  setWorld(id) {
-    this.worldId = id;
-
-    this.map = null;
-    this.mapDate = null;
+  constructor() {
+    this.worlds = {
+    }
   }
 
-  getSvg() {
-    const cached = this.getCachedMap();
+  key(worldId) {
+    return worldId || 'default';
+  }
+
+  getSvg(worldId) {
+    const cached = this.getCachedMap(worldId);
     if (cached) {
       return Promise.resolve(cached);
     } else {
-      return this.downloadMap().then(map => {
-        this.map = map;
-        this.mapDate = new Date();
+      return this.downloadMap(worldId).then(map => {
+
+        this.worlds[this.key(worldId)] = {
+          map: map,
+					date: new Date()
+        };
         return map;
       });
     }
   }
 
-  getCachedMap() {
-    if (this.map && (new Date() - this.mapDate < 60 * 60000)) {
-      return this.map;
+  getCachedMap(worldId) {
+    const world = this.worlds[this.key(worldId)];
+    if (world && world.map && (new Date() - world.date < 60 * 60000)) {
+      return world.map;
     }
     return null;
   }
 
-  downloadMap() {
-    const worldParam = this.worldId ? `/${this.worldId}` : '';
+  downloadMap(worldId) {
+    const worldParam = worldId ? `/${worldId}` : '';
     const promises = [
       axios.get(`${downloadUrl}${worldParam}`, requesOptions),
       axios.get(cssUrl, requesOptions)
@@ -73,8 +79,8 @@ class Map {
     return `${styleStart}${styleData}${styleEnd}`;
   }
 
-  getSettings() {
-    return this.getSvg().then(map => {
+  getSettings(worldId) {
+    return this.getSvg(worldId).then(map => {
       return {
         viewBox: this.getSvgParam(map, 'viewBox="'),
         rotate: this.getSvgParam(map, 'transform="rotate'),

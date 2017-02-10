@@ -2,7 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchPositions, fetchMapSettings } from '../actions';
+import { fetchPositionsAndWorld, fetchMapSettings } from '../actions';
 
 import s from './map.css';
 
@@ -27,6 +27,7 @@ const powerColours = [
 class Map extends Component {
   static get propTypes() {
     return {
+			worldId: PropTypes.number,
       positions: PropTypes.array,
 			mapSettings: PropTypes.object,
       onFetch: PropTypes.func.isRequired,
@@ -35,10 +36,18 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    const { onFetch, onFetchSettings } = this.props;
+    const { worldId, onFetch, onFetchSettings } = this.props;
+    onFetchSettings(worldId);
+
     onFetch();
-    onFetchSettings();
-    this.fetchInterval = setInterval(onFetch, 5000);
+    this.fetchInterval = setInterval(onFetch, 3000);
+  }
+
+  componentWillReceiveProps(props) {
+    const { worldId, onFetchSettings } = this.props;
+    if (props.worldId !== worldId) {
+      onFetchSettings(props.worldId);
+    }
   }
 
   componentWillUnmount() {
@@ -46,10 +55,11 @@ class Map extends Component {
   }
 	
   render() {
-    const { positions, mapSettings } = this.props;
+    const { worldId, positions, mapSettings } = this.props;
+    const worldParam = worldId ? `?world=${worldId}` : '';
     return <div className="map">
       <div className="map-route">
-        <img className="full-size" src={`${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg`} />
+        <img className="full-size" src={`${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg${worldParam}`} />
       </div>
       {(positions && mapSettings.viewBox) ?
         <div className="map-riders">
@@ -109,6 +119,7 @@ class Map extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    worldId: state.world.worldId,
     positions: state.positions,
     mapSettings: state.mapSettings
   }
@@ -116,8 +127,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchSettings: () => dispatch(fetchMapSettings()),
-    onFetch: () => dispatch(fetchPositions())
+    onFetchSettings: (worldId) => dispatch(fetchMapSettings(worldId)),
+    onFetch: () => dispatch(fetchPositionsAndWorld())
   }
 }
 

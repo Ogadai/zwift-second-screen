@@ -27,7 +27,6 @@ class Login extends Component {
       username: props.user ? props.user.username : '',
 			password: ''
     };
-		console.log(this.state)
   }
 
   componentDidMount() {

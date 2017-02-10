@@ -27,6 +27,26 @@ export function fetchPositions() {
   return dispatchRequest('/positions/', receivePositions);
 }
 
+export const RECEIVE_WORLD = "RECEIVE_WORLD";
+
+function receiveWorld(data) {
+  return {
+    type: RECEIVE_WORLD,
+    data
+  };
+}
+
+export function fetchWorld() {
+  return dispatchRequest('/world/', receiveWorld);
+}
+
+export function fetchPositionsAndWorld() {
+  return dispatch => {
+    dispatch(fetchWorld());
+    dispatch(fetchPositions());
+  }
+}
+
 export const RECEIVE_MAPSETTINGS = "RECEIVE_MAPSETTINGS";
 
 function receiveMapSettings(data) {
@@ -36,8 +56,9 @@ function receiveMapSettings(data) {
   };
 }
 
-export function fetchMapSettings() {
-  return dispatchRequest('/mapSettings/', receiveMapSettings);
+export function fetchMapSettings(worldId) {
+  const worldParam = worldId ? `?world=${worldId}` : '';
+  return dispatchRequest(`/mapSettings/${worldParam}`, receiveMapSettings);
 }
 
 

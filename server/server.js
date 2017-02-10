@@ -38,13 +38,16 @@ class Server {
 
     this.app.get('/profile', this.processRider(rider => rider.getProfile()))
     this.app.get('/positions', this.processRider(rider => rider.getPositions()))
+    this.app.get('/world', this.processRider(rider => Promise.resolve({ worldId: rider.getWorld() })))
 
     this.app.get('/map.svg', (req, res) => {
-      this.map.getSvg().then(data => sendImg(res, data, 'image/svg+xml'));
+      const worldId = req.query.world || undefined;
+      this.map.getSvg(worldId).then(data => sendImg(res, data, 'image/svg+xml'));
     })
 
     this.app.get('/mapSettings', (req, res) => {
-      this.map.getSettings().then(respondJson(res));
+      const worldId = req.query.world || undefined;
+      this.map.getSettings(worldId).then(respondJson(res));
     })
 
     this.app.get('/host', (req, res) => {
@@ -78,13 +81,18 @@ class Server {
   }
 
   start(port) {
-    this.app.listen(port, () => {
-      console.log(`Listening on port ${port}`)
+    this.port = port;
+    this.server = this.app.listen(port, () => {
+      console.log(`Listening on port ${port}`);
     })
   }
 
   stop() {
-
+    if (this.server) {
+      this.server.close();
+      console.log(`Stopped listening on port ${this.port}`);
+      this.server = null;
+    }
   }
 
 	processRider(callbackFn) {

@@ -22,8 +22,10 @@
   "homepage": "https://github.com/Ogadai/zwift-second-screen",
   "dependencies": {
     "body-parser": "^1.16.0",
+    "cookie-parser": "^1.4.3",
     "express": "^4.14.1",
     "express-ws": "^2.0.0",
+    "guid": "0.0.12",
     "zwift-mobile-api": "^0.1.1"
   },
   "devDependencies": {

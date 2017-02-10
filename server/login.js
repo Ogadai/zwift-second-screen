@@ -1,44 +1,35 @@
-﻿const ZwiftAccount = require('zwift-mobile-api');
+const Guid = require('guid');
+const ZwiftAccount = require('zwift-mobile-api');
+const Session = require('./session');
 const Rider = require('./rider');
-
-const settings = require('../settings');
-
-let rider = null;
 
 class Login {
   constructor() {
-    this.interval = null;
-    this.subscriptions = 0;
+    this.sessions = {};
   }
 
   getRider(cookie) {
-    return rider;
+    const session = this.sessions[cookie];
+    if (session) return session.getRider();
+    return null;
   }
 
   subscribe(cookie) {
-    if (this.subscriptions === 0) {
-      this.interval = setInterval(() => {
-        if (rider) {
-          rider.pollPositions();
-        }
-      }, 3000);
-    }
-    this.subscriptions++;
-
-    return () => {
-      this.subscriptions--;
-      if (this.subscriptions === 0) {
-        clearInterval(this.interval);
-      }
-    }
+    const session = this.sessions[cookie];
+    if (session) return session.subscribe();
   }
 
   login(username, password) {
     const account = new ZwiftAccount(username, password);
-    rider = new Rider(account);
+    const rider = new Rider(account);
 
+    const cookie = Guid.raw();
+    
     return rider.getProfile()
-      .then(profile => { cookie: '' });
+      .then(profile => {
+        this.sessions[cookie] = new Session(rider);
+        return { cookie };
+      });
   }
 
 }

@@ -1,6 +1,7 @@
 ﻿const express = require('express');
 const expressWs = require('express-ws');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const path = require('path');
 
 const Map = require('./map');
@@ -19,6 +20,7 @@ class Server {
 
   initialise() {
     this.app.use(bodyParser.json());
+    this.app.use(cookieParser())
 
 		// Enable CORS for post login
     this.app.options('/login', respondCORS)
@@ -28,6 +30,7 @@ class Server {
       this.riderProvider.login(username, password)
         .then(result => {
           console.log('login successful')
+          res.cookie('zssToken', result.cookie, { httpOnly: true });
           sendJson(res, { message: 'ok' })
         })
         .catch(err => {
@@ -43,7 +46,7 @@ class Server {
     this.app.get('/world', this.processRider(rider => Promise.resolve({ worldId: rider.getWorld() })))
 
     this.app.ws('/listen', (ws, req) => {
-      const cookie = '';
+      const cookie = req.cookies.zssToken;
       const rider = this.riderProvider.getRider(cookie);
 
       if (rider) {
@@ -123,7 +126,9 @@ class Server {
 
 	processRider(callbackFn) {
 		return (req, res) => {
-      const rider = this.riderProvider.getRider('');
+		  const cookie = req.cookies.zssToken;
+		  console.log(`cookie: ${cookie}`)
+      const rider = this.riderProvider.getRider(cookie);
 			if (rider) {
 				callbackFn(rider, req).then(respondJson(res));
 			} else {

@@ -2,6 +2,7 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
+import SocketClient from './socket-client.jsx';
 import { fetchPositionsAndWorld, fetchMapSettings } from '../actions';
 
 import s from './map.css';
@@ -39,8 +40,8 @@ class Map extends Component {
     const { worldId, onFetch, onFetchSettings } = this.props;
     onFetchSettings(worldId);
 
-    onFetch();
-    this.fetchInterval = setInterval(onFetch, 3000);
+    //onFetch();
+    //this.fetchInterval = setInterval(onFetch, 3000);
   }
 
   componentWillReceiveProps(props) {
@@ -77,6 +78,7 @@ class Map extends Component {
       <div className="map-attribute">
         Map from <a href="http://zwifthacks.com/" target="_blank">zwifthacks.com</a>
       </div>
+      <SocketClient />
 		</div>
   }
 

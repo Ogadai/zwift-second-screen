@@ -1,6 +1,9 @@
-﻿
-class Rider {
+﻿const EventEmitter = require('events')
+
+class Rider extends EventEmitter {
   constructor(account, riderId) {
+    super();
+
     this.account = account;
     this.riderId = riderId;
   }
@@ -11,6 +14,12 @@ class Rider {
   getWorld() {
 		// not implemented
     return undefined
+  }
+
+  pollPositions() {
+    this.getPositions().then(positions => {
+      this.emit('positions', positions);
+    });
   }
 
   getProfile() {

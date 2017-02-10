@@ -16,7 +16,7 @@ export function fetchProfile() {
 
 export const RECEIVE_POSITIONS = "RECEIVE_POSITIONS";
 
-function receivePositions(data) {
+export function receivePositions(data) {
   return {
     type: RECEIVE_POSITIONS,
     data

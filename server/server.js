@@ -1,4 +1,5 @@
 ﻿const express = require('express');
+const expressWs = require('express-ws');
 const bodyParser = require('body-parser');
 const path = require('path');
 
@@ -7,6 +8,7 @@ const Map = require('./map');
 class Server {
   constructor(riderProvider, hostData) {
     this.app = express();
+    expressWs(this.app);
 
     this.map = new Map();
     this.riderProvider = riderProvider;
@@ -39,6 +41,30 @@ class Server {
     this.app.get('/profile', this.processRider(rider => rider.getProfile()))
     this.app.get('/positions', this.processRider(rider => rider.getPositions()))
     this.app.get('/world', this.processRider(rider => Promise.resolve({ worldId: rider.getWorld() })))
+
+    this.app.ws('/listen', (ws, req) => {
+      const cookie = '';
+      const rider = this.riderProvider.getRider(cookie);
+
+      if (rider) {
+        if (this.riderProvider.subscribe) {
+          const unsubscribe = this.riderProvider.subscribe(cookie);
+          ws.on('close', unsubscribe);
+        }
+
+        const send = (name, data) => {
+          ws.send(JSON.stringify({ name, data }));
+        }
+
+        rider
+          .on('positions', positions => {
+            send('positions', positions);
+          })
+          .on('world', worldId => {
+            send('world', { worldId });
+          })
+      }
+    });
 
     this.app.get('/map.svg', (req, res) => {
       const worldId = req.query.world || undefined;

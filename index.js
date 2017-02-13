@@ -3,4 +3,4 @@ const Login = require('./server/login');
 const settings = require('./settings');
 
 const server = new Server(new Login());
-server.start(settings.port);
+server.start(process.env.PORT || settings.port);

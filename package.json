@@ -1,6 +1,6 @@
 {
   "name": "zwift-second-screen",
-  "version": "0.0.8",
+  "version": "0.0.9",
   "description": "Second Screen companion application for Zwift",
   "main": "main.js",
   "scripts": {
@@ -20,7 +20,9 @@
   "author": "Andy Lee",
   "license": "MIT",
   "homepage": "https://github.com/Ogadai/zwift-second-screen",
-  "engines": { "node": ">=7.0.0" },
+  "engines": {
+    "node": ">=7.0.0"
+  },
   "dependencies": {
     "body-parser": "^1.16.0",
     "cookie-parser": "^1.4.3",

@@ -11,6 +11,7 @@ class Session {
 
   subscribe() {
     if (this.subscriptions === 0) {
+      console.log(`start-polling`);
       this.interval = setInterval(() => {
         this.rider.pollPositions();
       }, 3000);
@@ -20,6 +21,7 @@ class Session {
     return () => {
       this.subscriptions--;
       if (this.subscriptions === 0) {
+        console.log(`stop-polling`);
         clearInterval(this.interval);
       }
     }

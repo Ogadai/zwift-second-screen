@@ -1,4 +1,4 @@
-﻿import axios from 'axios';
+import axios from 'axios';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 

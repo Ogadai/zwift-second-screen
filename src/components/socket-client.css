@@ -1,3 +1,10 @@
 ﻿.socket-client {
     display: none;
 }
+.socket-error {
+    display: inline-block;
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    color: red;
+}

@@ -1,4 +1,4 @@
-﻿const express = require('express');
+const express = require('express');
 const expressWs = require('express-ws');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -46,7 +46,8 @@ class Server {
     this.app.get('/world', this.processRider(rider => Promise.resolve({ worldId: rider.getWorld() })))
 
     this.app.ws('/listen', (ws, req) => {
-      const cookie = req.cookies.zssToken;
+		  const cookie = req.cookies.zssToken;
+		  console.log(`ws-cookie: ${cookie}`)
       const rider = this.riderProvider.getRider(cookie);
 
       if (rider) {
@@ -127,7 +128,6 @@ class Server {
 	processRider(callbackFn) {
 		return (req, res) => {
 		  const cookie = req.cookies.zssToken;
-		  console.log(`cookie: ${cookie}`)
       const rider = this.riderProvider.getRider(cookie);
 			if (rider) {
 				callbackFn(rider, req).then(respondJson(res));

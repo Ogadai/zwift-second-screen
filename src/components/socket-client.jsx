@@ -13,13 +13,26 @@ class SocketClient extends Component {
       onReceiveWorld: PropTypes.func.isRequired
     };
   }
+  
+  constructor(props) {
+    super(props);
+    this.state = {
+      error: null
+    }
+  }
 
   componentDidMount() {
-    const root = axios.defaults.baseURL ? axios.defaults.baseURL.replace('http', 'ws') : `ws://${window.location.host}`;
-    this.ws = new WebSocket(`${root}/listen`);
+    const { protocol, host } = window.location;
+    const root = axios.defaults.baseURL ? axios.defaults.baseURL : `${protocol}//${host}`;
+    const wsRoot = root.replace('http', 'ws');
+
+    this.ws = new WebSocket(`${wsRoot}/listen`);
+    
     this.ws.onmessage = event => {
-      console.log(event);
       this.onMessage(JSON.parse(event.data));
+    }
+    this.ws.onerror = event => {
+      this.setState({ error: JSON.stringify(event) });
     }
   }
 
@@ -44,7 +57,10 @@ class SocketClient extends Component {
   }
 
   render() {
-		return <span className="socket-client"></span>
+    const { error } = this.state;
+		return <span className={ error ? 'socket-error' : 'socket-client' }>
+		  {error}
+		</span>
   }
 }
 

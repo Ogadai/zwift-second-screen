@@ -17,9 +17,9 @@ const requesOptions = {
 };
 
 class Map {
-  constructor() {
-    this.worlds = {
-    }
+  constructor(worldSettings) {
+    this.worlds = {}
+    this.worldSettings = worldSettings;
   }
 
   key(worldId) {
@@ -81,8 +81,16 @@ class Map {
 
   getSettings(worldId) {
     return this.getSvg(worldId).then(map => {
+      const worldId = this.getSvgParam(map, 'id="world_');
+
+      const worldSettings = this.worldSettings ? this.worldSettings[worldId] : null;
+      const mapImage = worldSettings ? worldSettings.map : null;
+      const viewBoxSettings = worldSettings ? worldSettings.viewBox : null;
+
       return {
-        viewBox: this.getSvgParam(map, 'viewBox="'),
+        worldId,
+        map: mapImage,
+        viewBox: viewBoxSettings ? viewBoxSettings : this.getSvgParam(map, 'viewBox="'),
         rotate: this.getSvgParam(map, 'transform="rotate'),
         translate: this.getSvgParam(map, 'transform="translate')
       };

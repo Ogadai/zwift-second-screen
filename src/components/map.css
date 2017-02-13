@@ -18,8 +18,15 @@
     }
 
     & .full-size {
-        width: 100%;
+        max-height: 100%;
+        max-width: 100%;
+    }
+
+    & .img {
         height: 100%;
+        background-size:contain;
+        background-repeat: no-repeat;
+        background-position-x: 50%;
     }
 
     & .map-attribute {
@@ -45,5 +52,14 @@
 
     &.hovering .map-attribute {
         opacity: 1;
+    }
+}
+
+.map-develop {
+    position: absolute;
+    bottom: 5px;
+    left: 5px;
+    & .viewbox {
+        width: 200px;
     }
 }

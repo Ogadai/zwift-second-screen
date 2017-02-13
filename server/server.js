@@ -7,13 +7,13 @@ const path = require('path');
 const Map = require('./map');
 
 class Server {
-  constructor(riderProvider, hostData) {
+  constructor(riderProvider, settings) {
     this.app = express();
     expressWs(this.app);
 
-    this.map = new Map();
+    this.map = new Map(settings ? settings.worlds : null);
     this.riderProvider = riderProvider;
-    this.hostData = hostData;
+    this.hostData = settings ? settings.hostData : null;
 
     this.initialise();
   }
@@ -222,7 +222,8 @@ function sendJson(res, data) {
 
 function sendImg(res, data, contentType) {
   res.setHeader('Accept-Ranges', 'bytes');
-  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
+  res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Content-Type', contentType);
   res.send(data);
 }

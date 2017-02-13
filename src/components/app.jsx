@@ -12,6 +12,7 @@ import s from './app.css';
 class App extends Component {
   static get propTypes() {
     return {
+      develop: PropTypes.bool,
       overlay: PropTypes.bool,
       onCloseApp: PropTypes.func
     };
@@ -26,7 +27,7 @@ class App extends Component {
   }
 
   render() {
-    const { overlay, onCloseApp } = this.props;
+    const { develop, overlay, onCloseApp } = this.props;
     const { hovering } = this.state;
 
     return (
@@ -36,8 +37,8 @@ class App extends Component {
 					<a className="close-button" href="#" onClick={onCloseApp}>X</a>
 				</h1>
         <div className="content" onMouseMove={() => this.onMouseMove()}>
-					<Summary />
-					<Map />
+          <Map develop={develop} />
+          <Summary />
 				</div>
       </div>
     )
@@ -60,8 +61,9 @@ class App extends Component {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, ownProps) => {
   return {
+    develop: ownProps.params.filter === 'dev',
     overlay: state.environment.electron
   }
 }

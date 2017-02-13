@@ -11,7 +11,7 @@ const settings = require('./settings');
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
-const server = new Server(new Login(), new Host(settings.port));
+const server = new Server(new Login(), { hostData: new Host(settings.port) });
 server.start(settings.port);
 
 function createWindow() {

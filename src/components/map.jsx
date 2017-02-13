@@ -28,6 +28,7 @@ const powerColours = [
 class Map extends Component {
   static get propTypes() {
     return {
+      develop: PropTypes.bool,
 			worldId: PropTypes.number,
       positions: PropTypes.array,
       mapSettings: PropTypes.object,
@@ -37,18 +38,28 @@ class Map extends Component {
     };
   }
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      viewBox: undefined
+    }
+  }
+
   componentDidMount() {
-    const { worldId, onFetchSettings, onStartPolling } = this.props;
+    const { develop, worldId, onFetchSettings, onStartPolling } = this.props;
     onFetchSettings(worldId);
 
     onStartPolling();
+
+    if (develop) this.loadDevelop(worldId);
   }
 
   componentWillReceiveProps(props) {
-    const { worldId, onFetchSettings } = this.props;
-console.log(`componentWillReceiveProps worldId: ${worldId}`);
+    const { develop, worldId, onFetchSettings } = this.props;
     if (props.worldId !== worldId) {
       onFetchSettings(props.worldId);
+      if (develop) this.loadDevelop(props.worldId);
     }
   }
 
@@ -56,18 +67,31 @@ console.log(`componentWillReceiveProps worldId: ${worldId}`);
     const { onStopPolling } = this.props;
     onStopPolling();
   }
+
+  loadDevelop(worldId) {
+    axios.get(this.svgPath(worldId)).then(response => {
+      this.setState({
+        svgFile: response.data
+      });
+    })
+  }
 	
   render() {
-    const { worldId, positions, mapSettings } = this.props;
-console.log(`render worldId: ${worldId}`);
-    const worldParam = worldId ? `?world=${worldId}` : '';
+    const { develop, worldId, positions, mapSettings } = this.props;
+    const { svgFile } = this.state;
+    const viewBox = this.state.viewBox || mapSettings.viewBox;
+
     return <div className="map">
       <div className="map-route">
-        <img className="full-size" src={`${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg${worldParam}`} />
+        <div className="full-size img" style={{ backgroundImage: "url(" + (mapSettings.map || this.svgPath(worldId)) + ")" }} />
       </div>
-      {(positions && mapSettings.viewBox) ?
+      {svgFile ?
+        <div className="map-route" dangerouslySetInnerHTML={{ __html: this.replaceViewBox(svgFile) }} />
+				: undefined
+      }
+      {(positions && viewBox) ?
         <div className="map-riders">
-          <svg className="full-size" viewBox={mapSettings.viewBox}>
+          <svg className="full-size" viewBox={viewBox}>
             <g transform={'rotate' + mapSettings.rotate}>
               <g transform={'translate' + mapSettings.translate}>
 								<g id="riders" className="riders">
@@ -81,7 +105,17 @@ console.log(`render worldId: ${worldId}`);
       <div className="map-attribute">
         Map from <a href="http://zwifthacks.com/" target="_blank">zwifthacks.com</a>
       </div>
+      {develop ?
+        <div className="map-develop">
+          <input className="viewbox" type="text" value={viewBox} onKeyPress={evt => this.viewBoxKeyPress(evt)} />
+        </div>
+      : undefined}
 		</div>
+  }
+
+  svgPath(worldId) {
+    const worldParam = worldId ? `?world=${worldId}` : '';
+    return `${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg${worldParam}`;
   }
 
   renderPosition(position, index) {
@@ -118,6 +152,65 @@ console.log(`render worldId: ${worldId}`);
       return map.substring(start, end);
     }
     return '';
+  }
+
+  viewBoxKeyPress(evt) {
+    const event = evt.nativeEvent;
+    const speed = event.shiftKey ? 10000 : 1000;
+    console.log(`${event.shiftKey ? 'SHIFT ' : ''}${event.ctrlKey ? 'CTRL ' : ''}${event.keyCode}`)
+
+    this.adjustViewBox(params => {
+      const adjust = this.adjustVal.bind(this, params);
+
+      switch (event.keyCode) {
+        case 119: // w
+          return adjust(1, speed);
+        case 97: // a
+          return adjust(0, speed);
+        case 115: // s
+          return adjust(1, -speed);
+        case 100: // d
+          return adjust(0, -speed);
+				case 105: // i
+          return adjust(3, speed);
+        case 106: // j
+          return adjust(2, speed);
+        case 107: // k
+          return adjust(3, -speed);
+        case 108: // l
+          return adjust(2, -speed);
+        default:
+          return params;
+      }
+    });
+  }
+
+  adjustViewBox(adjustFn) {
+    const { mapSettings } = this.props;
+    const viewBox = this.state.viewBox || mapSettings.viewBox;
+    const params = viewBox.split(' ')
+			.filter(v => v.length)
+      .map(v => parseInt(v));
+    
+    const updatedParams = adjustFn(params)
+
+    const newViewBox = updatedParams.join(' ')
+    this.setState({ viewBox: newViewBox });
+  }
+
+  adjustVal(array, index, adjustment) {
+    const result = array.slice(0);
+    result[index] += adjustment;
+    return result;
+  }
+
+  replaceViewBox(svgFile) {
+    const { mapSettings } = this.props;
+    const viewBox = this.state.viewBox || mapSettings.viewBox;
+    const tag = 'viewBox="'
+    const startPos = svgFile.indexOf(tag);
+    const endPos = svgFile.indexOf('"', startPos + tag);
+    return `${svgFile.substring(0, startPos)}viewBox="${viewBox}" class="full-size" style="width:auto;height:auto;background-color: rgba(255, 0, 0, 0.1);" ${svgFile.substring(endPos)}`;
   }
 }
 

@@ -74,7 +74,7 @@ class PollingClient {
     this.interval = setInterval(() => this.onInterval(), 3000);
   }
 
-  onMessage(socketMessage) {
+  onMessage(message) {
     switch (message.name.toLowerCase()) {
       case 'world':
         this.dispatch(receiveWorld(message.data));

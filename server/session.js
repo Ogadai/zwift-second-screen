@@ -1,4 +1,4 @@
-class Session {
+﻿class Session {
   constructor(rider) {
     this.rider = rider;
     this.interval = null;
@@ -15,14 +15,20 @@ class Session {
       this.interval = setInterval(() => {
         this.rider.pollPositions();
       }, 3000);
+      this.rider.pollPositions();
     }
     this.subscriptions++;
 
+    let unsubscribed = false;
     return () => {
-      this.subscriptions--;
-      if (this.subscriptions === 0) {
-        console.log(`stop-polling`);
-        clearInterval(this.interval);
+      if (!unsubscribed) {
+        unsubscribed = true;
+        this.subscriptions--;
+
+        if (this.subscriptions === 0) {
+          console.log(`stop-polling`);
+          clearInterval(this.interval);
+        }
       }
     }
   }

@@ -50,22 +50,39 @@ class Server {
       const rider = this.riderProvider.getRider(cookie);
 
       if (rider) {
+        const sendPositions = positions => send('positions', positions);
+        const sendWorld = worldId => send('world', { worldId });
+
+        let unsubscribeRider;
+
+        const unsubscribe = () => {
+          rider.removeListener('positions', sendPositions);
+          rider.removeListener('world', sendWorld);
+
+          if (unsubscribeRider) unsubscribeRider();
+        }
+        ws.on('close', unsubscribe);
+
         if (this.riderProvider.subscribe) {
-          const unsubscribe = this.riderProvider.subscribe(cookie);
-          ws.on('close', unsubscribe);
+          unsubscribeRider = this.riderProvider.subscribe(cookie);
         }
 
         const send = (name, data) => {
-          ws.send(JSON.stringify({ name, data }));
+          try {
+            ws.send(JSON.stringify({ name, data }));
+          } catch (ex) {
+            unsubscribe();
+            console.error(ex);
+            ws.close();
+          }
         }
 
+        const world = rider.getWorld();
+        if (world) sendWorld(world);
+
         rider
-          .on('positions', positions => {
-            send('positions', positions);
-          })
-          .on('world', worldId => {
-            send('world', { worldId });
-          })
+          .on('positions', sendPositions)
+          .on('world', sendWorld)
       }
     });
 

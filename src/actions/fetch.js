@@ -31,7 +31,7 @@ export function fetchPositions() {
 
 export const RECEIVE_WORLD = "RECEIVE_WORLD";
 
-function receiveWorld(data) {
+export function receiveWorld(data) {
   return {
     type: RECEIVE_WORLD,
     data

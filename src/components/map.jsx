@@ -46,6 +46,7 @@ class Map extends Component {
 
   componentWillReceiveProps(props) {
     const { worldId, onFetchSettings } = this.props;
+console.log(`componentWillReceiveProps worldId: ${worldId}`);
     if (props.worldId !== worldId) {
       onFetchSettings(props.worldId);
     }
@@ -58,6 +59,7 @@ class Map extends Component {
 	
   render() {
     const { worldId, positions, mapSettings } = this.props;
+console.log(`render worldId: ${worldId}`);
     const worldParam = worldId ? `?world=${worldId}` : '';
     return <div className="map">
       <div className="map-route">
@@ -129,7 +131,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchSettings: () => dispatch(fetchMapSettings()),
+    onFetchSettings: (worldId) => dispatch(fetchMapSettings(worldId)),
     onStartPolling: () => dispatch(startPolling()),
     onStopPolling: () => dispatch(stopPolling())
   }

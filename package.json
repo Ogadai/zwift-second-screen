@@ -20,7 +20,7 @@
   "author": "Andy Lee",
   "license": "MIT",
   "homepage": "https://github.com/Ogadai/zwift-second-screen",
-  "engines": { "node": "7.5.x" },
+  "engines": { "node": "~7.5.0" },
   "dependencies": {
     "body-parser": "^1.16.0",
     "cookie-parser": "^1.4.3",

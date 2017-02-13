@@ -2,7 +2,8 @@
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import { postLogin, fetchHost, runHost, closeApp } from '../actions';
+import { postLogin } from '../actions/login';
+import { fetchHost, runHost, closeApp } from '../actions/host';
 
 import s from './login.css';
 

@@ -2,7 +2,7 @@
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import { fetchProfile } from '../actions';
+import { fetchProfile } from '../actions/fetch';
 
 import s from './summary.css';
 

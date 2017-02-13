@@ -1,4 +1,4 @@
-const express = require('express');
+﻿const express = require('express');
 const expressWs = require('express-ws');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -47,7 +47,6 @@ class Server {
 
     this.app.ws('/listen', (ws, req) => {
 		  const cookie = req.cookies.zssToken;
-		  console.log(`ws-cookie: ${cookie}`)
       const rider = this.riderProvider.getRider(cookie);
 
       if (rider) {
@@ -126,7 +125,7 @@ class Server {
   }
 
 	processRider(callbackFn) {
-		return (req, res) => {
+    return (req, res) => {
 		  const cookie = req.cookies.zssToken;
       const rider = this.riderProvider.getRider(cookie);
 			if (rider) {
@@ -200,6 +199,7 @@ function sendJson(res, data) {
   res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
   res.send(data);
 }
 

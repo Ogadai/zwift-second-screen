@@ -1,7 +1,7 @@
 ﻿import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchHost, closeApp } from '../actions';
+import { fetchHost, closeApp } from '../actions/host';
 
 import s from './host.css';
 

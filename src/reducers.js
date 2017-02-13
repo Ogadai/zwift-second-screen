@@ -1,46 +1,9 @@
 ﻿import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
-import {
-  RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_MAPSETTINGS,
-  INITIALISE_LOGIN, RECEIVE_LOGINFAILURE, RECEIVE_HOST
-} from './actions';
-
-function profile(state = {}, action) {
-  switch (action.type) {
-    case RECEIVE_PROFILE:
-      return action.data;
-    default:
-      return state;
-  }
-}
-
-function positions(state = [], action) {
-  switch (action.type) {
-    case RECEIVE_POSITIONS:
-      return action.data;
-    default:
-      return state;
-  }
-}
-
-function world(state = {}, action) {
-  switch (action.type) {
-    case RECEIVE_WORLD:
-      return action.data;
-    default:
-      return state;
-  }
-}
-
-function mapSettings(state = {}, action) {
-  switch (action.type) {
-    case RECEIVE_MAPSETTINGS:
-      return action.data;
-    default:
-      return state;
-  }
-}
+import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_MAPSETTINGS } from './actions/fetch';
+import { INITIALISE_LOGIN, RECEIVE_LOGINFAILURE } from './actions/login';
+import { RECEIVE_HOST } from './actions/host';
 
 function login(state = {}, action) {
   switch (action.type) {
@@ -66,24 +29,26 @@ function environment(state, action) {
   }
 }
 
-function host(state = {}, action) {
-  switch (action.type) {
-    case RECEIVE_HOST:
-      return action.data;
-    default:
-      return state;
-  }
-}
-
 const rootReducer = combineReducers({
-  profile,
-  positions,
-  world,
-  mapSettings,
+  profile: createReducer(RECEIVE_PROFILE),
+  positions: createReducer(RECEIVE_POSITIONS, []),
+  world: createReducer(RECEIVE_WORLD),
+  mapSettings: createReducer(RECEIVE_MAPSETTINGS),
   login,
   environment,
-  host,
+  host: createReducer(RECEIVE_HOST),
   routing: routerReducer
 })
+
+function createReducer(actionType, defaultState = {}) {
+  return function reducer(state = defaultState, action) {
+    switch (action.type) {
+      case actionType:
+        return action.data;
+      default:
+        return state;
+    }
+  }
+}
 
 export default rootReducer

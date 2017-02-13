@@ -17,9 +17,13 @@ class Rider extends EventEmitter {
   }
 
   pollPositions() {
-    this.getPositions().then(positions => {
-      this.emit('positions', positions);
-    });
+    this.getPositions()
+      .then(positions => {
+        this.emit('positions', positions);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 
   getProfile() {

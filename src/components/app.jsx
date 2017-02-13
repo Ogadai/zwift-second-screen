@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import Summary from './summary';
 import Map from './map';
 
-import { closeApp } from '../actions';
+import { closeApp } from '../actions/host';
 
 import s from './app.css';
 

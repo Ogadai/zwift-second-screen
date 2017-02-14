@@ -49,7 +49,8 @@ module.exports = {
 		      allChunks: true
 		}),
     new CopyWebpackPlugin([
-      { from: 'img', to: 'img' }
+      { from: 'img', to: 'img' },
+      { from: 'favicon.ico', to: 'favicon.ico' }
     ]),
     new HtmlWebpackPlugin({
       template: './src/template.html',

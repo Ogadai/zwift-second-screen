@@ -79,6 +79,7 @@ class Map extends Component {
   render() {
     const { develop, worldId, positions, mapSettings } = this.props;
     const { svgFile } = this.state;
+    const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
 
     return <div className="map">
@@ -102,9 +103,11 @@ class Map extends Component {
 					</svg>
         </div>
         : undefined}
-      <div className="map-attribute">
-        Map from <a href="http://zwifthacks.com/" target="_blank">zwifthacks.com</a>
-      </div>
+      {credit ?
+				<div className="map-attribute">
+          Map by <a href={credit.href} target="_blank">{credit.name}</a>
+				</div>
+			: undefined }
       {develop ?
         <div className="map-develop">
           <input className="viewbox" type="text" value={viewBox} onKeyPress={evt => this.viewBoxKeyPress(evt)} />

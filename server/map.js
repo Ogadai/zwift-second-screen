@@ -16,6 +16,11 @@ const requesOptions = {
   }
 };
 
+const defaultCredit = {
+  name: 'Zwift Hacks',
+  href: 'http://zwifthacks.com'
+}
+
 class Map {
   constructor(worldSettings) {
     this.worlds = {}
@@ -85,10 +90,12 @@ class Map {
 
       const worldSettings = this.worldSettings ? this.worldSettings[worldId] : null;
       const mapImage = worldSettings ? worldSettings.map : null;
+      const credit = worldSettings && worldSettings.credit ? worldSettings.credit : defaultCredit;
       const viewBoxSettings = worldSettings ? worldSettings.viewBox : null;
 
       return {
         worldId,
+        credit,
         map: mapImage,
         viewBox: viewBoxSettings ? viewBoxSettings : this.getSvgParam(map, 'viewBox="'),
         rotate: this.getSvgParam(map, 'transform="rotate'),

@@ -1,23 +1,27 @@
 ﻿import axios from 'axios';
 import { push } from 'react-router-redux';
 
-export const INITIALISE_LOGIN = "INITIALISE_LOGIN";
-export function initialiseLogin(data) {
+export function requestLoginType(data) {
+  return dispatch => {
+    axios.get('/logintype').then(response => dispatch(receiveLoginType(response.data)))
+  }
+}
+
+export const RECEIVE_LOGINTYPE = "RECEIVE_LOGINTYPE";
+function receiveLoginType(data) {
+  const loginDetails = localStorage.getItem('login-details');
+  let loginData = data;
+  if (loginDetails) {
+    loginData = Object.assign({}, data, JSON.parse(loginDetails));
+  }
   return {
-    type: INITIALISE_LOGIN,
-    data
+    type: RECEIVE_LOGINTYPE,
+    data: loginData
   };
 }
 
 export function redirectToLogin() {
-  return dispatch => {
-    const loginDetails = localStorage.getItem('login-details');
-    if (loginDetails) {
-      dispatch(initialiseLogin(JSON.parse(loginDetails)));
-    }
-
-    dispatch(push('/login'));
-  }
+  return push('/login');
 }
 
 export const RECEIVE_LOGINFAILURE = "RECEIVE_LOGINFAILURE";
@@ -33,7 +37,7 @@ export function postLogin(username, password) {
   return dispatch => {
     axios.post('/login', { username, password })
       .then(response => {
-        localStorage.setItem('login-details', JSON.stringify({ username }));
+        setLoginDetails({ username });
         // Successful login
         dispatch(push('/'));
       })
@@ -42,4 +46,25 @@ export function postLogin(username, password) {
         dispatch(receiveLoginFailure(error.response));
       });
   }
+}
+
+export function postLoginById(id) {
+  return dispatch => {
+    axios.post('/login', { id })
+      .then(response => {
+        setLoginDetails({ id });
+        // Successful login
+        dispatch(push('/'));
+      })
+      .catch(error => {
+        // Failed to login
+        dispatch(receiveLoginFailure(error.response.data || error.response));
+      });
+  }
+}
+
+function setLoginDetails(settings) {
+  const loginDetails = localStorage.getItem('login-details');
+  const details = loginDetails ? JSON.parse(loginDetails) : {}
+  localStorage.setItem('login-details', JSON.stringify(Object.assign(details, settings)));
 }

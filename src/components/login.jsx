@@ -2,7 +2,7 @@
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import { postLogin } from '../actions/login';
+import { requestLoginType, postLogin, postLoginById } from '../actions/login';
 import { fetchHost, runHost, closeApp } from '../actions/host';
 
 import s from './login.css';
@@ -15,6 +15,8 @@ class Login extends Component {
       error: PropTypes.object,
       host: PropTypes.object,
       onSubmit: PropTypes.func.isRequired,
+      onSubmitId: PropTypes.func.isRequired,
+      onRequestLoginType: PropTypes.func.isRequired,
       onFetchHost: PropTypes.func,
       onRunHost: PropTypes.func,
       onCloseApp: PropTypes.func
@@ -26,19 +28,29 @@ class Login extends Component {
 
     this.state = {
       username: props.user ? props.user.username : '',
-			password: ''
+      password: '',
+      id: props.user ? props.user.id : ''
     };
   }
 
   componentDidMount() {
-    const { onFetchHost } = this.props;
+    const { onRequestLoginType, onFetchHost } = this.props;
 
+    onRequestLoginType();
     if (onFetchHost) setTimeout(onFetchHost, 500);
   }
 
+  componentWillReceiveProps(props) {
+    this.setState({
+      username: this.state.username || (props.user ? props.user.username : ''),
+      id: this.state.id || (props.user ? props.user.id : '')
+    });
+  }
+
   render() {
-    const { overlay, host, error, onRunHost, onCloseApp } = this.props;
-    const { username, password } = this.state;
+    const { user, overlay, host, error, onRunHost, onCloseApp } = this.props;
+    const { username, password, id } = this.state;
+    const loginType = user ? user.type : '';
 
     return (
       <div className="login">
@@ -54,9 +66,16 @@ class Login extends Component {
             </div>
             : undefined}
 
-					<fieldset>
-            <input type="text" name="username" id="username" placeholder="Username" value={username} onChange={evt => this.setState({ username: evt.target.value })} />
-            <input type="password" name="password" id="password" placeholder="Password" value={password} onChange={evt => this.setState({ password: evt.target.value })} />
+          <fieldset>
+            {loginType == 'user'
+              ? [
+                <input key="username" type="text" name="username" id="username" placeholder="Username" value={username} onChange={evt => this.setState({ username: evt.target.value })} />,
+                <input key="password" type="password" name="password" id="password" placeholder="Password" value={password} onChange={evt => this.setState({ password: evt.target.value })} />
+								] : undefined}
+
+            {loginType == 'id'
+              ? <input type="text" name="riderid" id="riderid" placeholder="Rider Id" value={id} onChange={evt => this.setState({ id: evt.target.value })} />
+							: undefined}
 
 						<input type="submit" value="Log in" />
           </fieldset>
@@ -81,10 +100,16 @@ class Login extends Component {
   onSubmitForm(evt) {
     evt.preventDefault();
 
-    const { onSubmit } = this.props;
-    const { username, password } = this.state;
+    const { user, onSubmit, onSubmitId } = this.props;
+    const { username, password, id } = this.state;
 
-    onSubmit(username, password);
+    const loginType = user ? user.type : '';
+
+    if (loginType === 'user') {
+      onSubmit(username, password);
+    } else {
+      onSubmitId(id);
+    }
   }
 }
 
@@ -99,7 +124,9 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    onRequestLoginType: () => dispatch(requestLoginType()),
     onSubmit: (username, password) => dispatch(postLogin(username, password)),
+    onSubmitId: id => dispatch(postLoginById(id)),
     onFetchHost: () => dispatch(fetchHost()),
     onRunHost: () => dispatch(runHost()),
     onCloseApp: closeApp

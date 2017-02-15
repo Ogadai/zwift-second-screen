@@ -2,7 +2,7 @@
 import { routerReducer } from 'react-router-redux'
 
 import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_MAPSETTINGS } from './actions/fetch';
-import { INITIALISE_LOGIN, RECEIVE_LOGINFAILURE } from './actions/login';
+import { RECEIVE_LOGINTYPE, RECEIVE_LOGINFAILURE } from './actions/login';
 import { RECEIVE_HOST } from './actions/host';
 
 function login(state = {}, action) {
@@ -11,8 +11,8 @@ function login(state = {}, action) {
       return Object.assign({}, state, {
         error: action.data
       })
-    case INITIALISE_LOGIN:
-      return Object.assign({}, state, {
+    case RECEIVE_LOGINTYPE:
+return Object.assign({}, state, {
         user: action.data
       })
     default:

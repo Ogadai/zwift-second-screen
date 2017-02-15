@@ -8,83 +8,88 @@ const Map = require('./map');
 
 class Server {
   constructor(riderProvider, settings) {
-    this.app = express();
-    expressWs(this.app);
-
-    this.map = new Map(settings ? settings.worlds : null);
     this.riderProvider = riderProvider;
     this.hostData = settings ? settings.hostData : null;
+    this.map = new Map(settings ? settings.worlds : null);
 
     this.initialise();
   }
 
   initialise() {
-    this.app.use(bodyParser.json());
+    this.app = express();
+    if (this.riderProvider.login) {
+      expressWs(this.app);
+    }
+
+    this.app.use(bodyParser.json())
     this.app.use(cookieParser())
+
+    this.app.get('/logintype', (req, res) => {
+      sendJson(res, { type: this.riderProvider.login ? 'user' : 'id' });
+    })
 
 		// Enable CORS for post login
     this.app.options('/login', respondCORS)
-    this.app.post('/login', (req, res) => {
-      const { username, password } = req.body;
-      console.log(`login: ${username}`)
-      this.riderProvider.login(username, password)
-        .then(result => {
-          console.log('login successful')
-          res.cookie('zssToken', result.cookie, { httpOnly: true });
-          sendJson(res, { message: 'ok' })
-        })
-        .catch(err => {
-          console.log('login failed - ', err)
-          const { status, statusText } = err.response;
-          res.status(status);
-          sendJson(res, { status, statusText });
-        })
-    })
+    if (this.riderProvider.login) {
+      this.app.post('/login', (req, res) => {
+        const { username, password } = req.body
+        console.log(`login: ${username}`)
+        this.processLogin(res, this.riderProvider.login(username, password))
+      })
+    } else {
+      this.app.post('/login', (req, res) => {
+        const { id } = req.body
+        console.log(`login: ${id}`)
+        this.processLogin(res, this.riderProvider.loginWithId(id))
+      })
+    }
 
     this.app.get('/profile', this.processRider(rider => rider.getProfile()))
     this.app.get('/positions', this.processRider(rider => rider.getPositions()))
     this.app.get('/world', this.processRider(rider => Promise.resolve({ worldId: rider.getWorld() })))
 
-    this.app.ws('/listen', (ws, req) => {
-		  const cookie = req.cookies.zssToken;
-      const rider = this.riderProvider.getRider(cookie);
+    if (this.riderProvider.login) {
+      this.app.ws('/listen', (ws, req) => {
+        const cookie = req.cookies.zssToken;
+        const rider = this.riderProvider.getRider(cookie);
 
-      if (rider) {
-        const sendPositions = positions => send('positions', positions);
-        const sendWorld = worldId => send('world', { worldId });
+        if (rider) {
+          const sendPositions = positions => send('positions', positions);
+          const sendWorld = worldId => send('world', { worldId });
 
-        let unsubscribeRider;
+          let unsubscribeRider;
 
-        const unsubscribe = () => {
-          rider.removeListener('positions', sendPositions);
-          rider.removeListener('world', sendWorld);
+          const unsubscribe = () => {
+            rider.removeListener('positions', sendPositions);
+            rider.removeListener('world', sendWorld);
 
-          if (unsubscribeRider) unsubscribeRider();
-        }
-        ws.on('close', unsubscribe);
-
-        if (this.riderProvider.subscribe) {
-          unsubscribeRider = this.riderProvider.subscribe(cookie);
-        }
-
-        const send = (name, data) => {
-          try {
-            ws.send(JSON.stringify({ name, data }));
-          } catch (ex) {
-            unsubscribe();
-            console.error(ex);
-            ws.close();
+            if (unsubscribeRider) unsubscribeRider();
           }
+          ws.on('close', unsubscribe);
+
+          if (this.riderProvider.subscribe) {
+            unsubscribeRider = this.riderProvider.subscribe(cookie);
+          }
+
+          const send = (name, data) => {
+            try {
+              ws.send(JSON.stringify({ name, data }));
+            } catch (ex) {
+              unsubscribe();
+              console.error(ex);
+              ws.close();
+            }
+          }
+
+          const world = rider.getWorld();
+          if (world) sendWorld(world);
+
+          rider
+            .on('positions', sendPositions)
+            .on('world', sendWorld)
         }
-
-        const world = rider.getWorld();
-        if (world) sendWorld(world);
-
-        rider
-          .on('positions', sendPositions)
-          .on('world', sendWorld)
-      }
-    });
+      });
+    }
 
     this.app.get('/map.svg', (req, res) => {
       const worldId = req.query.world || undefined;
@@ -139,6 +144,21 @@ class Server {
       console.log(`Stopped listening on port ${this.port}`);
       this.server = null;
     }
+  }
+
+  processLogin(res, promise) {
+		promise
+      .then(result => {
+        console.log('login successful')
+        res.cookie('zssToken', result.cookie, { httpOnly: true });
+        sendJson(res, { message: 'ok' })
+      })
+      .catch(err => {
+        console.log('login failed - ', err)
+        const { status, statusText } = err.response;
+        res.status(status);
+        sendJson(res, { status, statusText });
+      })
   }
 
 	processRider(callbackFn) {

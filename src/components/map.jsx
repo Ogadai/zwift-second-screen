@@ -84,7 +84,7 @@ class Map extends Component {
 
     return <div className="map">
       <div className="map-route">
-        <div className="full-size img" style={{ backgroundImage: "url(" + (mapSettings.map || this.svgPath(worldId)) + ")" }} />
+        <div className="full-size img" style={{ backgroundImage: `url(${mapSettings.map || this.svgPath(worldId)})` }} />
       </div>
       {svgFile ?
         <div className="map-route" dangerouslySetInnerHTML={{ __html: this.replaceViewBox(svgFile) }} />
@@ -93,8 +93,8 @@ class Map extends Component {
       {(positions && viewBox) ?
         <div className="map-riders">
           <svg className="full-size" viewBox={viewBox}>
-            <g transform={'rotate' + mapSettings.rotate}>
-              <g transform={'translate' + mapSettings.translate}>
+            <g transform={`rotate${mapSettings.rotate}`}>
+              <g transform={`translate${mapSettings.translate}`}>
 								<g id="riders" className="riders">
 									{ positions.map((p, i) => this.renderPosition(p, i)) }
 								</g>
@@ -122,16 +122,18 @@ class Map extends Component {
   }
 
   renderPosition(position, index) {
-    return <g key={`rider-${index}`} className="rider-position">
-      <circle 
-				cx={position.x} cy={position.y} r="6000"
-				stroke={this.getRiderColour(index)} strokeWidth="2000"
-				fill={this.getPowerColour(position.power)}>
-        <title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
-      </circle>
-      <text x={position.x + 7500} y={position.y + 1000} fontFamily="Verdana" fontSize="7000" fontWeight="600">
-        {position.firstName.substring(0, 1)} {position.lastName}
-      </text>
+    return <g key={`rider-${index}`} className="rider-position" transform={`translate(${position.x},${position.y})`}>
+      <g transform={`rotate(${this.getLabelRotate()})`}>
+				<circle 
+					cx="0" cy="0" r="6000"
+					stroke={this.getRiderColour(index)} strokeWidth="2000"
+					fill={this.getPowerColour(position.power)}>
+					<title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
+				</circle>
+				<text x="7500" y="1000" fontFamily="Verdana" fontSize="7000" fontWeight="600">
+					{position.firstName.substring(0, 1)} {position.lastName}
+        </text>
+			</g>
     </g>
   }
 
@@ -141,20 +143,16 @@ class Map extends Component {
 
   getPowerColour(power) {
     let powerIndex = Math.round(powerColours.length * power / powerMax);
-    console.log(powerIndex);
     return powerColours[Math.min(powerIndex, powerColours.length - 1)];
   }
 
-  getSvgParam(searchTerm) {
-    const { world } = this.props;
-    const map = maps[world];
-    const pos = map.indexOf(searchTerm);
-    if (pos !== -1) {
-      const start = pos + searchTerm.length;
-      const end = map.indexOf('"', start);
-      return map.substring(start, end);
+  getLabelRotate() {
+    const { mapSettings } = this.props;
+    if (mapSettings.rotate) {
+      return -parseInt(mapSettings.rotate.substring(1));
     }
-    return '';
+
+    return 0;
   }
 
   viewBoxKeyPress(evt) {

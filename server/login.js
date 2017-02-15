@@ -1,4 +1,4 @@
-const Guid = require('guid');
+﻿const Guid = require('guid');
 const ZwiftAccount = require('zwift-mobile-api');
 const Session = require('./session');
 const Rider = require('./rider');

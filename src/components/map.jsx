@@ -130,7 +130,7 @@ class Map extends Component {
 					fill={this.getPowerColour(position.power)}>
 					<title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
 				</circle>
-				<text x="7500" y="1000" fontFamily="Verdana" fontSize="7000" fontWeight="600">
+				<text x="10000" y="2000" fontFamily="Verdana" fontSize="9000" fontWeight="600">
 					{position.firstName.substring(0, 1)} {position.lastName}
         </text>
 			</g>

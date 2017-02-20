@@ -7,23 +7,9 @@ import { startPolling, stopPolling } from '../actions/polling';
 
 import s from './map.css';
 
-const riderColours = [
-  "#A81C07", //red
-	"#0077BE", //blue
-  "#317873", //green
-	"#FF8C00", //orange
-	"#B768A2" //pink
-];
-
+const riderColours = 5;
 const powerMax = 750;
-const powerColours = [
-  "#0077BE", //blue
-  "#90EE90", //green
-  "#FFEF00", //yellow
-	"#FF8C00", //orange
-  "#E03C31", //red,
-	"#FFB0B0"  //white
-];
+const powerColours = 6;
 
 class Map extends Component {
   static get propTypes() {
@@ -122,30 +108,27 @@ class Map extends Component {
   }
 
   renderPosition(position, index) {
-    return <g key={`rider-${index}`} className="rider-position" transform={`translate(${position.x},${position.y})`}>
+    return <g key={`rider-${index}`}
+				className={this.getRiderClass(index, position.power)}
+				transform={`translate(${position.x},${position.y})`}>
       <g transform={`rotate(${this.getLabelRotate()})`}>
-				<circle 
-					cx="0" cy="0" r="6000"
-					stroke={this.getRiderColour(index)} strokeWidth="2000"
-					fill={this.getPowerColour(position.power)}>
+				<circle cx="0" cy="0" r="6000">
 					<title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
 				</circle>
-				<text x="10000" y="2000" fontFamily="Verdana" fontSize="9000" fontWeight="600">
+				<text x="10000" y="2000">
 					{position.firstName.substring(0, 1)} {position.lastName}
         </text>
 			</g>
     </g>
   }
 
-  getRiderColour(index) {
-    return riderColours[index % riderColours.length];
-  }
+  getRiderClass(index, power) {
+    const riderIndex = index % riderColours;
+    const powerIndex = Math.round(powerColours * power / powerMax);
 
-  getPowerColour(power) {
-    let powerIndex = Math.round(powerColours.length * power / powerMax);
-    return powerColours[Math.min(powerIndex, powerColours.length - 1)];
+    return `rider-position rider-${riderIndex} rider-power-${powerIndex}`;
   }
-
+	
   getLabelRotate() {
     const { mapSettings } = this.props;
     if (mapSettings.rotate) {

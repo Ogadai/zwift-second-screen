@@ -6,12 +6,13 @@ const COOKIE_PREFIX = 'rider-';
 class RiderId {
   constructor(username, password) {
     this.account = new ZwiftAccount(username, password);
+    this.riders = {};
   }
 
   getRider(cookie) {
     const riderId = this.getRiderIdFromCookie(cookie);
     if (riderId) {
-      return new Rider(this.account, riderId);
+      return this.getOrCreateRider(riderId);
     }
     return null;
   }
@@ -21,12 +22,19 @@ class RiderId {
       return Promise.reject({ response: { status: 401, statusText: 'Missing rider id' }});
     }
 
-    const rider = new Rider(this.account, riderId);
+    const rider = this.getOrCreateRider(riderId);
     return rider.getProfile()
       .then(profile => {
         const cookie = this.createCookieFromRiderId(riderId);
         return { cookie }
       });
+  }
+
+  getOrCreateRider(riderId) {
+    if (!this.riders[riderId]) {
+      this.riders[riderId] = new Rider(this.account, riderId);
+    }
+    return this.riders[riderId];
   }
 
   getRiderIdFromCookie(cookie) {

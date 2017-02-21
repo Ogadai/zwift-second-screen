@@ -109,7 +109,7 @@ class Map extends Component {
 
   renderPosition(position, index) {
     return <g key={`rider-${index}`}
-				className={this.getRiderClass(index, position.power)}
+      className={this.getRiderClass(position, index)}
 				transform={`translate(${position.x},${position.y})`}>
       <g transform={`rotate(${this.getLabelRotate()})`}>
 				<circle cx="0" cy="0" r="6000">
@@ -122,9 +122,9 @@ class Map extends Component {
     </g>
   }
 
-  getRiderClass(index, power) {
-    const riderIndex = index % riderColours;
-    const powerIndex = Math.round(powerColours * power / powerMax);
+  getRiderClass(position, index) {
+    const riderIndex = position.ghost ? 'ghost' : index % riderColours;
+    const powerIndex = Math.round(powerColours * position.power / powerMax);
 
     return `rider-position rider-${riderIndex} rider-power-${powerIndex}`;
   }

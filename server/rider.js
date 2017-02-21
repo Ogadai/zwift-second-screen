@@ -1,4 +1,5 @@
 ﻿const EventEmitter = require('events')
+const Ghosts = require('./ghosts')
 
 class Rider extends EventEmitter {
   constructor(account, riderId) {
@@ -6,6 +7,12 @@ class Rider extends EventEmitter {
 
     this.account = account;
     this.riderId = riderId;
+    this.ghosts = new Ghosts(account, riderId);
+  }
+
+  setRiderId(riderId) {
+    this.riderId = riderId;
+    this.ghosts.setRiderId(riderId);
   }
 
   setWorld() {
@@ -24,6 +31,10 @@ class Rider extends EventEmitter {
       .catch(err => {
         console.error(err);
       });
+  }
+
+  getGhosts() {
+    return this.ghosts;
   }
 
   getProfile() {
@@ -83,7 +94,8 @@ class Rider extends EventEmitter {
     return this.getRiders().then(riders => {
       const promises = riders.map(r => this.riderPromise(r));
 
-      return Promise.all(promises);
+      return Promise.all(promises)
+        .then(positions => this.addGhosts(positions));
     });
   }
 
@@ -103,6 +115,11 @@ class Rider extends EventEmitter {
           y: status.y
         };
       });
+  }
+
+  addGhosts(positions) {
+    const ghostPositions = this.ghosts.getPositions();
+    return positions.concat(ghostPositions);
   }
 }
 module.exports = Rider;

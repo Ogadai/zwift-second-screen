@@ -48,6 +48,8 @@ class Server {
     this.app.get('/positions', this.processRider(rider => rider.getPositions()))
     this.app.get('/world', this.processRider(rider => Promise.resolve({ worldId: rider.getWorld() })))
 
+    this.app.get('/activity/:activityId', this.processRider((rider, req) => rider.getGhosts().getActivity(req.params.activityId)))
+
     if (this.riderProvider.login) {
       this.app.ws('/listen', (ws, req) => {
         const cookie = req.cookies.zssToken;
@@ -166,7 +168,15 @@ class Server {
 		  const cookie = req.cookies.zssToken;
       const rider = this.riderProvider.getRider(cookie);
 			if (rider) {
-				callbackFn(rider, req).then(respondJson(res));
+        callbackFn(rider, req)
+          .then(respondJson(res))
+          .catch(err => {
+            if (err.response) {
+              res.status(err.response.status).send(`${err.response.status} - ${err.response.statusText}`);
+            } else {
+              res.status(500).send(JSON.stringify(err));
+            }
+          });
 			} else {
 				res.status(401);
 				sendJson(res, { status: 401, statusText: 'Unauthorised' });

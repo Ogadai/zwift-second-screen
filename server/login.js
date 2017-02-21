@@ -27,6 +27,7 @@ class Login {
     
     return rider.getProfile()
       .then(profile => {
+        rider.setRiderId(profile.id);
         this.sessions[cookie] = new Session(rider);
         return { cookie };
       });

@@ -54,6 +54,14 @@
         }
     }
 
+    & .rider-ghost {
+        opacity: 0.5;
+
+        & circle {
+            stroke: #202020;
+        }
+    }
+
     & .rider-0 circle {
         stroke: #110351;
     }

@@ -4,6 +4,7 @@ import classnames from 'classnames';
 
 import Summary from './summary';
 import Map from './map';
+import Ghosts from './ghosts';
 
 import { closeApp } from '../actions/host';
 
@@ -39,6 +40,7 @@ class App extends Component {
         <div className="content" onMouseMove={() => this.onMouseMove()}>
           <Map develop={develop} />
           <Summary />
+					<Ghosts />
 				</div>
       </div>
     )

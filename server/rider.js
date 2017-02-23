@@ -12,7 +12,6 @@ class Rider extends EventEmitter {
 
   setRiderId(riderId) {
     this.riderId = riderId;
-    this.ghosts.setRiderId(riderId);
   }
 
   setWorld() {
@@ -37,52 +36,61 @@ class Rider extends EventEmitter {
     return this.ghosts;
   }
 
+  regroupGhosts() {
+    return this.getPositions().then(positions => {
+      if (positions.length > 0) {
+        return this.getGhosts().regroup(positions[0]);
+      }
+			return []
+    })
+  }
+
   getProfile() {
     return this.account.getProfile(this.riderId).profile();
   }
 
-  getFriends(riderId) {
-    return this.account.getProfile(riderId).followees();
+  getRiders() {
+    return this.getProfile().then(profile => {
+      return this.getFriends(profile.id).then(friends => {
+        return [profile].concat(friends.map(this.friendMap));
+      });
+		});
   }
 
-  getRiders() {
+	getFriends(riderId) {
+		return this.account.getProfile(riderId).followees();
+	}
+
+  getActivities(worldId, riderId) {
+    const matchWorld = parseInt(worldId);
+    return this.account.getProfile(riderId).activities(0, 30)
+      .then(activities => {
+				return activities.filter(a => a.worldId === matchWorld);
+      });
+  }
+
+  getRidingNow() {
     const cached = this.getCachedRiders();
     if (cached) {
       return Promise.resolve(cached);
     } else {
-      return this.requestRiders().then(riders => {
-        this.riders = riders;
-        this.ridersDate = new Date();
+      return this.requestRidingNow().then(riders => {
+        this.ridingNow = riders;
+        this.ridingNowDate = new Date();
         return riders;
       });
     }
   }
 
   getCachedRiders() {
-    if (this.riders && (new Date() - this.ridersDate < 30000)) {
-      return this.riders;
+    if (this.ridingNow && (new Date() - this.ridingNowDate < 30000)) {
+      return this.ridingNow;
     }
     return null;
   }
 
-  requestRiders() {
-    return this.getProfile().then(profile =>
-      this.getFriends(profile.id).then(friends => {
-        const ridingFriends = friends
-          .filter(this.friendRidingFilter)
-          .map(this.friendMap);
-
-        if (profile.riding) {
-          return [profile].concat(ridingFriends);
-        } else {
-          return ridingFriends;
-        }
-      })
-    );
-  }
-
-  friendRidingFilter(friend) {
-    return friend.followeeProfile && friend.followeeProfile.riding;
+  requestRidingNow() {
+    return this.getRiders().then(riders => riders.filter(r => r.riding));
   }
 
   friendMap(friend) {
@@ -91,7 +99,7 @@ class Rider extends EventEmitter {
 
   getPositions() {
 		// id, firstName, lastName
-    return this.getRiders().then(riders => {
+    return this.getRidingNow().then(riders => {
       const promises = riders.map(r => this.riderPromise(r));
 
       return Promise.all(promises)

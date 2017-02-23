@@ -56,6 +56,29 @@ export function fetchMapSettings(worldId) {
   return dispatchRequest(`/mapSettings/${worldParam}`, receiveMapSettings);
 }
 
+export function fetchRiders() {
+  return dispatchRequestIfNeeded('/riders/', state => !state.riders || state.riders.length === 0, receiveRiders);
+}
+
+export const RECEIVE_RIDERS = "RECEIVE_RIDERS";
+
+export function receiveRiders(data) {
+  return {
+    type: RECEIVE_RIDERS,
+    data
+  };
+}
+
+export function dispatchRequestIfNeeded(path, shouldGetFn, dispatchFn) {
+  return (dispatch, getState) => {
+    if (shouldGetFn(getState())) {
+      return dispatch(dispatchRequest(path, dispatchFn));
+    } else {
+      return Promise.resolve();
+    }
+  }
+}
+
 export function dispatchRequest(path, dispatchFn) {
   return dispatch => {
     axios.get(path)

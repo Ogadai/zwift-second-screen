@@ -46,9 +46,30 @@ class Server {
 
     this.app.get('/profile', this.processRider(rider => rider.getProfile()))
     this.app.get('/positions', this.processRider(rider => rider.getPositions()))
+    this.app.get('/riders', this.processRider(rider => rider.getRiders()))
+
     this.app.get('/world', this.processRider(rider => Promise.resolve({ worldId: rider.getWorld() })))
 
+    this.app.get('/activities/:playerId', this.processRider((rider, req) => {
+      const targetWorldId = rider.getWorld()
+      const { playerId } = req.params;
+      if (targetWorldId) {
+        return rider.getActivities(targetWorldId, playerId)
+      } else {
+        return this.map.getSettings().then(({ worldId }) => rider.getActivities(worldId, playerId))
+      }
+    }))
+
     this.app.get('/activity/:activityId', this.processRider((rider, req) => rider.getGhosts().getActivity(req.params.activityId)))
+
+    this.app.get('/ghosts', this.processRider((rider, req) => Promise.resolve(rider.getGhosts().getList())))
+    this.app.options('/ghosts', respondCORS)
+    this.app.put('/ghosts', this.processRider((rider, req) => rider.getGhosts().addGhost(parseInt(req.body.riderId), parseInt(req.body.activityId))))
+    this.app.options('/ghosts/:ghostId', respondCORS)
+    this.app.delete('/ghosts/:ghostId', this.processRider((rider, req) => Promise.resolve(rider.getGhosts().removeGhost(parseInt(req.params.ghostId)))))
+
+    this.app.options('/ghosts/post', respondCORS)
+    this.app.post('/ghosts/regroup', this.processRider((rider, req) => Promise.resolve(rider.regroupGhosts())))
 
     if (this.riderProvider.login) {
       this.app.ws('/listen', (ws, req) => {
@@ -171,6 +192,7 @@ class Server {
         callbackFn(rider, req)
           .then(respondJson(res))
           .catch(err => {
+						console.log(err)
             if (err.response) {
               res.status(err.response.status).send(`${err.response.status} - ${err.response.statusText}`);
             } else {

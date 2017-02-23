@@ -6,34 +6,42 @@ class Ghosts extends EventEmitter {
     super();
 
     this.account = account;
-    this.riderId = riderId;
 
     this.ghostRiders = [];
     this.cached = {};
   }
 
-  setRiderId(riderId) {
-    this.riderId = riderId;
-  }
-
-  addGhost(activityId) {
-    this.getActivity(activityId)
+  addGhost(riderId, activityId) {
+    return this.getActivity(riderId, activityId)
       .then(activity => {
         this.ghostRiders.push(new Ghost(activity));
       });
+  }
+
+  removeGhost(ghostId) {
+		console.log(`removing ghost ${ghostId}`)
+    this.ghostRiders = this.ghostRiders.filter(g => g.getId() !== ghostId);
+  }
+
+  getList() {
+    return this.ghostRiders.map(g => g.getDetails());
   }
 
   getPositions() {
     return this.ghostRiders.map(g => g.getPosition());
   }
 
-  getActivity(activityId) {
+  regroup(position) {
+    return this.ghostRiders.map(g => g.regroup(position));
+  }
+
+  getActivity(riderId, activityId) {
     const cached = this.getFromCache(activityId);
 
     if (cached) {
       return Promise.resolve(cached);
     } else {
-      return this.download(activityId);
+      return this.download(riderId, activityId);
     }
   }
 
@@ -41,8 +49,8 @@ class Ghosts extends EventEmitter {
     return this.cached[activityId];
   }
 
-  download(activityId) {
-    return this.account.getActivity(this.riderId).get(activityId)
+  download(riderId, activityId) {
+    return this.account.getActivity(riderId).get(activityId)
       .then(activity => {
         this.cached[activityId] = activity;
         return activity;

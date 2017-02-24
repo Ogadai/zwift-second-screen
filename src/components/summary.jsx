@@ -10,6 +10,7 @@ class Summary extends Component {
   static get propTypes() {
     return {
       profile: PropTypes.object.isRequired,
+      mapSettings: PropTypes.object,
       onFetch: PropTypes.func.isRequired
     };
   }
@@ -25,9 +26,9 @@ class Summary extends Component {
   }
 
   render() {
-    const { profile } = this.props;
+    const { profile, mapSettings } = this.props;
     return (
-      <div className={classnames("summary", { disabled: !profile.riding })}>
+      <div className={classnames("summary", { disabled: !profile.riding, "custom-map": mapSettings && mapSettings.map })}>
         <div className="logo"></div>
         <div className="player-name">
           {profile.firstName} {profile.lastName}
@@ -40,7 +41,8 @@ class Summary extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    profile: state.profile
+    profile: state.profile,
+    mapSettings: state.mapSettings
   }
 }
 

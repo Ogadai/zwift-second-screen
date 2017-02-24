@@ -20,7 +20,13 @@ class Map extends Component {
       mapSettings: PropTypes.object,
       onFetchSettings: PropTypes.func.isRequired,
       onStartPolling: PropTypes.func.isRequired,
-      onStopPolling: PropTypes.func.isRequired
+      onStopPolling: PropTypes.func.isRequired,
+      displayActivity: PropTypes.shape({
+        positions: PropTypes.arrayOf(PropTypes.shape({
+          x: PropTypes.number,
+          y: PropTypes.number
+        }))
+      })
     };
   }
 
@@ -28,7 +34,10 @@ class Map extends Component {
     super(props);
 
     this.state = {
-      viewBox: undefined
+      viewBox: undefined,
+      activityIndex: -1,
+      activityId: -1,
+      activityInterval: null
     }
   }
 
@@ -43,10 +52,34 @@ class Map extends Component {
 
   componentWillReceiveProps(props) {
     const { develop, worldId, onFetchSettings } = this.props;
+
     if (props.worldId !== worldId) {
       onFetchSettings(props.worldId);
       if (develop) this.loadDevelop(props.worldId);
     }
+
+    const { activityIndex, activityId, activityInterval } = this.state;
+    const newState = {}
+
+    if (activityInterval && (!props.displayActivity || props.displayActivity.id !== activityId)) {
+      clearInterval(activityInterval);
+      newState.activityInterval = null;
+      newState.activityId = -1;
+    }
+
+    if (props.displayActivity && props.displayActivity.id !== activityId) {
+      newState.activityInterval = setInterval(() => {
+        let activityIndex = this.state.activityIndex + 2;
+        if (activityIndex >= props.displayActivity.positions.length) {
+          activityIndex = -30;
+        }
+        this.setState({ activityIndex });
+      }, 15);
+      newState.activityIndex = -30;
+      newState.activityId = props.displayActivity.id;
+    }
+
+    this.setState(newState);
   }
 
   componentWillUnmount() {
@@ -63,7 +96,7 @@ class Map extends Component {
   }
 	
   render() {
-    const { develop, worldId, positions, mapSettings } = this.props;
+    const { develop, worldId, positions, mapSettings, displayActivity } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
@@ -76,14 +109,28 @@ class Map extends Component {
         <div className="map-route" dangerouslySetInnerHTML={{ __html: this.replaceViewBox(svgFile) }} />
 				: undefined
       }
-      {(positions && viewBox) ?
+      {(viewBox) ?
         <div className="map-riders">
           <svg className="full-size" viewBox={viewBox}>
+            <defs>
+              <marker id="arrowHead" orient="auto" markerWidth="1" markerHeight="2"
+                      refX="0.1" refY="1">
+                <path d="M0,0 V2 L1,1 Z" />
+              </marker>
+            </defs>
+
             <g transform={`rotate${mapSettings.rotate}`}>
               <g transform={`translate${mapSettings.translate}`}>
-								<g id="riders" className="riders">
-									{ positions.map((p, i) => this.renderPosition(p, i)) }
-								</g>
+
+                { positions
+								  ? <g id="riders" className="riders">
+									    { positions.map((p, i) => this.renderPosition(p, i)) }
+								    </g>
+                  : undefined }
+
+                { (displayActivity && displayActivity.positions)
+                  ? this.renderActivity(displayActivity)
+                  : undefined }
 							</g>
 						</g>
 					</svg>
@@ -102,6 +149,21 @@ class Map extends Component {
 		</div>
   }
 
+  renderActivity(displayActivity) {
+    const { activityIndex } = this.state;
+    const activityPosition = activityIndex >= 0 && activityIndex < displayActivity.positions.length
+        ? displayActivity.positions[activityIndex] : displayActivity.positions[0];
+
+    const points = displayActivity.positions.map(p => `${p.x},${p.y}`).join(' ');
+    
+    return <g id="display-activity" className="display-activity">
+      <polyline points={points} />
+      { activityPosition
+        ? <circle cx={ activityPosition.x } cy={activityPosition.y} r="6000" />
+        : undefined }
+    </g>
+  }
+
   svgPath(worldId) {
     const worldParam = worldId ? `?world=${worldId}` : '';
     return `${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg${worldParam}`;
@@ -112,6 +174,9 @@ class Map extends Component {
       className={this.getRiderClass(position, index)}
 				transform={`translate(${position.x},${position.y})`}>
       <g transform={`rotate(${this.getLabelRotate()})`}>
+        { position.trail 
+          ? this.renderTrail(position)
+          : undefined }
 				<circle cx="0" cy="0" r="6000">
 					<title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
 				</circle>
@@ -120,6 +185,12 @@ class Map extends Component {
         </text>
 			</g>
     </g>
+  }
+
+  renderTrail(position) {
+    const { x, y, trail } = position;
+    const points = trail.map(p => `${p.x - x},${p.y - y}`).join(' ');
+    return <polyline points={points} markerEnd="url(#arrowHead)" />
   }
 
   getRiderClass(position, index) {
@@ -202,7 +273,8 @@ const mapStateToProps = (state) => {
   return {
     worldId: state.world.worldId,
     positions: state.positions,
-    mapSettings: state.mapSettings
+    mapSettings: state.mapSettings,
+    displayActivity: state.ghosts.displayActivity
   }
 }
 

@@ -14,12 +14,12 @@ class Ghosts extends EventEmitter {
   addGhost(riderId, activityId) {
     return this.getActivity(riderId, activityId)
       .then(activity => {
-        this.ghostRiders.push(new Ghost(activity));
+        this.removeGhost(activityId);
+        this.ghostRiders.push(new Ghost(activity, activityId));
       });
   }
 
   removeGhost(ghostId) {
-		console.log(`removing ghost ${ghostId}`)
     this.ghostRiders = this.ghostRiders.filter(g => g.getId() !== ghostId);
   }
 
@@ -52,6 +52,7 @@ class Ghosts extends EventEmitter {
   download(riderId, activityId) {
     return this.account.getActivity(riderId).get(activityId)
       .then(activity => {
+        activity.id = activityId;
         this.cached[activityId] = activity;
         return activity;
       });

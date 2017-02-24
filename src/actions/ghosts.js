@@ -162,3 +162,16 @@ export function requestRegroup() {
       })
   }
 }
+
+export function fetchActivity(riderId, activityId) {
+  return dispatchRequest(`/rider/${riderId}/activity/${activityId}`, receiveActivity);
+}
+
+export const RECEIVE_ACTIVITY = "RECEIVE_ACTIVITY";
+
+function receiveActivity(data) {
+  return {
+    type: RECEIVE_ACTIVITY,
+    data
+  };
+}

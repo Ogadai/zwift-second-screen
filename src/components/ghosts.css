@@ -88,11 +88,54 @@
         & li {
             padding: 10px;
             cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 5px;
 
             &.selected {
                 color: var(--highlight-color);
                 background-color: var(--highlight-background);
-                border-radius: 6px;
+            }
+
+            &.activity {
+                border: solid 1px var(--highlight-background);
+                padding: 5px;
+            }
+
+            & h2 {
+                font-size: 1em;
+                margin: 2px;
+            }
+
+            & .details {
+                display: flex;
+                flex-direction: row;
+
+                & .detail-entry {
+                    flex: 1 1 auto;
+                    text-align: center;
+                    background-color: var(--shaded-background);
+                    border-right: 2px solid white;
+                    padding: 2px;
+                    font-size: 0.8em;
+
+                    &:first-child {
+                        border-bottom-left-radius: 6px;
+                    }
+                    &:last-child {
+                        border-bottom-right-radius: 6px;
+                        border-right: none;
+                    }
+
+                    & h3 {
+                        font-size: 0.8em;
+                        font-weight: 300;
+                        margin: 0;
+                    }
+                }
+            }
+
+            &.selected .details {
+                color: black;
             }
         }
 

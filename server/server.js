@@ -60,7 +60,7 @@ class Server {
       }
     }))
 
-    this.app.get('/activity/:activityId', this.processRider((rider, req) => rider.getGhosts().getActivity(req.params.activityId)))
+    this.app.get('/rider/:riderId/activity/:activityId', this.processRider((rider, req) => rider.getGhosts().getActivity(req.params.riderId, req.params.activityId)))
 
     this.app.get('/ghosts', this.processRider((rider, req) => Promise.resolve(rider.getGhosts().getList())))
     this.app.options('/ghosts', respondCORS)

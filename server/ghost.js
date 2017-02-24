@@ -1,15 +1,13 @@
 ﻿const EventEmitter = require('events')
 
-let nextId = 1;
-
 class Ghost extends EventEmitter {
-  constructor(activity) {
+  constructor(activity, ghostId) {
     super();
 
     this.activity = activity;
     this.startTime = new Date();
     this.startOffset = 0;
-    this.id = nextId++
+    this.id = ghostId;
   }
 
   getId() {
@@ -40,6 +38,8 @@ class Ghost extends EventEmitter {
       const remain = offset - position.time * 1000;
       const ratio = remain / ((nextPosition.time - positions[index - 1].time) * 1000);
 
+      const trail = positions.slice(index, index + 20);
+
       const getAggregated = name => position[name] + ratio * (nextPosition[name] - position[name]);
 
       return {
@@ -50,7 +50,8 @@ class Ghost extends EventEmitter {
         y: getAggregated('y'),
         speed: getAggregated('speed'),
         power: getAggregated('power'),
-        cadence: getAggregated('cadence')
+        cadence: getAggregated('cadence'),
+        trail
       };
     } else {
       return positions[positions.length - 1];

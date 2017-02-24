@@ -4,7 +4,8 @@ import classnames from 'classnames';
 
 import {
   toggleGhosts, toggleAddGhost, selectRider, changedActivity,
-  fetchGhosts, addGhost, changedGhost, removeGhost, requestRegroup
+  fetchGhosts, addGhost, changedGhost, removeGhost,
+  requestRegroup, fetchActivity
 } from '../actions/ghosts';
 import { fetchRiders } from '../actions/fetch';
 
@@ -33,6 +34,7 @@ class Ghosts extends Component {
       onRemoveGhost: PropTypes.func.isRequired,
       requestingRegroup: PropTypes.bool,
       onRequestRegroup: PropTypes.func.isRequired,
+      onFetchActivity: PropTypes.func.isRequired,
     }
   }
 
@@ -93,24 +95,48 @@ class Ghosts extends Component {
 	}
 
   renderActivity(activity) {
-    const { activityId, onChangeActivity } = this.props;
-    const { id, name } = activity;
+    const { riderId, activityId, onChangeActivity, onFetchActivity } = this.props;
+    const { id, name, distanceInMeters, duration, totalElevation, avgWatts } = activity;
 
     return <li key={id}
-				className={classnames({ selected: activityId === id })}
-				onClick={() => onChangeActivity(id)}
+				className={classnames("activity", { selected: activityId === id })}
+				onClick={() => {
+          onChangeActivity(id);
+          onFetchActivity(riderId, id);
+        }}
       >
-      {name}
+      <h2 className="name">{name}</h2>
+      <div className="details">
+        <div className="detail-entry">
+          <h3>Distance</h3>
+          <span className="value">{Math.round(distanceInMeters / 100) / 10}km</span>
+        </div>
+        <div className="detail-entry">
+          <h3>Time</h3>
+          <span className="value">{duration} min</span>
+        </div>
+        <div className="detail-entry">
+          <h3>Elevation</h3>
+          <span className="value">{Math.round(totalElevation)}m</span>
+        </div>
+        <div className="detail-entry">
+          <h3>Avg. watts</h3>
+          <span className="value">{Math.round(avgWatts)}w</span>
+        </div>
+      </div>
     </li>
   }
 
   renderGhost(ghost) {
-    const { ghostId, onChangedGhost, onRemoveGhost } = this.props;
+    const { ghostId, onChangedGhost, onRemoveGhost, onFetchActivity } = this.props;
     const { id, name } = ghost;
 
     return <li key={id}
 				className={classnames({ selected: ghostId === id })}
-				onClick={() => onChangedGhost(id)}
+				onClick={() => {
+          onChangedGhost(id);
+          onFetchActivity(0, id);
+        }}
       >
       {name}
 
@@ -148,7 +174,8 @@ const mapDispatchToProps = (dispatch) => {
     onAddGhost: (riderId, activityId) => dispatch(addGhost(riderId, activityId)),
     onChangedGhost: (ghostId) => dispatch(changedGhost(parseInt(ghostId))),
     onRemoveGhost: (ghostId) => dispatch(removeGhost(ghostId)),
-    onRequestRegroup: () => dispatch(requestRegroup())
+    onRequestRegroup: () => dispatch(requestRegroup()),
+    onFetchActivity: (riderId, activityId) => dispatch(fetchActivity(riderId, activityId))
   }
 }
 

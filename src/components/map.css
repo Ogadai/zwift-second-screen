@@ -44,6 +44,8 @@
     }
 
     & .rider-position {
+        z-index: 100;
+
         & circle {
             stroke-width: 2000;
         }
@@ -56,14 +58,31 @@
 
     & .rider-ghost {
         opacity: 0.5;
+        z-index: 0;
 
         & circle {
-            stroke: #202020;
+            stroke: #080808;
+        }
+
+        & polyline {
+            stroke-width: 5000;
+            stroke: #080808;
+            fill: none;
+        }
+
+        & text {
+            fill: white;
+            stroke-width: 500;
+            stroke: black;
         }
     }
 
-    & .rider-0 circle {
-        stroke: #110351;
+    & .rider-0 {
+        z-index: 200;
+
+        & circle {
+            stroke: #110351;
+        }
     }
     & .rider-1 circle {
         stroke: #0077BE;
@@ -95,6 +114,20 @@
     }
     & .rider-power-5 circle {
         fill: #FFB0B0; /* white */
+    }
+
+    & .display-activity {
+        & circle {
+            opacity: 0.8;
+            fill: var(--activity-color);
+        }
+        
+        & polyline {
+            opacity: 0.5;
+            fill: none;
+            stroke-width: 5000;
+            stroke: var(--activity-color);
+        }
     }
 }
 

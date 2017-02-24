@@ -7,7 +7,7 @@ import { RECEIVE_HOST } from './actions/host';
 import {
   TOGGLE_GHOSTS, TOGGLE_ADDGHOST, CHANGED_RIDER, RECEIVE_ACTIVITIES, CHANGED_ACTIVITY,
   RECEIVE_GHOSTS, ADDING_GHOST, ADDED_GHOST, CHANGED_GHOST,
-  REQUESTING_REGROUP, RECEIVE_REGROUP
+  REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY
 } from './actions/ghosts';
 
 function login(state = {}, action) {
@@ -44,7 +44,8 @@ const defaultGhosts = {
   activityId: null,
   waitingAddGhost: false,
   ghostId: null,
-	requestingRegroup: false
+	requestingRegroup: false,
+  displayActivity: null
 }
 
 function ghosts(state = defaultGhosts, action) {
@@ -55,11 +56,17 @@ function ghosts(state = defaultGhosts, action) {
       });
     case TOGGLE_GHOSTS:
       return Object.assign({}, state, {
-				show: !state.show
+				show: !state.show,
+        activityId: null,
+        ghostId: null,
+        displayActivity: null
       });
     case TOGGLE_ADDGHOST:
       return Object.assign({}, state, {
-        addingGhost: !state.addingGhost
+        addingGhost: !state.addingGhost,
+        activityId: null,
+        ghostId: null,
+        displayActivity: null
       });
     case CHANGED_RIDER:
       return Object.assign({}, state, {
@@ -75,7 +82,8 @@ function ghosts(state = defaultGhosts, action) {
       });
     case CHANGED_ACTIVITY:
       return Object.assign({}, state, {
-				activityId: action.activityId
+				activityId: action.activityId,
+        displayActivity: null
       });
     case ADDING_GHOST:
       return Object.assign({}, state, {
@@ -84,11 +92,15 @@ function ghosts(state = defaultGhosts, action) {
     case ADDED_GHOST:
       return Object.assign({}, state, {
         waitingAddGhost: false,
-        addingGhost: false
+        addingGhost: false,
+        activityId: null,
+        ghostId: null,
+        displayActivity: null
       });
     case CHANGED_GHOST:
       return Object.assign({}, state, {
-        ghostId: action.ghostId
+        ghostId: action.ghostId,
+        displayActivity: null
       });
     case REQUESTING_REGROUP:
       return Object.assign({}, state, {
@@ -97,6 +109,10 @@ function ghosts(state = defaultGhosts, action) {
 		case RECEIVE_REGROUP:
       return Object.assign({}, state, {
         requestingRegroup: false
+      });
+    case RECEIVE_ACTIVITY:
+      return Object.assign({}, state, {
+        displayActivity: action.data
       });
     default:
       return state;

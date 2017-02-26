@@ -173,10 +173,10 @@ class Map extends Component {
     return <g key={`rider-${index}`}
       className={this.getRiderClass(position, index)}
 				transform={`translate(${position.x},${position.y})`}>
+      { position.trail 
+        ? this.renderTrail(position)
+        : undefined }
       <g transform={`rotate(${this.getLabelRotate()})`}>
-        { position.trail 
-          ? this.renderTrail(position)
-          : undefined }
 				<circle cx="0" cy="0" r="6000">
 					<title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
 				</circle>

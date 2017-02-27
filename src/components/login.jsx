@@ -54,12 +54,13 @@ class Login extends Component {
 
     return (
       <div className="login">
-        {overlay
-          ? <a className="close-button" href="#" onClick={onCloseApp}>X</a>
-          : undefined}
-				<div className="logo" />
+        <h1 className="title-bar">
+          Zwift GPS
+					<a className="close-button" href="#" onClick={onCloseApp}>X</a>
+				</h1>
+
         <form onSubmit={evt => this.onSubmitForm(evt)}>
-          <h1>Log In</h1>
+          <h2>Log In</h2>
           {error ?
             <div className="error">
               {error.status}: {error.statusText}
@@ -83,7 +84,7 @@ class Login extends Component {
 
         {(onRunHost && overlay)
           ? <div className={classnames('host', { show: host && host.hosts && host.hosts.length })}>
-	            <h1>Host</h1>
+	            <h2>Host</h2>
               <div className="host-info">
 								<p>
 									Run a host on your local network to view the map on a tablet or phone

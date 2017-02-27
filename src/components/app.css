@@ -97,14 +97,14 @@ input[type=submit], input[type=button], button {
     right: 10px;
     padding: 5px 8px;
     text-decoration: none;
-    color: var(--input-border);
+    color: var(--close-button);
     font-size: 0.5em;
-    border: 2px var(--input-border) solid;
+    border: 2px var(--close-button) solid;
     border-radius: 15px;
     -webkit-app-region: no-drag;
 
     &:hover {
-        color: white;
-        border-color: white;
+        color: var(--close-button-hover);
+        border-color: var(--close-button-hover);
     }
 }

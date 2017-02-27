@@ -20,7 +20,7 @@ class Login {
   }
 
   getSession(cookie) {
-    const session = sessionCache.get(cookie);
+    const session = cookie ? sessionCache.get(cookie) : null;
     if (session) {
       sessionCache.ttl(cookie, sessionTimeout);
     }

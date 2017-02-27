@@ -10,7 +10,7 @@
     right: 1px;
     bottom: 1px;
     
-    & h1 {
+    & h2 {
         background-color: #3e3e3e;
         color: white;
         padding: 20px;
@@ -18,11 +18,6 @@
         text-align: center;
         text-transform: uppercase;
         border-top-left-radius: 20px;
-    }
-
-    & .close-button:hover {
-        color: #FC6719;
-        border-color: #FC6719;
     }
 
     & form, & .host {
@@ -34,7 +29,7 @@
     & form {
         position: absolute;
         left: calc(50% - 225px);
-        top: 50px;
+        top: 60px;
         border: 1px solid #bfbebe;
         width: 450px;
 

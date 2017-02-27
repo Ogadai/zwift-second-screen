@@ -10,7 +10,6 @@ const settings = require('./settings');
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
-
 const server = new Server(new Login(), { hostData: new Host(settings.port) });
 server.start(settings.port);
 
@@ -18,7 +17,7 @@ function createWindow() {
   // Create the browser window.
   win = new BrowserWindow({ x: 300, y: 100, width: 800, height: 600, frame: false, transparent: true, alwaysOnTop: true, webPreferences: { devTools: false } })
 
-  const port = settings.port | 3000;
+  const port = settings.port || 3000;
   // and load the index.html of the app.
   win.loadURL(url.format({
     pathname: `localhost:${port}`,

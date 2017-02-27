@@ -211,3 +211,14 @@
         font-family: Arial;
     }
 }
+
+.zwift-app.overlay {
+    & .ghosts {
+        opacity: 0;
+        transition: opacity ease 1s;
+    }
+
+    &.hovering .ghosts {
+        opacity: 1;
+    }    
+}

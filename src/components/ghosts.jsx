@@ -73,7 +73,13 @@ class Ghosts extends Component {
 		return <div className="display-area">
 			<h1>Ghosts</h1>
 			<div className="list">
-        <ul>{ghosts.map(g => this.renderGhost(g))}</ul>
+        {ghosts && ghosts.length ?
+          <ul>{ghosts.map(g => this.renderGhost(g))}</ul>
+        : <span className="add-prompt">
+            Click
+            <input className="add-ghost-button" type="button" value="+" onClick={onToggleAddGhost} />
+            below to start adding Ghosts
+          </span> }
 			</div>
       <footer>
         <input className={classnames("regroup-button", { disabled })}

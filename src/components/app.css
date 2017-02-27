@@ -80,13 +80,21 @@ input[type=submit], input[type=button], button {
     color: white;
     text-transform: uppercase;
 
-    &:hover {
+    &:hover, &:active {
         background-color: var(--button-background-hover);
     }
 
     &:disabled {
         background-color: var(--button-background-hover);
         cursor: default;
+    }
+}
+
+@media (max-width: 1281px) {
+    input[type=submit], input[type=button], button {
+        &:hover {
+            background-color: var(--button-background);
+        }
     }
 }
 

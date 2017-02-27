@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import { requestLoginType, postLogin, postLoginById } from '../actions/login';
 import { fetchHost, runHost, closeApp } from '../actions/host';
 
+import s2 from './app.css';
 import s from './login.css';
 
 class Login extends Component {
@@ -56,7 +57,7 @@ class Login extends Component {
       <div className="login">
         <h1 className="title-bar">
           Zwift GPS
-					<a className="close-button" href="#" onClick={onCloseApp}>X</a>
+          { overlay ? <a className="close-button" href="#" onClick={onCloseApp}>X</a> : undefined }
 				</h1>
 
         <form onSubmit={evt => this.onSubmitForm(evt)}>

@@ -68,6 +68,7 @@
             stroke-width: 5000;
             stroke: #080808;
             fill: none;
+            stroke-linejoin: round;
         }
 
         & text {
@@ -127,6 +128,7 @@
             fill: none;
             stroke-width: 5000;
             stroke: var(--activity-color);
+            stroke-linejoin: round;
         }
     }
 }

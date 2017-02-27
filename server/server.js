@@ -42,6 +42,12 @@ class Server {
         console.log(`login: ${id}`)
         this.processLogin(res, this.riderProvider.loginWithId(id))
       })
+
+      this.app.get('/login/:id', (req, res) => {
+        const { id } = req.params
+        console.log(`login: ${id}`)
+        this.processLogin(res, this.riderProvider.loginWithId(id), true)
+      })
     }
 
     this.app.get('/profile', this.processRider(rider => rider.getProfile()))
@@ -169,18 +175,26 @@ class Server {
     }
   }
 
-  processLogin(res, promise) {
+  processLogin(res, promise, redirect = false) {
 		promise
       .then(result => {
         console.log('login successful')
         res.cookie('zssToken', result.cookie, { httpOnly: true });
-        sendJson(res, { message: 'ok' })
+
+        if (redirect)
+          res.redirect('/')
+        else
+          sendJson(res, { message: 'ok' })
       })
       .catch(err => {
         console.log('login failed - ', err)
         const { status, statusText } = err.response;
         res.status(status);
-        sendJson(res, { status, statusText });
+
+        if (redirect)
+          res.redirect('/login')
+        else
+          sendJson(res, { status, statusText });
       })
   }
 
@@ -208,51 +222,6 @@ class Server {
 
 }
 module.exports = Server;
-
-
-
-//app.get('/followers/', function (req, res) {
-//    var playerId = req.query.player || settings.player;
-//    account.getProfile(playerId).followers().then(function (data) {
-//        res.send(asHtml(data))
-//    });
-//})
-
-//app.get('/followees/', function (req, res) {
-//    var playerId = req.query.player || settings.player;
-//    account.getProfile(playerId).followees().then(function (data) {
-//        res.send(asHtml(data))
-//    });
-//})
-
-//app.get('/riders/', function (req, res) {
-//  var worldId = req.query.world || 1;
-//  account.getWorld(worldId).riders().then(respondJson(res));
-//})
-
-//app.get('/status/', function (req, res) {
-//  var worldId = req.query.world || 1;
-//  var playerId = req.query.player || settings.player;
-//  account.getWorld(worldId).riderStatus(playerId).then(respondJson(res));
-//})
-
-//app.get('/json/', function (req, res) {
-//    var path = req.query.path;
-//    console.log(`Request: ${path}`);
-//    account.getRequest().json(path)
-//        .then(function (data) {
-//            res.send(asHtml(data))
-//        })
-//        .catch(function (err) {
-//            console.log(err.response);
-//            res.status(err.response.status).send(`${err.response.status} - ${err.response.statusText}`);
-//        });
-//})
-
-//function asHtml(data) {
-//  return '<html><body><pre><code>' + JSON.stringify(data, null, 4) + '</code></pre></body></html>'
-//}
-
 
 function respondJson(res) {
   return function (data) {

@@ -17,7 +17,7 @@ function login(state = {}, action) {
         error: action.data
       })
     case RECEIVE_LOGINTYPE:
-return Object.assign({}, state, {
+      return Object.assign({}, state, {
         user: action.data
       })
     default:

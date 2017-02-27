@@ -181,10 +181,14 @@ class Map extends Component {
 					<title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
 				</circle>
 				<text x="10000" y="2000">
-					{position.firstName.substring(0, 1)} {position.lastName}
+					{this.formatName(position)}
         </text>
 			</g>
     </g>
+  }
+
+  formatName(position) {
+    return `${position.firstName ? position.firstName.substring(0, 1) : ''} ${position.lastName}`;
   }
 
   renderTrail(position) {

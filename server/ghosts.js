@@ -1,14 +1,15 @@
 ﻿const EventEmitter = require('events')
 const Ghost = require('./ghost')
+const NodeCache = require('node-cache')
+
+const activityCache = new NodeCache({ stdTTL: 30 * 60, checkPeriod: 120, useClones: false });
 
 class Ghosts extends EventEmitter {
   constructor(account, riderId) {
     super();
 
     this.account = account;
-
     this.ghostRiders = [];
-    this.cached = {};
   }
 
   addGhost(riderId, activityId) {
@@ -28,6 +29,9 @@ class Ghosts extends EventEmitter {
   }
 
   getPositions() {
+    // Remove finished ghosts
+    this.ghostRiders = this.ghostRiders.filter(g => !g.isFinished());
+    
     return this.ghostRiders.map(g => g.getPosition());
   }
 
@@ -46,16 +50,20 @@ class Ghosts extends EventEmitter {
   }
 
   getFromCache(activityId) {
-    return this.cached[activityId];
+    return activityCache.get(this.cacheId(activityId));
   }
 
   download(riderId, activityId) {
     return this.account.getActivity(riderId).get(activityId)
       .then(activity => {
         activity.id = activityId;
-        this.cached[activityId] = activity;
+        activityCache.set(this.cacheId(activityId), activity);
         return activity;
       });
+  }
+
+  cacheId(activityId) {
+    return `activity-${activityId}`;
   }
 }
 module.exports = Ghosts;

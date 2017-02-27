@@ -1,12 +1,14 @@
-﻿const ZwiftAccount = require('zwift-mobile-api');
+﻿const NodeCache = require('node-cache')
+const ZwiftAccount = require('zwift-mobile-api');
 const Rider = require('./rider');
 
 const COOKIE_PREFIX = 'rider-';
+const sessionTimeout = 30 * 60;
+const sessionCache = new NodeCache({ stdTTL: sessionTimeout, checkPeriod: 120, useClones: false });
 
 class RiderId {
   constructor(username, password) {
     this.account = new ZwiftAccount(username, password);
-    this.riders = {};
   }
 
   getRider(cookie) {
@@ -31,10 +33,15 @@ class RiderId {
   }
 
   getOrCreateRider(riderId) {
-    if (!this.riders[riderId]) {
-      this.riders[riderId] = new Rider(this.account, riderId);
+    const cachedRider = sessionCache.get(riderId);
+    if (cachedRider) {
+      sessionCache.ttl(riderId, sessionTimeout);
+      return cachedRider;
     }
-    return this.riders[riderId];
+
+    const newRider = new Rider(this.account, riderId);
+    sessionCache.set(riderId, newRider);
+    return newRider;
   }
 
   getRiderIdFromCookie(cookie) {

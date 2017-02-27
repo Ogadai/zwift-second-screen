@@ -72,6 +72,7 @@ class PollingClient {
     this.ws = null;
 
     this.interval = setInterval(() => this.onInterval(), 3000);
+    this.onInterval();
   }
 
   onMessage(message) {

@@ -1,6 +1,8 @@
 ﻿import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import moment from 'moment';
+import momentGB from 'moment/locale/en-gb';
 
 import {
   toggleGhosts, toggleAddGhost, selectRider, changedActivity,
@@ -42,6 +44,17 @@ class Ghosts extends Component {
     const { onFetchRiders, onFetchGhosts } = this.props;
     onFetchRiders();
     onFetchGhosts();
+  }
+
+  componentWillReceiveProps(props) {
+    const { onFetchGhosts } = this.props;
+
+    const wasShowingGhosts = this.props.showPanel && !this.props.addingGhost;
+    const isShowingGhosts = props.showPanel && !props.addingGhost;
+
+    if (!wasShowingGhosts && isShowingGhosts) {
+      onFetchGhosts();
+    }
   }
 
   render() {
@@ -96,7 +109,7 @@ class Ghosts extends Component {
 
   renderActivity(activity) {
     const { riderId, activityId, onChangeActivity, onFetchActivity } = this.props;
-    const { id, name, distanceInMeters, duration, totalElevation, avgWatts } = activity;
+    const { id, name, distanceInMeters, duration, totalElevation, avgWatts, startDate } = activity;
 
     return <li key={id}
 				className={classnames("activity", { selected: activityId === id })}
@@ -105,26 +118,46 @@ class Ghosts extends Component {
           onFetchActivity(riderId, id);
         }}
       >
-      <h2 className="name">{name}</h2>
+      <h2>
+        <span className="name">{name}</span>
+        <span className="date">{moment(startDate).format('ll')}</span>
+        </h2>
       <div className="details">
         <div className="detail-entry">
           <h3>Distance</h3>
-          <span className="value">{Math.round(distanceInMeters / 100) / 10}km</span>
+          <span className="value">{Math.round(distanceInMeters / 100) / 10} km</span>
         </div>
         <div className="detail-entry">
-          <h3>Time</h3>
-          <span className="value">{duration} min</span>
+          <h3>Hrs</h3>
+          <span className="value">{this.formatHours(duration)}</span>
+        </div>
+        <div className="detail-entry">
+          <h3>Min</h3>
+          <span className="value">{this.formatMinutes(duration)}</span>
         </div>
         <div className="detail-entry">
           <h3>Elevation</h3>
-          <span className="value">{Math.round(totalElevation)}m</span>
+          <span className="value">{Math.round(totalElevation)} m</span>
         </div>
         <div className="detail-entry">
-          <h3>Avg. watts</h3>
-          <span className="value">{Math.round(avgWatts)}w</span>
+          <h3>Avg watts</h3>
+          <span className="value">{Math.round(avgWatts)}</span>
         </div>
       </div>
     </li>
+  }
+
+  formatHours(duration) {
+    const parts = duration.split(':');
+    if (parts.length > 1) {
+      return parseInt(parts[parts.length - 2]) || 0;
+    }
+    return 0;
+  }
+
+  formatMinutes(duration) {
+    const parts = duration.split(':');
+    return parseInt(parts[parts.length - 1]) || 0;
   }
 
   renderGhost(ghost) {

@@ -30,7 +30,13 @@ class Ghost extends EventEmitter {
     const offset = (new Date()) - this.startTime + this.startOffset;
     const { positions } = this.activity;
 
-    const index = this.getIndex()
+    const index = this.getIndex();
+
+    const baseResult = {
+        firstName: this.activity.firstName,
+        lastName: this.activity.lastName,
+				ghost: true
+    };
 
     if (index < positions.length) {
       const position = positions[index - 1];
@@ -42,20 +48,29 @@ class Ghost extends EventEmitter {
 
       const getAggregated = name => position[name] + ratio * (nextPosition[name] - position[name]);
 
-      return {
-        firstName: this.activity.firstName,
-        lastName: this.activity.lastName,
-				ghost: true,
+      return Object.assign(baseResult, {
         x: getAggregated('x'),
         y: getAggregated('y'),
         speed: getAggregated('speed'),
         power: getAggregated('power'),
         cadence: getAggregated('cadence'),
         trail
-      };
+      });
     } else {
-      return positions[positions.length - 1];
+      return Object.assign(baseResult,
+        positions[positions.length - 1], {
+          power: 0,
+          speed: 0,
+          cadence: 0
+        });
     }
+  }
+
+  isFinished() {
+    const offset = (new Date()) - this.startTime + this.startOffset;
+    const { positions } = this.activity;
+
+    return (offset > positions[positions.length - 1].time * 1000 + 10000);
   }
 
   getIndex() {

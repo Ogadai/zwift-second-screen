@@ -1,5 +1,6 @@
 ﻿const axios = require('axios');
 const fs = require('fs');
+const NodeCache = require('node-cache')
 
 const downloadUrl = '/zwiftmap/svg/world',
   cssUrl = '/zwiftmap/app/world-web.css',
@@ -21,9 +22,10 @@ const defaultCredit = {
   href: 'http://zwifthacks.com'
 }
 
+const mapCache = new NodeCache({ stdTTL: 30 * 60, checkPeriod: 120, useClones: false });
+
 class Map {
   constructor(worldSettings) {
-    this.worlds = {}
     this.worldSettings = worldSettings;
   }
 
@@ -37,22 +39,14 @@ class Map {
       return Promise.resolve(cached);
     } else {
       return this.downloadMap(worldId).then(map => {
-
-        this.worlds[this.key(worldId)] = {
-          map: map,
-					date: new Date()
-        };
+        mapCache.set(this.key(worldId), map);
         return map;
       });
     }
   }
 
   getCachedMap(worldId) {
-    const world = this.worlds[this.key(worldId)];
-    if (world && world.map && (new Date() - world.date < 60 * 60000)) {
-      return world.map;
-    }
-    return null;
+    return mapCache.get(this.key(worldId));
   }
 
   downloadMap(worldId) {

@@ -43,8 +43,8 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    const { develop, worldId, onFetchSettings, onStartPolling } = this.props;
-    onFetchSettings(worldId);
+    const { develop, overlay, worldId, onFetchSettings, onStartPolling } = this.props;
+    onFetchSettings(worldId, overlay);
 
     onStartPolling();
 
@@ -97,12 +97,12 @@ class Map extends Component {
   }
 	
   render() {
-    const { develop, overlay, worldId, positions, mapSettings, displayActivity } = this.props;
+    const { develop, worldId, positions, mapSettings, displayActivity } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
 
-    const mapUrl = (!overlay && mapSettings.map) ? mapSettings.map : this.svgPath(worldId);
+    const mapUrl = mapSettings.map ? mapSettings.map : this.svgPath(worldId);
     return <div className="map">
       <div className="map-route">
         <div className="full-size img" style={{ backgroundImage: `url(${mapUrl})` }} />
@@ -287,7 +287,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchSettings: (worldId) => dispatch(fetchMapSettings(worldId)),
+    onFetchSettings: (worldId, overlay) => dispatch(fetchMapSettings(worldId, overlay)),
     onStartPolling: () => dispatch(startPolling()),
     onStopPolling: () => dispatch(stopPolling())
   }

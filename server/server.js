@@ -129,7 +129,8 @@ class Server {
 
     this.app.get('/mapSettings', (req, res) => {
       const worldId = req.query.world || undefined;
-      this.map.getSettings(worldId).then(respondJson(res));
+      const overlay = req.query.overlay === 'true';
+      this.map.getSettings(worldId, overlay).then(respondJson(res));
     })
 
     this.app.get('/host', (req, res) => {

@@ -51,9 +51,13 @@ function receiveMapSettings(data) {
   };
 }
 
-export function fetchMapSettings(worldId) {
-  const worldParam = worldId ? `?world=${worldId}` : '';
-  return dispatchRequest(`/mapSettings/${worldParam}`, receiveMapSettings);
+export function fetchMapSettings(worldId, overlay) {
+  const params = [];
+  if (worldId) params.push(`world=${worldId}`);
+  if (overlay) params.push('overlay=true');
+
+  const queryParams = params.length ? `?${params.join('&')}` : '';
+  return dispatchRequest(`/mapSettings/${queryParams}`, receiveMapSettings);
 }
 
 export function fetchRiders() {

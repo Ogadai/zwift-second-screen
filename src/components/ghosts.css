@@ -17,10 +17,13 @@
     transition-property: width, height, border-color;
 
     & .display-area {
-        height: 400px;
-        width: 400px;
+        position: relative;
+        min-height: 400px;
+        min-width: 400px;
         max-height: 100%;
         max-width: 100%;
+        display: flex;
+        flex-direction: column;
     }
 
     & .ghosts-button {
@@ -80,9 +83,9 @@
     & .list {
         box-sizing: border-box;
         margin-bottom: 10px;
-        height: calc(100% - 110px);
         overflow-x: hidden;
         overflow: auto;
+        flex: 1 1;
 
         & ul {
             list-style: none;
@@ -172,10 +175,9 @@
         display: block;
         text-align: center;
         position: absolute;
-        bottom: 0;
+        bottom: 120px;
         left: 0;
         width: 100%;
-        height: 120px;
 
         & .add-ghost-button {
             width: 30px;
@@ -186,12 +188,16 @@
     }
 
     & footer {
-        position: absolute;
-        bottom: 0;
-        left: 0;
-        width: 100%;
         height: 50px;
-        text-align: right;
+        flex: 0 0;
+
+        display: flex;
+        flex-direction: row;
+
+        & .footer-middle {
+            flex: 1;
+            text-align: center;
+        }
 
         & .add-ghost-button {
             width: 50px;
@@ -199,9 +205,6 @@
             border-top-right-radius: 0;
             border-bottom-left-radius: 0;
         }
-    }
-    & .adding footer {
-        text-align: center;
     }
 
     & .add-ghost-button {
@@ -212,10 +215,6 @@
 
     & .submit-add-ghost, & .regroup-button {
         height: 40px;
-    }
-    & .regroup-button {
-        margin: 5px 110px 0 0;
-        vertical-align: top;
     }
 
     & .back-button {

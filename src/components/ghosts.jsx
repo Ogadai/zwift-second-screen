@@ -68,11 +68,11 @@ class Ghosts extends Component {
   }
 
 	renderGhostList() {
-    const { onToggleAddGhost, ghosts, requestingRegroup, onRequestRegroup } = this.props;
+    const { onToggleAddGhost, ghosts, requestingRegroup, onRequestRegroup, onChangedGhost } = this.props;
     const disabled = requestingRegroup || ghosts.length == 0
 		return <div className="display-area">
 			<h1>Ghosts</h1>
-			<div className="list">
+			<div className="list" onClick={() => onChangedGhost(null)}>
         {ghosts && ghosts.length ?
           <ul>{ghosts.map(g => this.renderGhost(g))}</ul>
         : <span className="add-prompt">
@@ -82,15 +82,18 @@ class Ghosts extends Component {
           </span> }
 			</div>
       <footer>
-        <input className={classnames("regroup-button", { disabled })}
-          disabled={disabled} type="button" value="Regroup" onClick={onRequestRegroup} />
+        <div className="footer-middle">
+          <input className={classnames("regroup-button", { disabled })}
+            disabled={disabled} type="button" value="Regroup" onClick={onRequestRegroup} />
+        </div>
 				<input className="add-ghost-button" type="button" value="+" onClick={onToggleAddGhost} />
 			</footer>
 		</div>;
 	}
 
   renderActivityList() {
-    const { riders, riderId, loadingActivities, activities, activityId, onToggleAddGhost, onSelectRider, onAddGhost, waitingAddGhost } = this.props;
+    const { riders, riderId, loadingActivities, activities, activityId,
+      onToggleAddGhost, onChangeActivity, onSelectRider, onAddGhost, waitingAddGhost } = this.props;
     const disabled = !activityId || waitingAddGhost
 		return <div className="display-area adding">
       <header>
@@ -99,16 +102,18 @@ class Ghosts extends Component {
           {riders.map(r => <option key={r.id} value={r.id}>{r.firstName} {r.lastName} Activities</option>)}
         </select>
       </header>
-      <div className="list">
+      <div className="list" onClick={() => onChangeActivity(null)}>
         {!activities.length
           ? <span className="message">{loadingActivities ? 'Loading...' : 'No activities'}</span>
           : <ul>{activities.map(a => this.renderActivity(a))}</ul>
         }
 			</div>
 			<footer>
-        <input className={classnames("submit-add-ghost", { disabled })}
-          disabled={disabled} type="button" value={waitingAddGhost ? 'Adding...' : 'Add Ghost'}
-          onClick={() => onAddGhost(riderId, activityId)} />
+        <div className="footer-middle">
+          <input className={classnames("submit-add-ghost", { disabled })}
+            disabled={disabled} type="button" value={waitingAddGhost ? 'Adding...' : 'Add Ghost'}
+            onClick={() => onAddGhost(riderId, activityId)} />
+        </div>
 			</footer>
 		</div>;
 	}
@@ -119,7 +124,8 @@ class Ghosts extends Component {
 
     return <li key={id}
 				className={classnames("activity", { selected: activityId === id })}
-				onClick={() => {
+				onClick={(event) => {
+          event.stopPropagation();
           onChangeActivity(id);
           onFetchActivity(riderId, id);
         }}
@@ -172,7 +178,8 @@ class Ghosts extends Component {
 
     return <li key={id}
 				className={classnames({ selected: ghostId === id })}
-				onClick={() => {
+				onClick={(event) => {
+          event.stopPropagation();
           onChangedGhost(id);
           onFetchActivity(0, id);
         }}

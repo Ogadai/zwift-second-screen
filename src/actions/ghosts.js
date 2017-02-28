@@ -16,7 +16,7 @@ export const TOGGLE_ADDGHOST = "TOGGLE_ADDGHOST";
 export function toggleAddGhost() {
   return (dispatch, getState) => {
     const state = getState();
-    if (!state.ghosts.riderId && state.riders) {
+    if (!state.ghosts.riderId && state.riders && state.riders.length) {
       dispatch(selectRider(state.riders[0].id))
     }
 

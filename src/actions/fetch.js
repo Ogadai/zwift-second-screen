@@ -84,7 +84,7 @@ export function dispatchRequest(path, dispatchFn) {
     axios.get(path)
       .then(response => dispatch(dispatchFn(response.data)))
       .catch(error => {
-        const { status, statusMessage } = error|| error.response;
+        const { status, statusMessage } = error.response || error;
         if (status === 401) {
 					// Redirect to login
           dispatch(redirectToLogin());

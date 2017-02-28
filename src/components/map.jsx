@@ -15,6 +15,7 @@ class Map extends Component {
   static get propTypes() {
     return {
       develop: PropTypes.bool,
+      overlay: PropTypes.bool,
 			worldId: PropTypes.number,
       positions: PropTypes.array,
       mapSettings: PropTypes.object,
@@ -96,14 +97,15 @@ class Map extends Component {
   }
 	
   render() {
-    const { develop, worldId, positions, mapSettings, displayActivity } = this.props;
+    const { develop, overlay, worldId, positions, mapSettings, displayActivity } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
 
+    const mapUrl = (!overlay && mapSettings.map) ? mapSettings.map : this.svgPath(worldId);
     return <div className="map">
       <div className="map-route">
-        <div className="full-size img" style={{ backgroundImage: `url(${mapSettings.map || this.svgPath(worldId)})` }} />
+        <div className="full-size img" style={{ backgroundImage: `url(${mapUrl})` }} />
       </div>
       {svgFile ?
         <div className="map-route" dangerouslySetInnerHTML={{ __html: this.replaceViewBox(svgFile) }} />
@@ -276,6 +278,7 @@ class Map extends Component {
 const mapStateToProps = (state) => {
   return {
     worldId: state.world.worldId,
+    overlay: state.environment.electron,
     positions: state.positions,
     mapSettings: state.mapSettings,
     displayActivity: state.ghosts.displayActivity

@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import Summary from './summary';
 import Map from './map';
 import Ghosts from './ghosts';
+import Analytics from './analytics';
 
 import { closeApp } from '../actions/host';
 
@@ -42,6 +43,7 @@ class App extends Component {
           <Summary />
 					<Ghosts />
 				</div>
+        <Analytics />
       </div>
     )
   }

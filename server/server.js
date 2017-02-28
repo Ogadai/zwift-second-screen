@@ -5,12 +5,14 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 
 const Map = require('./map');
+const insertAnalytics = require('./analytics');
 
 class Server {
   constructor(riderProvider, settings) {
     this.riderProvider = riderProvider;
     this.hostData = settings ? settings.hostData : null;
     this.map = new Map(settings ? settings.worlds : null);
+    this.analytics = settings.analytics;
 
     this.initialise();
   }
@@ -138,16 +140,17 @@ class Server {
       }
     })
 
-		// Static hosting for web client
-    this.app.use(express.static(`${__dirname}/../public`))
-		// Handle 404s (React app routing)
-    this.app.use((req, res) => {
+    const indexRoute = (req, res) => {
       if (req.accepts('html')) {
 				// respond with html index page
-        res.sendFile(path.resolve(`${__dirname}/../public/index.html`));
+        const htmlPath = path.resolve(`${__dirname}/../public/index.html`);
+        if (this.analytics) {
+          res.send(insertAnalytics(htmlPath, this.analytics));
+        } else {
+          res.sendFile(htmlPath);
+        }
         return;
       }
-
       res.status(404);
 
       // respond with json
@@ -157,7 +160,13 @@ class Server {
       }
       // default to plain-text. send()
       res.type('txt').send('Not found');
-    });
+    };
+    
+    this.app.get('/', indexRoute)
+		// Static hosting for web client
+    this.app.use(express.static(`${__dirname}/../public`))
+		// Handle 404s (React app routing)
+    this.app.use(indexRoute);
   }
 
   start(port) {

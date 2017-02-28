@@ -29,7 +29,8 @@ function environment(state, action) {
   switch (action.type) {
     default:
       return {
-        electron: navigator.userAgent.toLowerCase().indexOf('electron') !== -1
+        electron: navigator.userAgent.toLowerCase().indexOf('electron') !== -1,
+        analytics: (window.ga && window.ga.trackingId) ? { trackingId: window.ga.trackingId } : {}
       };
   }
 }

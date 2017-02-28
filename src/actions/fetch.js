@@ -84,12 +84,15 @@ export function dispatchRequest(path, dispatchFn) {
     axios.get(path)
       .then(response => dispatch(dispatchFn(response.data)))
       .catch(error => {
-        const { status, statusMessage } = error.response;
+        const { status, statusMessage } = error|| error.response;
         if (status === 401) {
 					// Redirect to login
           dispatch(redirectToLogin());
         } else {
-          console.error(`Error calling '${path}': ${status} - ${statusMessage}`);
+          if (!status)
+            console.error(`Error calling '${path}': ${error.message}`);
+          else
+            console.error(`Error calling '${path}': ${status} - ${statusMessage}`);
         }
       });
   }

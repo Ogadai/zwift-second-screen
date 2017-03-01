@@ -120,7 +120,9 @@ class Rider extends EventEmitter {
           time: status.time,
           climbing: status.climbing,
           x: status.x,
-          y: status.y
+          y: status.y,
+          altitude: status.altitude,
+          heartrate: status.heartrate
         };
       });
   }

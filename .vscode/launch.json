@@ -9,7 +9,15 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceRoot}\\index.js",
-            "cwd": "${workspaceRoot}"
+            "cwd": "${workspaceRoot}",
+            "runtimeExecutable": "${workspaceRoot}\\node_modules\\.bin\\nodemon.cmd",
+            "runtimeArgs": [
+                "--debug=5858"
+            ],
+            "restart": true,
+            "port": 5858,
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen"
         },
         {
             "type": "node",

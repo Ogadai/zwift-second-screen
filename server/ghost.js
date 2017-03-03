@@ -118,15 +118,23 @@ class Ghost extends EventEmitter {
       tryIndex += direction;
     }
 
-    return (tryIndex > 0 && tryIndex < positions.length - 1) ? tryIndex : -1;
+    if (tryIndex > 0 && tryIndex < positions.length - 1) {
+      return this.getClosestIndex(position, tryIndex - 10, tryIndex + 10);
+     }
+     return -1;
   }
 
   isCloseEnough(index, position) {
     if (!this.activity.positions[index]) return false;
+
+    const distance = this.distance(index, position)
+    return distance < 5000;
+  }
+
+  distance(index, position) {
     const match = this.activity.positions[index];
 
-    const distance = Math.sqrt(Math.pow(position.x-match.x, 2) + Math.pow(position.y-match.y, 2));
-    return distance < 5000;
+    return Math.sqrt(Math.pow(position.x-match.x, 2) + Math.pow(position.y-match.y, 2));
   }
 
   setPosition(index) {
@@ -134,6 +142,26 @@ class Ghost extends EventEmitter {
 
     this.startTime = new Date();
     this.startOffset = positions[index].time * 1000;
+  }
+
+  getClosestIndex(position, lowest, highest) {
+    const { positions } = this.activity;
+
+    const from = Math.max(0, lowest);
+    const to = Math.min(positions.length, highest);
+
+    let closest = null;
+    for(let n = from; n < to; n++) {
+      const distance = this.distance(n, position);
+
+      if (!closest || distance < closest.distance) {
+        closest = {
+          index: n,
+          distance
+        };
+      }
+    }
+    return closest ? closest.index : -1;
   }
 }
 module.exports = Ghost;

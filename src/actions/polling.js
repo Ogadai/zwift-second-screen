@@ -3,6 +3,8 @@ import { push } from 'react-router-redux';
 
 import { fetchWorld, fetchPositions, receivePositions, receiveWorld } from './fetch';
 
+const POLLING_INTERVAL = 2500;
+
 let pollingClient = null;
 
 export function startPolling() {
@@ -71,7 +73,7 @@ class PollingClient {
     if (this.ws) this.ws.close();
     this.ws = null;
 
-    this.interval = setInterval(() => this.onInterval(), 3000);
+    this.interval = setInterval(() => this.onInterval(), POLLING_INTERVAL);
     this.onInterval();
   }
 

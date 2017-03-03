@@ -1,6 +1,9 @@
-﻿class Session {
-  constructor(rider) {
+﻿const POLL_INTERVAL = 2500;
+
+class Session {
+  constructor(rider, pool) {
     this.rider = rider;
+    this.pool = pool;
     this.interval = null;
     this.subscriptions = 0;
   }
@@ -14,7 +17,7 @@
       console.log(`start-polling`);
       this.interval = setInterval(() => {
         this.rider.pollPositions();
-      }, 3000);
+      }, POLL_INTERVAL);
       this.rider.pollPositions();
     }
     this.subscriptions++;

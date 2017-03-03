@@ -1,17 +1,21 @@
 ﻿const EventEmitter = require('events')
 const Ghosts = require('./ghosts')
 
+const MAX_RIDERS = 10;
+
 class Rider extends EventEmitter {
-  constructor(account, riderId) {
+  constructor(account, riderId, riderStatusFn) {
     super();
 
     this.account = account;
     this.riderId = riderId;
     this.ghosts = new Ghosts(account, riderId);
+    this.riderStatusFn = riderStatusFn || this.account.getWorld(1).riderStatus
   }
 
-  setRiderId(riderId) {
+  setRiderId(riderId, riderStatusFn) {
     this.riderId = riderId;
+    this.riderStatusFn = riderStatusFn || this.account.getWorld(1).riderStatus
   }
 
   setWorld() {
@@ -100,7 +104,9 @@ class Rider extends EventEmitter {
   getPositions() {
 		// id, firstName, lastName
     return this.getRidingNow().then(riders => {
-      const promises = riders.map(r => this.riderPromise(r));
+      const promises = riders
+          .slice(0, MAX_RIDERS)
+          .map(r => this.riderPromise(r));
 
       return Promise.all(promises)
         .then(positions => this.addGhosts(positions));
@@ -108,7 +114,7 @@ class Rider extends EventEmitter {
   }
 
   riderPromise(rider) {
-    return this.account.getWorld(1).riderStatus(rider.id)
+    return this.riderStatusFn(rider.id)
       .then(status => {
         return {
           id: rider.id,

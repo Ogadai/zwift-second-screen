@@ -1,6 +1,7 @@
 ﻿import axios from 'axios';
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
+import classnames from 'classnames';
 
 import { fetchMapSettings } from '../actions/fetch';
 import { startPolling, stopPolling } from '../actions/polling';
@@ -103,7 +104,7 @@ class Map extends Component {
     const viewBox = this.state.viewBox || mapSettings.viewBox;
 
     const mapUrl = mapSettings.map ? mapSettings.map : this.svgPath(worldId);
-    return <div className="map">
+    return <div className={classnames("map", { "custom-map": mapSettings && mapSettings.map })}>
       <div className="map-route">
         <div className="full-size img" style={{ backgroundImage: `url(${mapUrl})` }} />
       </div>

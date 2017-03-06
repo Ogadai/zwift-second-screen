@@ -10,6 +10,8 @@ import {
   REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY
 } from './actions/ghosts';
 
+import { COOKIE_WARNING } from './actions/cookie-warning'
+
 function login(state = {}, action) {
   switch (action.type) {
     case RECEIVE_LOGINFAILURE:
@@ -25,13 +27,20 @@ function login(state = {}, action) {
   }
 }
 
-function environment(state, action) {
+const defaultEnv = {
+    electron: navigator.userAgent.toLowerCase().indexOf('electron') !== -1,
+    analytics: (window.ga && window.ga.trackingId) ? { trackingId: window.ga.trackingId } : {},
+    cookieWarning: false
+}
+
+function environment(state = defaultEnv, action) {
   switch (action.type) {
+    case COOKIE_WARNING:
+      return Object.assign({}, state, {
+        cookieWarning: action.value
+      })
     default:
-      return {
-        electron: navigator.userAgent.toLowerCase().indexOf('electron') !== -1,
-        analytics: (window.ga && window.ga.trackingId) ? { trackingId: window.ga.trackingId } : {}
-      };
+      return state;
   }
 }
 

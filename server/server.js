@@ -5,14 +5,14 @@ const cookieParser = require('cookie-parser');
 const path = require('path');
 
 const Map = require('./map');
-const insertAnalytics = require('./analytics');
+const insertSiteSettings = require('./siteSettings');
 
 class Server {
   constructor(riderProvider, settings) {
     this.riderProvider = riderProvider;
     this.hostData = settings ? settings.hostData : null;
     this.map = new Map(settings ? settings.worlds : null);
-    this.analytics = settings.analytics;
+    this.siteSettings = settings.site;
 
     this.initialise();
   }
@@ -145,8 +145,8 @@ class Server {
       if (req.accepts('html')) {
 				// respond with html index page
         const htmlPath = path.resolve(`${__dirname}/../public/index.html`);
-        if (this.analytics) {
-          res.send(insertAnalytics(htmlPath, this.analytics));
+        if (this.siteSettings) {
+          res.send(insertSiteSettings(htmlPath, this.siteSettings));
         } else {
           res.sendFile(htmlPath);
         }

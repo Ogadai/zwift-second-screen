@@ -1,11 +1,12 @@
 const fs = require('fs');
 
-module.exports = function insertAnalytics(htmlPath, settings) {
+module.exports = function insertSiteSettings(htmlPath, settings) {
     const html = fs.readFileSync(htmlPath, { encoding: 'utf8' });
     const scriptIndex = html.indexOf('<script');
-    const analyticsCode = getAnalyticsCode(settings.trackingId);
+    const analyticsCode = settings.trackingId ? getAnalyticsCode(settings.trackingId) : '';
+    const siteCode = getSiteCode(settings);
 
-    return `${html.substring(0, scriptIndex)}${analyticsCode}${html.substring(scriptIndex)}`;
+    return `${html.substring(0, scriptIndex)}${analyticsCode}${siteCode}${html.substring(scriptIndex)}`;
 }
 
 function getAnalyticsCode(trackingId) {
@@ -21,4 +22,10 @@ function getAnalyticsCode(trackingId) {
   ga('send', 'pageview');
 
 </script>`;
+}
+
+function getSiteCode(settings) {
+    return `<script>
+        window.__zwiftGPS = ${JSON.stringify(settings)}
+    </script>`;
 }

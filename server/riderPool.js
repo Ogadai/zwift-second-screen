@@ -1,7 +1,8 @@
 const PooledRider = require('./pooledRider')
 
 const MIN_INTERVAL = 5000;
-const MAX_RATE = 4;
+const RATE_LIMIT = process.env.ZwiftRateLimit || 5
+const MAX_RATE = RATE_LIMIT * 0.8;
 
 class RiderPool {
   constructor(account) {

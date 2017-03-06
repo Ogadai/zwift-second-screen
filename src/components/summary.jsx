@@ -27,11 +27,15 @@ class Summary extends Component {
 
   render() {
     const { profile, mapSettings } = this.props;
+    const disabled = !profile.riding;
     return (
-      <div className={classnames("summary", { disabled: !profile.riding, "custom-map": mapSettings && mapSettings.map })}>
-        <div className="logo"></div>
+      <div className={classnames("summary", { "custom-map": mapSettings && mapSettings.map })}>
+        <div className={classnames("logo", { disabled })}></div>
         <div className="player-name">
-          {profile.firstName} {profile.lastName}
+          <span className={classnames("name", { disabled })}>
+            {profile.firstName} {profile.lastName}
+          </span>
+          <a className="logout" href="/login"><img src="/img/logout.png"/></a>
 				</div>
       </div>
     )

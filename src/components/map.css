@@ -13,9 +13,14 @@
         position: absolute;
         top: 0;
         left: 0;
-        width: 100%;
-        height: 100%;
+        right: 0;
+        bottom: 0;
     }
+
+    &.custom-map .map-route, &.custom-map .map-riders {
+        top: 40px;
+    }
+
 
     & .full-size {
         max-height: 100%;
@@ -31,8 +36,12 @@
 
     & .map-attribute {
         position: absolute;
-        top: 5px;
-        right: 20px;
+        top: 40px;
+        left: 0;
+        width: 200px;
+        text-align: center;
+        padding: var(--padding);
+        z-index: 100;
 
         color: #808080;
 
@@ -41,6 +50,10 @@
             color: #6e7af8;
             font-weight: bold;
         }
+    }
+    &.custom-map .map-attribute {
+        top: 0;
+        width: 100%;
     }
 
     & .rider-position {

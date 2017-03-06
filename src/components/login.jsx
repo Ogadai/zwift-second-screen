@@ -5,6 +5,8 @@ import classnames from 'classnames';
 import { requestLoginType, postLogin, postLoginById } from '../actions/login';
 import { fetchHost, runHost, closeApp } from '../actions/host';
 
+import CookieWarning from './cookie-warning';
+
 import s2 from './app.css';
 import s from './login.css';
 
@@ -55,6 +57,7 @@ class Login extends Component {
 
     return (
       <div className="login">
+        <CookieWarning />
         <h1 className="title-bar">
           Zwift GPS
           { overlay ? <a className="close-button" href="#" onClick={onCloseApp}>X</a> : undefined }

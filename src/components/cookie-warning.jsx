@@ -24,7 +24,7 @@ class CookieWarning extends Component {
     const { cookieWarning, dismissCookieWarning } = this.props;
     return <div className={classnames("cookie-warning", { show: cookieWarning })}>
       <div className="content">
-        This site uses cookies to improve your experience.
+        <span>This site uses cookies to improve your experience.</span>
         <button onClick={dismissCookieWarning}>Got It</button>
       </div>
     </div>

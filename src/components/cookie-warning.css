@@ -6,28 +6,41 @@
     bottom: 0;
     overflow-y: hidden;
     height: 0;
-    margin: 0 auto;
     text-align: center;
     transition: height ease 500ms;
     z-index: 500;
 
     &.show {
-        height: 53px;
+        height: 50px;
     }
 
     & .content {
-        display: inline-block;
-        width: 450px;
+        box-sizing: border-box;
+        margin: 0 auto;
+        width: 95%;
+        max-width: 450px;
+        height: 50px;
         background-color: #3e3e3e;
         color: white;
         padding: 10px;
+        font-size: 0.9em;
 
         border-top-left-radius: 20px;
         border-top-right-radius: 20px;
 
+        display: flex;
+        flex-direction: row;
 
+        & span {
+            display: block;
+            margin: auto 0;
+            flex: 1 1;
+        }
 
         & button {
+            display: block;
+            flex: 0 0;
+            min-width: 70px;
             margin-left: 20px;
         }
     }

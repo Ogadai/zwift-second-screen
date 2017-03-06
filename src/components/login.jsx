@@ -72,17 +72,23 @@ class Login extends Component {
             : undefined}
 
           <fieldset>
-            {loginType == 'user'
+            {loginType === 'user'
               ? [
                 <input key="username" type="text" name="username" id="username" placeholder="Username" value={username} onChange={evt => this.setState({ username: evt.target.value })} />,
                 <input key="password" type="password" name="password" id="password" placeholder="Password" value={password} onChange={evt => this.setState({ password: evt.target.value })} />
 								] : undefined}
 
-            {loginType == 'id'
-              ? <input type="text" name="riderid" id="riderid" placeholder="Rider Id" value={id} onChange={evt => this.setState({ id: evt.target.value })} />
+            {loginType === 'id'
+              ? <input type="text" name="riderid" id="riderid" placeholder="Zwift ID" value={id} onChange={evt => this.setState({ id: evt.target.value })} />
 							: undefined}
 
 						<input type="submit" value="Log in" />
+
+            {loginType === 'id'
+            ? <span className="find-zwift-id">
+              <a href="http://zwiftblog.com/zwift-id-ios/" target="_blank">How to find your Zwift ID</a>
+              </span>
+            : undefined }
           </fieldset>
         </form>
 

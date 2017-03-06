@@ -27,18 +27,23 @@
         border-bottom-right-radius: 20px;
     }
     & form {
-        position: absolute;
-        left: calc(50% - 225px);
-        top: 60px;
-        border: 1px solid #bfbebe;
+        margin: 50px auto 0 auto;
         width: 450px;
+        max-width: 95%;
+        border: 1px solid #bfbebe;
 
         & fieldset {
-            margin: 20px 60px;
+            margin: 20px auto 0 auto;
             border: none;
-            width: 300px;
+            width: 90%;
         }
     }
+
+    & .find-zwift-id {
+        display: inline-block;
+        margin: 30px 0 0 10px;
+    }
+
     & .host {
         position: absolute;
         left: -300px;
@@ -76,6 +81,7 @@
     }
     & input[type=text], & input[type=password] {
         width: 100%;
+        margin: 10px 0;
     }
 
 }

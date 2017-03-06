@@ -23,6 +23,7 @@
         padding: var(--padding);
         font-weight: bold;
         color: var(--activity-color);
+        z-index: 200;
 
         & .name {
             vertical-align: middle;
@@ -40,6 +41,12 @@
 
     &.custom-map .logo {
         display: none;
+    }
+
+    @media (max-width: 600px) {
+        & .logo {
+            display: none;
+        }
     }
 }
 

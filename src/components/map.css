@@ -11,16 +11,11 @@
 
     & .map-route, & .map-riders {
         position: absolute;
-        top: 0;
+        top: 40px;
         left: 0;
         right: 0;
         bottom: 0;
     }
-
-    &.custom-map .map-route, &.custom-map .map-riders {
-        top: 40px;
-    }
-
 
     & .full-size {
         max-height: 100%;
@@ -52,8 +47,15 @@
         }
     }
     &.custom-map .map-attribute {
-        top: 0;
+        top: 5px;
         width: 100%;
+    }
+
+    @media (max-width: 600px) {
+        & .map-attribute, &.custom-map .map-attribute {
+            top: 3px;
+            width: auto;
+        }
     }
 
     & .rider-position {

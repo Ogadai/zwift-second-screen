@@ -28,21 +28,28 @@ class PooledRider {
     }
 
     refresh() {
-        this.promise = this.account.getWorld(1).riderStatus(this.riderId)
-            .then(status => {
-                this.promise = null;
-                if (this.last && status.time === this.last.time) {
-                    return this.last;
-                }
+        this.promise = new Promise(resolve => {
+            this.account.getWorld(1).riderStatus(this.riderId)
+                .then(status => {
+                    this.promise = null;
+                    if (this.last && status.time === this.last.time) {
+                        return this.last;
+                    }
 
-                status.requestTime = new Date();
-                if (this.last && this.last.requestTime < status.requestTime) {
-                    this.previous = this.last;
-                }
-                this.last = status;
+                    status.requestTime = new Date();
+                    if (this.last && this.last.requestTime < status.requestTime) {
+                        this.previous = this.last;
+                    }
+                    this.last = status;
 
-                return status;
-            });
+                    resolve(status);
+                })
+                .catch(() => {
+                    console.log(`Failed to get status for ${this.riderId}`);
+                    this.last = null;
+                    resolve(null);
+                });
+        });
         return this.promise;
     }
 

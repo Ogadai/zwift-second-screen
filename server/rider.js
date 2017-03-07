@@ -109,27 +109,31 @@ class Rider extends EventEmitter {
           .map(r => this.riderPromise(r));
 
       return Promise.all(promises)
-        .then(positions => this.addGhosts(positions));
+        .then(positions => this.addGhosts(positions.filter(p => p !== null)));
     });
   }
 
   riderPromise(rider) {
     return this.riderStatusFn(rider.id)
       .then(status => {
-        return {
-          id: rider.id,
-          firstName: rider.firstName,
-          lastName: rider.lastName,
-          distance: status.distance,
-          speed: status.speed,
-          power: status.power,
-          time: status.time,
-          climbing: status.climbing,
-          x: status.x,
-          y: status.y,
-          altitude: status.altitude,
-          heartrate: status.heartrate
-        };
+        if (status) {
+          return {
+            id: rider.id,
+            firstName: rider.firstName,
+            lastName: rider.lastName,
+            distance: status.distance,
+            speed: status.speed,
+            power: status.power,
+            time: status.time,
+            climbing: status.climbing,
+            x: status.x,
+            y: status.y,
+            altitude: status.altitude,
+            heartrate: status.heartrate
+          };
+        } else {
+          return null;
+        }
       });
   }
 

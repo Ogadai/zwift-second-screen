@@ -61,6 +61,9 @@ body {
 .disabled {
     filter: grayscale(100%);
 }
+.hidden {
+    display: none;
+}
 
 input, button {
     margin: 10px;

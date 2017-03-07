@@ -2,8 +2,11 @@
 import { push } from 'react-router-redux';
 
 export function requestLoginType(data) {
-  return dispatch => {
-    axios.get('/logintype').then(response => dispatch(receiveLoginType(response.data)))
+  return (dispatch, getState) => {
+    const state = getState();
+    if (!state.login || !state.login.user) {
+      axios.get('/logintype').then(response => dispatch(receiveLoginType(response.data)))
+    }
   }
 }
 

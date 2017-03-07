@@ -12,7 +12,7 @@ const Root = ({ store, history }) => {
     <Router history={history}>
       <Route path="/Login(/:filter)" component={Login} />
       <Route path="/Host(/:filter)" component={Host} />
-      <Route path="/Ghosts(/:filter)" component={EditGhosts} />
+      <Route path="/EditGhosts(/:filter)" component={EditGhosts} />
       <Route path="/(:filter)" component={App} />
     </Router>
   </Provider>

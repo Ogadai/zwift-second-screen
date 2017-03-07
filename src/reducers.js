@@ -46,6 +46,7 @@ function environment(state = defaultEnv, action) {
 
 const defaultGhosts = {
 	ghosts: [],
+  showButton: false,
   show: false,
   addingGhost: false,
   riderId: null,
@@ -62,7 +63,8 @@ function ghosts(state = defaultGhosts, action) {
   switch (action.type) {
     case RECEIVE_GHOSTS:
       return Object.assign({}, state, {
-        ghosts: action.data
+        ghosts: action.data,
+        showButton: action.showButton
       });
     case TOGGLE_GHOSTS:
       return Object.assign({}, state, {

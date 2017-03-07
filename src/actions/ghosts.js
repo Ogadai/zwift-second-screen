@@ -62,9 +62,11 @@ export function fetchGhosts(riderId) {
 export const RECEIVE_GHOSTS = "RECEIVE_GHOSTS";
 
 export function receiveGhosts(data) {
+  const isArray = Array.isArray(data);
   return {
     type: RECEIVE_GHOSTS,
-    data
+    data: isArray ? data : [],
+    showButton: isArray
   };
 }
 

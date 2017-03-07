@@ -3,7 +3,7 @@ const COOKIE_NAME = 'accept-cookie-warning';
 export const COOKIE_WARNING = "COOKIE_WARNING";
 
 export function checkCookieWarning() {
-  const requireWarning = true; //window.__zwiftGPS && window.__zwiftGPS.cookieWarning;
+  const requireWarning = window.__zwiftGPS && window.__zwiftGPS.cookieWarning;
   const warnedCookie = document.cookie.indexOf(COOKIE_NAME) !== -1;
 
   return {

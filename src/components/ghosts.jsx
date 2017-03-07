@@ -17,6 +17,7 @@ class Ghosts extends Component {
   static get propTypes() {
     return {
       ghosts: PropTypes.array,
+      showButton: PropTypes.bool,
       showPanel: PropTypes.bool,
       addingGhost: PropTypes.bool,
       riders: PropTypes.array,
@@ -58,9 +59,9 @@ class Ghosts extends Component {
   }
 
   render() {
-    const { showPanel, addingGhost, onToggleGhosts } = this.props;
+    const { showButton, showPanel, addingGhost, onToggleGhosts } = this.props;
 
-    return <div className={classnames("ghosts", { expanded: showPanel })}>
+    return <div className={classnames("ghosts", { expanded: showPanel, hidden: !showButton })}>
       {addingGhost ? this.renderActivityList() : this.renderGhostList() }
 
       <button className="ghosts-button" onClick={onToggleGhosts}><span>&gt;</span></button>
@@ -196,6 +197,7 @@ class Ghosts extends Component {
 const mapStateToProps = (state) => {
   return {
     ghosts: state.ghosts.ghosts,
+    showButton: state.ghosts.showButton,
     showPanel: state.ghosts.show,
     addingGhost: state.ghosts.addingGhost,
     riders: state.riders,

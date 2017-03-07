@@ -15,6 +15,10 @@ class Login {
     return null;
   }
 
+  get canLogout() {
+    return true;
+  }
+
   subscribe(cookie) {
     const session = this.getSession(cookie);
     if (session) return session.subscribe();

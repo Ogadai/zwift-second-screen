@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 import { fetchProfile } from '../actions/fetch';
+import { requestLoginType } from '../actions/login';
 
 import s from './summary.css';
 
@@ -10,14 +11,17 @@ class Summary extends Component {
   static get propTypes() {
     return {
       profile: PropTypes.object.isRequired,
+      user: PropTypes.object,
       mapSettings: PropTypes.object,
+      onRequestLoginType: PropTypes.func.isRequired,
       onFetch: PropTypes.func.isRequired
     };
   }
 
   componentDidMount() {
-    const { onFetch } = this.props;
+    const { onFetch, onRequestLoginType } = this.props;
     onFetch();
+    onRequestLoginType();
     this.fetchInterval = setInterval(onFetch, 10000);
   }
 
@@ -26,7 +30,7 @@ class Summary extends Component {
   }
 
   render() {
-    const { profile, mapSettings } = this.props;
+    const { profile, mapSettings, user } = this.props;
     const disabled = !profile.riding;
     return (
       <div className={classnames("summary", { "custom-map": mapSettings && mapSettings.map })}>
@@ -35,7 +39,9 @@ class Summary extends Component {
           <span className={classnames("name", { disabled })}>
             {profile.firstName} {profile.lastName}
           </span>
-          <a className="logout" href="/login"><img src="/img/logout.png"/></a>
+          { (user && user.canLogout)
+          ? <a className="logout" href="/login"><img src="/img/logout.png"/></a>
+          : undefined }
 				</div>
       </div>
     )
@@ -46,12 +52,14 @@ class Summary extends Component {
 const mapStateToProps = (state) => {
   return {
     profile: state.profile,
+		user: state.login.user,
     mapSettings: state.mapSettings
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    onRequestLoginType: () => dispatch(requestLoginType()),
     onFetch: () => dispatch(fetchProfile())
   }
 }

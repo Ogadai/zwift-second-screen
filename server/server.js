@@ -12,7 +12,7 @@ class Server {
     this.riderProvider = riderProvider;
     this.hostData = settings ? settings.hostData : null;
     this.map = new Map(settings ? settings.worlds : null);
-    this.siteSettings = settings.site;
+    this.siteSettings = settings ? settings.site : null;
 
     this.initialise();
   }
@@ -27,7 +27,9 @@ class Server {
     this.app.use(cookieParser())
 
     this.app.get('/logintype', (req, res) => {
-      sendJson(res, { type: this.riderProvider.login ? 'user' : 'id' });
+      const type = this.riderProvider.login ? 'user' : 'id'
+      const canLogout = this.riderProvider.canLogout;
+      sendJson(res, { type, canLogout });
     })
 
 		// Enable CORS for post login
@@ -54,7 +56,7 @@ class Server {
 
     this.app.get('/profile', this.processRider(rider => rider.getProfile()))
     this.app.get('/positions', this.processRider(rider => rider.getPositions()))
-    this.app.get('/riders', this.processRider(rider => rider.getRiders()))
+    this.app.get('/riders', this.processRider(rider => rider.getRiders ? rider.getRiders() : Promise.resolve([])))
 
     this.app.get('/world', this.processRider(rider => Promise.resolve({ worldId: rider.getWorld() })))
 
@@ -70,7 +72,7 @@ class Server {
 
     this.app.get('/rider/:riderId/activity/:activityId', this.processRider((rider, req) => rider.getGhosts().getActivity(req.params.riderId, req.params.activityId)))
 
-    this.app.get('/ghosts', this.processRider((rider, req) => Promise.resolve(rider.getGhosts().getList())))
+    this.app.get('/ghosts', this.processRider((rider, req) => Promise.resolve(rider.getGhosts ? rider.getGhosts().getList() : null)))
     this.app.options('/ghosts', respondCORS)
     this.app.put('/ghosts', this.processRider((rider, req) => rider.getGhosts().addGhost(parseInt(req.body.riderId), parseInt(req.body.activityId))))
     this.app.options('/ghosts/:ghostId', respondCORS)

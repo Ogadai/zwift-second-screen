@@ -189,7 +189,10 @@ class Server {
 		promise
       .then(result => {
         console.log('login successful')
-        res.cookie('zssToken', result.cookie, { httpOnly: true });
+
+        const expires = new Date()
+        expires.setFullYear(expires.getFullYear() + 1);
+        res.cookie('zssToken', result.cookie, { path: '/', httpOnly: true, expires });
 
         if (redirect)
           res.redirect('/')

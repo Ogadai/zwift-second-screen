@@ -59,7 +59,7 @@ class Login extends Component {
       <div className="login">
         <CookieWarning />
         <h1 className="title-bar">
-          Zwift GPS
+          ZwiftGPS
           { overlay ? <a className="close-button" href="#" onClick={onCloseApp}>X</a> : undefined }
 				</h1>
 
@@ -86,7 +86,7 @@ class Login extends Component {
 
             {loginType === 'id'
             ? <span className="find-zwift-id">
-              <a href="http://zwiftblog.com/zwift-id-ios/" target="_blank">How to find your Zwift ID</a>
+              <a href="http://zwiftblog.com/find-zwift-id/" target="_blank">How to find your Zwift ID</a>
               </span>
             : undefined }
           </fieldset>
@@ -104,6 +104,9 @@ class Login extends Component {
 						</div>
           : undefined}
         
+        <div className="feedback">
+          <a href="http://zwiftblog.com/zwiftgps/" target="_blank">Feedback</a>
+        </div>
       </div>
     )
   }

@@ -141,7 +141,7 @@ class Map extends Component {
         : undefined}
       {credit ?
 				<div className="map-attribute">
-          Map by <a href={credit.href} target="_blank">{credit.name}</a>
+          {credit.prompt || 'Map by'} <a href={credit.href} target="_blank">{credit.name}</a>
 				</div>
 			: undefined }
       {develop ?

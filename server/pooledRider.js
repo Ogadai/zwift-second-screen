@@ -33,7 +33,7 @@ class PooledRider {
                 .then(status => {
                     this.promise = null;
                     if (this.last && status.time === this.last.time) {
-                        console.log('Same time for ${this.riderId}')
+                        console.log(`Same time for ${this.riderId}`)
                         resolve(this.last);
                         return;
                     }

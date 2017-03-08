@@ -119,3 +119,11 @@ input[type=submit], input[type=button], button {
         border-color: var(--close-button-hover);
     }
 }
+
+.feedback {
+    position: absolute;
+    z-index: 200;
+    padding: 5px;
+    bottom: 0;
+    right: 0;
+}

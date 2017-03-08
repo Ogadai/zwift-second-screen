@@ -115,12 +115,7 @@ class Map extends Component {
       {(viewBox) ?
         <div className="map-riders">
           <svg className="full-size" viewBox={viewBox}>
-            <defs>
-              <marker id="arrowHead" orient="auto" markerWidth="1" markerHeight="2"
-                      refX="0.1" refY="1">
-                <path d="M0,0 V2 L1,1 Z" />
-              </marker>
-            </defs>
+            {this.renderDefs()}
 
             <g transform={`rotate${mapSettings.rotate}`}>
               <g transform={`translate${mapSettings.translate}`}>
@@ -150,6 +145,23 @@ class Map extends Component {
         </div>
       : undefined}
 		</div>
+  }
+
+  renderDefs() {
+    return <defs>
+        <marker id="arrowHead" orient="auto" markerWidth="1" markerHeight="2"
+                refX="0.1" refY="1">
+          <path d="M0,0 V2 L1,1 Z" />
+        </marker>
+        <filter id="glow" x="-30%" y="-30%" width="160%" height="160%">
+          <feGaussianBlur stdDeviation="1000 1000" result="glow"/>
+          <feMerge>
+            <feMergeNode in="glow"/>
+            <feMergeNode in="glow"/>
+            <feMergeNode in="glow"/>
+          </feMerge>
+        </filter>
+      </defs>;
   }
 
   renderActivity(displayActivity) {
@@ -183,10 +195,16 @@ class Map extends Component {
 				<circle cx="0" cy="0" r="6000">
 					<title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
 				</circle>
-				<text x="10000" y="2000">
-					{this.formatName(position)}
-        </text>
+				{this.renderName(position)}
 			</g>
+    </g>
+  }
+
+  renderName(position)  {
+    const nameLabel = this.formatName(position);
+    return <g>
+      <text className="glow" x="10000" y="2000">{nameLabel}</text>
+      <text x="10000" y="2000">{nameLabel}</text>
     </g>
   }
 

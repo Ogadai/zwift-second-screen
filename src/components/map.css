@@ -63,6 +63,13 @@
             font-family: Verdana;
             font-size: 9000px;
             font-weight: 600;
+            fill: black;
+
+            &.glow {
+                opacity: 0.7;
+                filter: url(#glow);
+                fill: var(--activity-color);
+            }
         }
     }
 
@@ -83,8 +90,9 @@
 
         & text {
             fill: white;
-            stroke-width: 500;
-            stroke: black;
+            &.glow {
+                fill: black;
+            }
         }
     }
 

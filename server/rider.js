@@ -8,7 +8,7 @@ class Rider extends EventEmitter {
     super();
 
     this.account = account;
-    this.riderId = 13590; //riderId;
+    this.riderId = riderId;
     this.ghosts = new Ghosts(account, riderId);
     this.riderStatusFn = riderStatusFn || this.account.getWorld(1).riderStatus
   }

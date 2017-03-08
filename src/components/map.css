@@ -40,12 +40,6 @@
         z-index: 100;
 
         color: #808080;
-
-        & a {
-            text-decoration: none;
-            color: #6e7af8;
-            font-weight: bold;
-        }
     }
     &.custom-map .map-attribute {
         top: 5px;

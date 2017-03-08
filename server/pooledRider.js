@@ -33,19 +33,21 @@ class PooledRider {
                 .then(status => {
                     this.promise = null;
                     if (this.last && status.time === this.last.time) {
-                        return this.last;
+                        console.log('Same time for ${this.riderId}')
+                        resolve(this.last);
+                        return;
                     }
 
                     status.requestTime = new Date();
-                    if (this.last && this.last.requestTime < status.requestTime) {
-                        this.previous = this.last;
-                    }
+                    this.previous = this.last;
                     this.last = status;
 
                     resolve(status);
                 })
-                .catch(() => {
-                    console.log(`Failed to get status for ${this.riderId}`);
+                .catch(ex => {
+                    const message = (ex && ex.response && ex.response.status) ? `- ${ex.response.status} (${ex.response.statusText})` : '';
+                    console.log(`Failed to get status for ${this.riderId}${message}`);
+                    this.promise = null;
                     this.last = null;
                     resolve(null);
                 });

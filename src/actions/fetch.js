@@ -25,10 +25,6 @@ export function receivePositions(data) {
   };
 }
 
-export function fetchPositions() {
-  return dispatchRequest('/positions/', receivePositions);
-}
-
 export const RECEIVE_WORLD = "RECEIVE_WORLD";
 
 export function receiveWorld(data) {

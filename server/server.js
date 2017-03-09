@@ -58,7 +58,9 @@ class Server {
     this.app.get('/positions', this.processRider(rider => rider.getPositions()))
     this.app.get('/riders', this.processRider(rider => rider.getRiders ? rider.getRiders() : Promise.resolve([])))
 
-    this.app.get('/world', this.processRider(rider => Promise.resolve({ worldId: rider.getWorld() })))
+    this.app.get('/world', this.processRider(rider => rider.getPositions().then(
+      positions => ({ worldId: rider.getWorld(), positions })
+    )))
 
     this.app.get('/activities/:playerId', this.processRider((rider, req) => {
       const targetWorldId = rider.getWorld()
@@ -261,6 +263,10 @@ function sendJson(res, data) {
   res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   res.setHeader('Access-Control-Allow-Credentials', true);
+  res.setHeader('Cache-Control', 'nocache');
+  res.setHeader('Last-Modified', (new Date()).toUTCString());
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", 0);
   res.send(data);
 }
 

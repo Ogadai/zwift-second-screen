@@ -12,6 +12,24 @@ import {
 
 import { COOKIE_WARNING } from './actions/cookie-warning'
 
+function world(state = { positions: [] }, action) {
+  switch (action.type) {
+    case RECEIVE_WORLD:
+      const { worldId, positions } = action.data;
+
+      const newState = { worldId };
+      if (positions) newState.positions = positions;
+
+      return Object.assign({}, state, newState);
+    case RECEIVE_POSITIONS:
+      return Object.assign({}, state, {
+        positions: action.data
+      });
+  default:
+    return state;
+  }
+}
+
 function login(state = {}, action) {
   switch (action.type) {
     case RECEIVE_LOGINFAILURE:
@@ -133,10 +151,9 @@ function ghosts(state = defaultGhosts, action) {
 
 const rootReducer = combineReducers({
   profile: createReducer(RECEIVE_PROFILE),
-  positions: createReducer(RECEIVE_POSITIONS, []),
-  world: createReducer(RECEIVE_WORLD),
   mapSettings: createReducer(RECEIVE_MAPSETTINGS),
   riders: createReducer(RECEIVE_RIDERS, []),
+  world,
   login,
   environment,
 	ghosts,

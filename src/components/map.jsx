@@ -297,8 +297,8 @@ class Map extends Component {
 const mapStateToProps = (state) => {
   return {
     worldId: state.world.worldId,
+    positions: state.world.positions,
     overlay: state.environment.electron,
-    positions: state.positions,
     mapSettings: state.mapSettings,
     displayActivity: state.ghosts.displayActivity
   }

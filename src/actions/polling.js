@@ -1,7 +1,7 @@
 ﻿import axios from 'axios';
 import { push } from 'react-router-redux';
 
-import { fetchWorld, fetchPositions, receivePositions, receiveWorld } from './fetch';
+import { fetchWorld, receivePositions, receiveWorld } from './fetch';
 
 const POLLING_INTERVAL = 2500;
 
@@ -90,6 +90,5 @@ class PollingClient {
 
   onInterval() {
     this.dispatch(fetchWorld());
-    this.dispatch(fetchPositions());
   }
 }

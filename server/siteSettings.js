@@ -1,7 +1,9 @@
 const fs = require('fs');
 
 module.exports = function insertSiteSettings(htmlPath, settings) {
-    const html = fs.readFileSync(htmlPath, { encoding: 'utf8' });
+    const origHtml = fs.readFileSync(htmlPath, { encoding: 'utf8' });
+    const html = replaceTitle(origHtml, settings);
+
     const scriptIndex = html.indexOf('<script');
     const analyticsCode = settings.trackingId ? getAnalyticsCode(settings.trackingId) : '';
     const siteCode = getSiteCode(settings);
@@ -28,4 +30,15 @@ function getSiteCode(settings) {
     return `<script>
         window.__zwiftGPS = ${JSON.stringify(settings)}
     </script>`;
+}
+
+function replaceTitle(html, settings) {
+    if (settings.title) {
+        const start = html.indexOf('<title>'),
+              end = html.indexOf('</title>')
+        if (start !== -1 && end !== -1) {
+            return `${html.substring(0, start)}<title>${settings.title}</title>${html.substring(end + 8)}`;
+        }
+    }
+    return html;
 }

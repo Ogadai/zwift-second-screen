@@ -37,7 +37,7 @@ class App extends Component {
       <div className={classnames("zwift-app", { overlay, hovering })}>
         <CookieWarning />
         <h1 className="title-bar">
-          ZwiftGPS
+          {document.title}
 					<a className="close-button" href="#" onClick={onCloseApp}>X</a>
 				</h1>
         <div className="content" onMouseMove={() => this.onMouseMove()}>

@@ -166,8 +166,16 @@ class Server {
     };
     
     this.app.get('/', indexRoute)
+
+    if (this.siteSettings && this.siteSettings.static) {
+      const { route, path } = this.siteSettings.static
+      // Static hosting for web client
+      this.app.use(route, express.static(path))
+    }
+
 		// Static hosting for web client
     this.app.use(express.static(`${__dirname}/../public`))
+
 		// Handle 404s (React app routing)
     this.app.use(indexRoute);
   }

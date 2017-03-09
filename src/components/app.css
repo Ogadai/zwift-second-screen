@@ -128,7 +128,6 @@ input[type=submit], input[type=button], button {
 
 .feedback {
     position: absolute;
-    z-index: 200;
     padding: 10px;
     bottom: 0;
     right: 0;

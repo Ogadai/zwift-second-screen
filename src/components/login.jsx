@@ -59,7 +59,7 @@ class Login extends Component {
       <div className="login">
         <CookieWarning />
         <h1 className="title-bar">
-          ZwiftGPS
+          {document.title}
           { overlay ? <a className="close-button" href="#" onClick={onCloseApp}>X</a> : undefined }
 				</h1>
 

@@ -1,10 +1,11 @@
 ﻿const EventEmitter = require('events')
 
 class Ghost extends EventEmitter {
-  constructor(activity, ghostId) {
+  constructor(activity, ghostId, staticData) {
     super();
 
     this.activity = activity;
+    this.static = staticData || {};
     this.startTime = new Date();
     this.startOffset = 0;
     this.id = ghostId;
@@ -44,16 +45,21 @@ class Ghost extends EventEmitter {
       const remain = offset - position.time * 1000;
       const ratio = remain / ((nextPosition.time - positions[index - 1].time) * 1000);
 
-      const trail = positions.slice(index, index + 20);
+      const trail = positions
+          .slice(index, index + 20)
+          .map(p => ({ x: p.x, y: p.y }));
 
-      const getAggregated = name => position[name] + ratio * (nextPosition[name] - position[name]);
+      const getAggregated = name => Math.round(position[name] + ratio * (nextPosition[name] - position[name]));
+      const power = getAggregated('power');
+      const wattsPerKG = this.getWattsPerKg(power, this.static.weight);
 
       return Object.assign(baseResult, {
         x: getAggregated('x'),
         y: getAggregated('y'),
         speed: getAggregated('speed'),
-        power: getAggregated('power'),
         cadence: getAggregated('cadence'),
+        power,
+        wattsPerKG,
         trail
       });
     } else {
@@ -64,6 +70,10 @@ class Ghost extends EventEmitter {
           cadence: 0
         });
     }
+  }
+
+  getWattsPerKg(power, weight) {
+      return weight ? Math.round((10 * power) / (weight / 1000)) / 10 : undefined;
   }
 
   isFinished() {

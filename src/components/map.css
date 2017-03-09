@@ -1,6 +1,18 @@
 ﻿@import 'variables.css';
 @import 'app.css';
 
+@keyframes maxPower {
+    from {
+        fill: #E03C31;
+    }
+    50% {
+        fill: #FFF0F0;
+    }
+    to {
+        fill: #E03C31;
+    }
+}
+
 .map {
     position: absolute;
     box-sizing: border-box;
@@ -53,87 +65,6 @@
         }
     }
 
-    & .rider-position {
-        z-index: 100;
-
-        & circle {
-            stroke-width: 2000;
-        }
-        & text {
-            font-family: Verdana;
-            font-size: 9000px;
-            font-weight: 600;
-            fill: black;
-
-            &.glow {
-                opacity: 0.7;
-                filter: url(#glow);
-                fill: var(--activity-color);
-            }
-        }
-    }
-
-    & .rider-ghost {
-        opacity: 0.5;
-        z-index: 0;
-
-        & circle {
-            stroke: #080808;
-        }
-
-        & polyline {
-            stroke-width: 5000;
-            stroke: #080808;
-            fill: none;
-            stroke-linejoin: round;
-        }
-
-        & text {
-            fill: white;
-            &.glow {
-                fill: black;
-            }
-        }
-    }
-
-    & .rider-0 {
-        z-index: 200;
-
-        & circle {
-            stroke: #110351;
-        }
-    }
-    & .rider-1 circle {
-        stroke: #0077BE;
-    }
-    & .rider-2 circle {
-        stroke: #317873;
-    }
-    & .rider-3 circle {
-        stroke: #FF8C00;
-    }
-    & .rider-4 circle {
-        stroke: #B768A2;
-    }
-
-    & .rider-power-0 circle {
-        fill: #0077BE; /* blue */
-    }
-    & .rider-power-1 circle {
-        fill: #90EE90; /* green */
-    }
-    & .rider-power-2 circle {
-        fill: #FFEF00; /* yellow */
-    }
-    & .rider-power-3 circle {
-        fill: #FF8C00; /* orange */
-    }
-    & .rider-power-4 circle {
-        fill: #E03C31; /* red */
-    }
-    & .rider-power-5 circle {
-        fill: #FFB0B0; /* white */
-    }
 
     & .display-activity {
         & circle {

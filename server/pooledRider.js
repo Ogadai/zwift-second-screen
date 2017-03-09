@@ -9,6 +9,9 @@ class PooledRider {
         this.previous = null;
 
         this.promise = null;
+
+        this.static = {};
+        this.staticPromise = null;
     }
 
     get id() {
@@ -28,6 +31,10 @@ class PooledRider {
     }
 
     refresh() {
+        if (!this.staticPromise) {
+            this.getStatic();
+        }
+    
         this.promise = new Promise(resolve => {
             this.account.getWorld(1).riderStatus(this.riderId)
                 .then(status => {
@@ -40,19 +47,41 @@ class PooledRider {
 
                     status.requestTime = new Date();
                     this.previous = this.last;
-                    this.last = status;
 
-                    resolve(status);
+                    this.last = this.addStatic(status);
+                    resolve(this.last);
                 })
                 .catch(ex => {
-                    const message = (ex && ex.response && ex.response.status) ? `- ${ex.response.status} (${ex.response.statusText})` : '';
-                    console.log(`Failed to get status for ${this.riderId}${message}`);
+                    console.log(`Failed to get status for ${this.riderId}${errorMessage(ex)}`);
                     this.promise = null;
                     this.last = null;
                     resolve(null);
                 });
         });
         return this.promise;
+    }
+
+    getStatic() {
+        this.staticPromise = this.account.getProfile(this.riderId).profile()
+            .then(profile => {
+                this.static = {
+                    weight: profile.weight
+                }
+            })
+            .catch(ex => {
+                console.log(`Failed to get profile for ${this.riderId}${errorMessage(ex)}`);
+            });
+    }
+
+    addStatic(status) {
+        const extra = {
+            wattsPerKG: this.getWattsPerKg(status.power, this.static.weight)
+        };
+        return Object.assign({}, status, extra);
+    }
+
+    getWattsPerKg(power, weight) {
+        return weight ? Math.round((10 * power) / (weight / 1000)) / 10 : undefined
     }
 
     get isStale() {
@@ -83,3 +112,7 @@ class PooledRider {
     // }
 }
 module.exports = PooledRider;
+
+function errorMessage(ex) {
+    return (ex && ex.response && ex.response.status) ? `- ${ex.response.status} (${ex.response.statusText})` : '';
+}

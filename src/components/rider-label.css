@@ -1,0 +1,15 @@
+@import 'variables.css';
+
+.map .rider-position .rider-label {
+    z-index: 250;
+
+    & .background {
+        fill: var(--shaded-background);
+        opacity: 0.8;
+    }
+
+    & .label {
+        font-size: 7000px;
+        font-weight: 400;
+    }
+}

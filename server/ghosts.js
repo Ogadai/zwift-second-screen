@@ -13,11 +13,22 @@ class Ghosts extends EventEmitter {
   }
 
   addGhost(riderId, activityId) {
-    return this.getActivity(riderId, activityId)
-      .then(activity => {
+    return Promise.all([
+      this.getActivity(riderId, activityId),
+      this.getStaticData(riderId)
+    ]).then(([activity, staticData]) => {
         this.removeGhost(activityId);
-        this.ghostRiders.push(new Ghost(activity, activityId));
+        this.ghostRiders.push(new Ghost(activity, activityId, staticData));
       });
+  }
+
+  getStaticData(riderId) {
+    return this.account.getProfile(this.riderId).profile()
+        .then(profile => {
+          return {
+              weight: profile.weight
+          }
+        })
   }
 
   removeGhost(ghostId) {

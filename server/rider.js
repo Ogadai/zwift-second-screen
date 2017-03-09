@@ -129,7 +129,8 @@ class Rider extends EventEmitter {
             x: status.x,
             y: status.y,
             altitude: status.altitude,
-            heartrate: status.heartrate
+            heartrate: status.heartrate,
+            wattsPerKG: status.wattsPerKG
           };
         } else {
           return null;

@@ -3,14 +3,11 @@ import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
+import Rider from './rider.jsx';
 import { fetchMapSettings } from '../actions/fetch';
 import { startPolling, stopPolling } from '../actions/polling';
 
 import s from './map.css';
-
-const riderColours = 5;
-const powerMax = 750;
-const powerColours = 6;
 
 class Map extends Component {
   static get propTypes() {
@@ -39,7 +36,8 @@ class Map extends Component {
       viewBox: undefined,
       activityIndex: -1,
       activityId: -1,
-      activityInterval: null
+      activityInterval: null,
+      selected: -1
     }
   }
 
@@ -104,6 +102,8 @@ class Map extends Component {
     const viewBox = this.state.viewBox || mapSettings.viewBox;
 
     const mapUrl = mapSettings.map ? mapSettings.map : this.svgPath(worldId);
+    const labelRotate = this.getLabelRotate();
+
     return <div className={classnames("map", { "custom-map": mapSettings && mapSettings.map })}>
       <div className="map-route">
         <div className="full-size img" style={{ backgroundImage: `url(${mapUrl})` }} />
@@ -113,7 +113,9 @@ class Map extends Component {
 				: undefined
       }
       {(viewBox) ?
-        <div className="map-riders">
+        <div className="map-riders"
+              onClick={ev => { ev.stopPropagation(); this.selectRider(-1); }}
+        >
           <svg className="full-size" viewBox={viewBox}>
             {this.renderDefs()}
 
@@ -122,7 +124,14 @@ class Map extends Component {
 
                 { positions
 								  ? <g id="riders" className="riders">
-									    { positions.map((p, i) => this.renderPosition(p, i)) }
+									    { this.sortRiders(positions).map((p, i) =>
+                        <Rider key={`rider-${i}`}
+                          position={p}
+                          labelRotate={labelRotate}
+                          selected={p.id === this.state.selected}
+                          onClick={ev => this.clickRider(ev, p) }
+                        />)
+                      }
 								    </g>
                   : undefined }
 
@@ -145,6 +154,15 @@ class Map extends Component {
         </div>
       : undefined}
 		</div>
+  }
+
+  clickRider(event, position) {
+    event.stopPropagation();
+    this.selectRider(position.ghost ? -1 : position.id);
+  }
+
+  selectRider(id) {
+    this.setState({ selected: id });
   }
 
   renderDefs() {
@@ -183,47 +201,6 @@ class Map extends Component {
     const worldParam = worldId ? `?world=${worldId}` : '';
     return `${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg${worldParam}`;
   }
-
-  renderPosition(position, index) {
-    return <g key={`rider-${index}`}
-      className={this.getRiderClass(position, index)}
-				transform={`translate(${position.x},${position.y})`}>
-      { position.trail 
-        ? this.renderTrail(position)
-        : undefined }
-      <g transform={`rotate(${this.getLabelRotate()})`}>
-				<circle cx="0" cy="0" r="6000">
-					<title>{position.power}w {Math.round(position.speed/ 1000000)}km/h</title>
-				</circle>
-				{this.renderName(position)}
-			</g>
-    </g>
-  }
-
-  renderName(position)  {
-    const nameLabel = this.formatName(position);
-    return <g>
-      <text className="glow" x="10000" y="2000">{nameLabel}</text>
-      <text x="10000" y="2000">{nameLabel}</text>
-    </g>
-  }
-
-  formatName(position) {
-    return `${position.firstName ? position.firstName.substring(0, 1) : ''} ${position.lastName}`;
-  }
-
-  renderTrail(position) {
-    const { x, y, trail } = position;
-    const points = trail.map(p => `${p.x - x},${p.y - y}`).join(' ');
-    return <polyline points={points} markerEnd="url(#arrowHead)" />
-  }
-
-  getRiderClass(position, index) {
-    const riderIndex = position.ghost ? 'ghost' : index % riderColours;
-    const powerIndex = Math.round(powerColours * position.power / powerMax);
-
-    return `rider-position rider-${riderIndex} rider-power-${powerIndex}`;
-  }
 	
   getLabelRotate() {
     const { mapSettings } = this.props;
@@ -232,6 +209,24 @@ class Map extends Component {
     }
 
     return 0;
+  }
+
+  sortRiders(positions) {
+    const { selected } = this.state;
+
+    return positions.slice(0).sort((a, b) => {
+      if (a.ghost !== b.ghost) {
+        return a.ghost ? -1 : 1;
+      } else if (a.id === selected) {
+        return 1;
+      } else if (b.id === selected) {
+        return -1;
+      } else if (a.lastName && b.lastName) {
+        return a.lastName.localeCompare(b.lastName)
+      } else {
+        return a.id -  b.id;
+      }
+    });
   }
 
   viewBoxKeyPress(evt) {

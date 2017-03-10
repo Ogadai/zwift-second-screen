@@ -60,6 +60,7 @@ class Zoom extends Component {
                         onTouchEnd={e => this.onTouchEnd(e)}
                         onTouchMove={e => this.onTouchMove(e)}
                         onTouchCancel={e => this.onTouchCancel(e)}
+                        onDoubleClick={this.toggleFullScreen}
                     >
                 {this.props.children}
             </div>
@@ -259,35 +260,28 @@ class Zoom extends Component {
         if (center.x < (1 / scale) / 2) center.x = (1 / scale) / 2;
         if (center.x > 1 - (1 / scale) / 2) center.x = 1 - (1 / scale) / 2;
 
-        if (this.state.scale === 1 && scale > 1) {
-            this.enterFullScreen();
-        } else if (this.state.scale > 1 && scale === 1) {
-            this.exitFullScreen();
-        }
-
         this.setState(Object.assign({}, state, {
             center,
             scale
         }));
     }
 
-    enterFullScreen() {
-        var docEl = window.document.documentElement;
-        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-        try {
-            if (requestFullScreen) requestFullScreen.call(docEl);
-        } catch(ex) {
-            console.log(`error trying to enter full screen - ${ex.message}`);
-        }
-    }
-
-    exitFullScreen() {
+    toggleFullScreen() {
         var doc = window.document;
+        var docEl = doc.documentElement;
+
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
         var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+
         try {
-            if (cancelFullScreen) cancelFullScreen.call(doc);
+            if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
+                requestFullScreen.call(docEl);
+            }
+            else {
+                cancelFullScreen.call(doc);
+            }
         } catch(ex) {
-            console.log(`error trying to enter full screen - ${ex.message}`);
+            console.log(`error trying to toggle full screen - ${ex.message}`);
         }
     }
 }

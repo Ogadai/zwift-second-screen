@@ -7,6 +7,7 @@ import Summary from './summary';
 import Map from './map';
 import Ghosts from './ghosts';
 import Analytics from './analytics';
+import Zoom from './zoom';
 
 import { closeApp } from '../actions/host';
 
@@ -41,7 +42,9 @@ class App extends Component {
 					<a className="close-button" href="#" onClick={onCloseApp}>X</a>
 				</h1>
         <div className="content" onMouseMove={() => this.onMouseMove()}>
-          <Map develop={develop} />
+          <Zoom>
+            <Map develop={develop} />
+          </Zoom>
           <Summary />
 					<Ghosts />
 				</div>

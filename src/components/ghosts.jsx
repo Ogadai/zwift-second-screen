@@ -64,7 +64,9 @@ class Ghosts extends Component {
     return <div className={classnames("ghosts", { expanded: showPanel, hidden: !showButton })}>
       {addingGhost ? this.renderActivityList() : this.renderGhostList() }
 
-      <button className="ghosts-button" onClick={onToggleGhosts}><span>&gt;</span></button>
+      <button className="ghosts-button" onClick={onToggleGhosts}>
+        <img src="/img/arrow.png" />
+      </button>
     </div>
   }
 
@@ -98,7 +100,10 @@ class Ghosts extends Component {
     const disabled = !activityId || waitingAddGhost
 		return <div className="display-area adding">
       <header>
-        <input className="back-button" type="button" value="<" onClick={onToggleAddGhost} />
+        <button className="back-button" onClick={onToggleAddGhost}>
+          <img src="/img/arrow.png" />
+        </button>
+
         <select value={riderId || -1} onChange={event => onSelectRider(event.target.value)}>
           {riders.map(r => <option key={r.id} value={r.id}>{r.firstName} {r.lastName} Activities</option>)}
         </select>

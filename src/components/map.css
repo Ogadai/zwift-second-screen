@@ -42,22 +42,6 @@
         background-position-x: 50%;
     }
 
-    & .map-attribute {
-        position: absolute;
-        top: 40px;
-        left: 0;
-        width: 200px;
-        text-align: center;
-        padding: var(--padding);
-        z-index: 100;
-
-        color: #808080;
-    }
-    &.custom-map .map-attribute {
-        top: 5px;
-        width: 100%;
-    }
-
     @media (max-width: 600px) {
         & .map-attribute, &.custom-map .map-attribute {
             top: 3px;

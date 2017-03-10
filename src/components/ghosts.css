@@ -12,7 +12,7 @@
     border: 1px solid transparent;
     border-radius: 8px;
     overflow: hidden;
-    z-index: 10;
+    z-index: 250;
 
     transition: all ease 400ms;
     transition-property: width, height, border-color;
@@ -36,10 +36,11 @@
         transition: all ease 400ms;
         transition-property: border-top-left-radius, border-bottom-right-radius;
 
-        & span {
+        & img {
+            width: 30px;
+            height: 30px;
             display: inline-block;
             transition: transform ease 400ms;
-            transform: rotate(-45deg);
             font-size: 1.5em;
             font-weight: 600;
             font-family: Arial;
@@ -55,8 +56,8 @@
             border-top-left-radius: 0;
             border-bottom-right-radius: 0;
 
-            & span {
-                transform: rotate(135deg);
+            & img {
+                transform: rotate(180deg);
             }
         }
     }
@@ -231,6 +232,13 @@
         font-size: 1.5em;
         font-weight: 600;
         font-family: Arial;
+        padding-left: 15px;
+
+        & img {
+            transform: rotate(225deg);
+            width: 30px;
+            height: 30px;
+        }
     }
 }
 

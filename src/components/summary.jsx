@@ -31,6 +31,7 @@ class Summary extends Component {
 
   render() {
     const { profile, mapSettings, user } = this.props;
+    const { credit } = mapSettings;
     const disabled = !profile.riding;
     return (
       <div className={classnames("summary", { "custom-map": mapSettings && mapSettings.map })}>
@@ -43,6 +44,11 @@ class Summary extends Component {
           ? <a className="logout" href="/login"><img src="/img/logout.png"/></a>
           : undefined }
 				</div>
+        {credit ?
+          <div className="map-attribute">
+            {credit.prompt || 'Map by'} <a href={credit.href} target="_blank">{credit.name}</a>
+          </div>
+        : undefined }
       </div>
     )
   }

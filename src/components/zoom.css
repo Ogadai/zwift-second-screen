@@ -1,0 +1,38 @@
+@import 'variables.css';
+
+.zoom-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
+
+    & .zoom-area {
+        position: absolute;
+        user-select: none;
+        touch-action: none;
+    }
+
+    & .zoom-follow-btn {
+        position: absolute;
+        bottom: var(--padding);
+        left: 80px;
+        width: 50px;
+        height: 50px;
+        z-index: 220;
+
+        & img {
+            width: 30px;
+            height: 30px;
+        }
+
+        &.hide {
+            display: none;
+        }
+
+        &.inactive {
+            filter: grayscale(100%);
+        }
+    }
+}

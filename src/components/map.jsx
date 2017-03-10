@@ -143,11 +143,6 @@ class Map extends Component {
 					</svg>
         </div>
         : undefined}
-      {credit ?
-				<div className="map-attribute">
-          {credit.prompt || 'Map by'} <a href={credit.href} target="_blank">{credit.name}</a>
-				</div>
-			: undefined }
       {develop ?
         <div className="map-develop">
           <input className="viewbox" type="text" value={viewBox} onKeyPress={evt => this.viewBoxKeyPress(evt)} />

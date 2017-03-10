@@ -63,7 +63,7 @@
         & .logo {
             display: none;
         }
-        & .map-attribute {
+        & .map-attribute, &.custom-map .map-attribute {
             top: 5px;
             width: auto;
         }

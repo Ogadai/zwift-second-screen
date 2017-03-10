@@ -259,13 +259,38 @@ class Zoom extends Component {
         if (center.x < (1 / scale) / 2) center.x = (1 / scale) / 2;
         if (center.x > 1 - (1 / scale) / 2) center.x = 1 - (1 / scale) / 2;
 
+        if (this.state.scale === 1 && scale > 1) {
+            this.enterFullScreen();
+        } else if (this.state.scale > 1 && scale === 1) {
+            this.exitFullScreen();
+        }
+
         this.setState(Object.assign({}, state, {
             center,
             scale
         }));
     }
-}
 
+    enterFullScreen() {
+        var docEl = window.document.documentElement;
+        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
+        try {
+            if (requestFullScreen) requestFullScreen.call(docEl);
+        } catch(ex) {
+            console.log(`error trying to enter full screen - ${ex.message}`);
+        }
+    }
+
+    exitFullScreen() {
+        var doc = window.document;
+        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
+        try {
+            if (cancelFullScreen) cancelFullScreen.call(doc);
+        } catch(ex) {
+            console.log(`error trying to enter full screen - ${ex.message}`);
+        }
+    }
+}
 
 const mapStateToProps = (state) => {
   return {

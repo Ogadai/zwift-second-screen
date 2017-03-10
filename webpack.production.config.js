@@ -50,7 +50,8 @@ module.exports = {
 		}),
     new CopyWebpackPlugin([
       { from: 'img', to: 'img' },
-      { from: 'favicon.ico', to: 'favicon.ico' }
+      { from: 'favicon.ico', to: 'favicon.ico' },
+			{ from: 'manifest.json', to: 'manifest.json' }
     ]),
     new HtmlWebpackPlugin({
       template: './src/template.html',

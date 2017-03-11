@@ -11,8 +11,6 @@ const WHEEL_RATE = 0.1;
 class Zoom extends Component {
   static get propTypes() {
     return {
-      positions: PropTypes.array,
-      mapSettings: PropTypes.object,
       showingGhosts: PropTypes.bool
     };
   }
@@ -36,7 +34,7 @@ class Zoom extends Component {
     componentWillReceiveProps(props) {
         const { follow, scale } = this.state;
         if (follow && scale > 1.1) {
-            this.centerOnRider(props);
+            this.centerOnRider();
         }
     }
 
@@ -72,46 +70,35 @@ class Zoom extends Component {
 
     clickFollow() {
         const { follow } = this.state;
+        const newFollow = !follow;
 
         this.setState({
-            follow: !follow
+            follow: newFollow
         });
-        this.centerOnRider(this.props);
+
+        if (newFollow) {
+            const followInterval = setInterval(() => {
+                if (!this.state.follow) {
+                    clearInterval(followInterval);
+                } else {
+                    this.centerOnRider();
+                }
+            }, 1000);
+            this.centerOnRider();
+        }
     }
 
-    centerOnRider(props) {
-        const { positions, mapSettings } = this.props;
-        let [ left, top, width, height ] = mapSettings.viewBox.split(' ');
-        const { clientWidth, clientHeight } = this.zoomElement;
-        const rotate = mapSettings.rotate && (parseInt(mapSettings.rotate.substring(1)) !== 0);
+    centerOnRider() {
+        const elements = document.querySelectorAll('.rider-position circle');
+        if (elements && elements.length) {
+            const lastElement = elements[elements.length - 1];
+            const riderRect = lastElement.getBoundingClientRect();
+            const mapRect = this.zoomElement.getBoundingClientRect();
 
-        if ((width / height) < (clientWidth / clientHeight)) {
-            // Increase width
-            const newWidth = height * (clientWidth / clientHeight);
-            left -= (newWidth - width) / 2;
-            width = newWidth;
-        } else {
-            // Increase height
-            const newHeight = width / (clientWidth / clientHeight);
-            top -= (newHeight - height);
-            height = newHeight;
-        }
-
-        if (positions && positions.length > 0) {
-            const position = positions[0];
-            let center;
-            if (rotate) {
-                center = {
-                    x: (position.y - left) / width,
-                    y: 1 - ((position.x - top) / height)
-                }
-            } else {
-                center = {
-                    x: (position.x - left) / width,
-                    y: (position.y - top) / height
-                }
-            }
-
+            const center = {
+                x: ((riderRect.left + riderRect.width / 2) - mapRect.left) / mapRect.width,
+                y: ((riderRect.top + riderRect.height / 2) - mapRect.top) / mapRect.height
+            };
             this.setZoom({ center });
         }
     }
@@ -288,8 +275,6 @@ class Zoom extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    positions: state.world.positions,
-    mapSettings: state.mapSettings,
     showingGhosts: state.ghosts.show
   }
 }

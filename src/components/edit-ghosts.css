@@ -9,22 +9,16 @@
         max-height: 100%;
         max-width: 100%;
         border-radius: 0;
+        background-color: var(--ghosts-background);
 
-        & .ghosts-button {
+        & .ghosts-button, & .minimize-button {
             display: none;
         }
 
         & .display-area {
             min-width: 100%;
             min-height: 100%;
-        }
-
-        & .back-button {
-            border-top-left-radius: 0;
-        }
-
-        & footer .add-ghost-button {
-            border-bottom-right-radius: 0;
+            opacity: 1;
         }
     }
 }

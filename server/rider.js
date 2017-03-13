@@ -10,12 +10,12 @@ class Rider extends EventEmitter {
     this.account = account;
     this.riderId = riderId;
     this.ghosts = new Ghosts(account, riderId);
-    this.riderStatusFn = riderStatusFn || this.account.getWorld(1).riderStatus
+    this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
   }
 
   setRiderId(riderId, riderStatusFn) {
     this.riderId = riderId;
-    this.riderStatusFn = riderStatusFn || this.account.getWorld(1).riderStatus
+    this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
   }
 
   setWorld() {
@@ -142,5 +142,22 @@ class Rider extends EventEmitter {
     const ghostPositions = this.ghosts.getPositions();
     return positions.concat(ghostPositions);
   }
+
+  fallbackRiderStatusFn(id) {
+    return new Promise(resolve => {
+      this.account.getWorld(1).riderStatus(id)
+          .then(status => {
+            resolve(status);
+          })
+          .catch(ex => {
+            console.log(`Failed to get status for ${id}${errorMessage(ex)}`);
+            resolve(null);
+          });
+    });
+  }
 }
 module.exports = Rider;
+
+function errorMessage(ex) {
+    return (ex && ex.response && ex.response.status) ? `- ${ex.response.status} (${ex.response.statusText})` : '';
+}

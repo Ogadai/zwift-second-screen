@@ -84,4 +84,10 @@
         margin: 10px 0;
     }
 
+    & .feedback {
+        position: absolute;
+        padding: var(--padding);
+        left: 0;
+        bottom: 0;
+    }
 }

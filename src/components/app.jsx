@@ -30,6 +30,12 @@ class App extends Component {
     };
   }
 
+  componentWillUnmount() {
+    if (this.mouseMoveTimeout) {
+      clearTimeout(this.mouseMoveTimeout);
+    }
+  }
+
   render() {
     const { develop, overlay, onCloseApp } = this.props;
     const { hovering } = this.state;
@@ -42,17 +48,13 @@ class App extends Component {
 					<a className="close-button" href="#" onClick={onCloseApp}>X</a>
 				</h1>
         <div className="content" onMouseMove={() => this.onMouseMove()}>
-          <Zoom>
+          <Zoom followSelector=".rider-position circle">
             <Map develop={develop} />
           </Zoom>
           <Summary />
 					<Ghosts />
 				</div>
         <Analytics />
-        
-        <div className="feedback">
-          <a href="http://zwiftblog.com/zwiftgps/" target="_blank">Feedback</a>
-        </div>
       </div>
     )
   }

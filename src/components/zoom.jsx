@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 import s from './zoom.css';
@@ -11,7 +10,7 @@ const WHEEL_RATE = 0.1;
 class Zoom extends Component {
   static get propTypes() {
     return {
-      showingGhosts: PropTypes.bool
+      followSelector: PropTypes.string
     };
   }
 
@@ -39,6 +38,7 @@ class Zoom extends Component {
     }
 
     render() {
+        const { followSelector } = this.props;
         const { scale, center, follow } = this.state;
         const scalePercent = scale * 100;
 
@@ -62,9 +62,12 @@ class Zoom extends Component {
                     >
                 {this.props.children}
             </div>
-            <button className={classnames("zoom-follow-btn", { hide: scale < 1.1 || this.props.showingGhosts, inactive: !follow })} onClick={() => this.clickFollow()}>
-                <img src="/img/target.png" />
-            </button>
+
+            { followSelector ?
+                <button className={classnames("app-button", "zoom-follow-btn", { hide: scale < 1.1, inactive: !follow })} onClick={() => this.clickFollow()}>
+                    <span className="zwiftgps-icon icon-follow">&nbsp;</span>
+                </button>
+            : undefined }
         </div>
     }
 
@@ -89,7 +92,8 @@ class Zoom extends Component {
     }
 
     centerOnRider() {
-        const elements = document.querySelectorAll('.rider-position circle');
+        const { followSelector } = this.props;
+        const elements = document.querySelectorAll(followSelector);
         if (elements && elements.length) {
             const lastElement = elements[elements.length - 1];
             const riderRect = lastElement.getBoundingClientRect();
@@ -273,18 +277,4 @@ class Zoom extends Component {
     }
 }
 
-const mapStateToProps = (state) => {
-  return {
-    showingGhosts: state.ghosts.show
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(Zoom);
+export default Zoom;

@@ -1,72 +1,100 @@
 ﻿@import 'variables.css';
 
 .summary {
-    position: absolute;
-    box-sizing: border-box;
-    top: 0;
-    left: 0;
-    width: 100%;
-    padding: var(--padding);
-
-    & .logo {
-        width: 200px;
-        height: 30px;
-        background-image: url(/img/zwift.png);
-        background-size: 100% 100%;
-        background-repeat: no-repeat;
+    & .menu-button {
+        position: absolute;
+        top: var(--padding);
+        left: var(--padding);
+        z-index: 250;
     }
 
-    & .player-name {
+    & .menu-overlay {
         position: absolute;
-        right: 0;
+        left: 0;
         top: 0;
-        padding: var(--padding);
-        font-weight: bold;
-        color: var(--activity-color);
-        z-index: 200;
+        bottom: 0;
+        right: 0;
+        background-color: transparent;
+        z-index: 300;
+        user-select: none;
+        touch-action: none;
 
-        & .name {
-            vertical-align: middle;
+        &.hide {
+            display: none;
+        }
+    }
+
+    & .menu-content {
+        background-color: var(--menu-background);
+        position: absolute;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        width: 220px;
+        transition: left ease 400ms;
+        z-index: 350;
+        user-select: none;
+        touch-action: none;
+        
+        &.hide {
+            left: -300px;
         }
 
-        & .logout {
-            margin-left: 10px;
-            & img {
-                width: 24px;
-                height: 24px;
-                vertical-align: middle;
+        & .actions {
+            margin: 10px 0 0 0;
+            padding: 10px 0 0 0;
+            list-style: none;
+            border-top: 2px solid var(--activity-color);
+
+            & li a {
+                display: flex;
+                flex-direction: row;
+                box-sizing: border-box;
+                padding: var(--padding) 20px;
+
+                & span {
+                    flex: 1;
+                    padding: 7px;
+                }
+                & img, & .zwiftgps-icon {
+                    flex: 0;
+                    padding: 0;
+                    display: inline-block;
+                    margin-right: 10px;
+                }
+
+                &:hover {
+                    background-color: var(--shaded-background);
+                }
             }
         }
     }
 
-    &.custom-map .logo {
-        display: none;
+    & .logo {
+        width: 90%;
+        height: 30px;
+        background-image: url(/img/zwift.png);
+        background-size: 100% 100%;
+        background-repeat: no-repeat;
+        margin: var(--padding) auto;
+    }
+
+    & .player-name {
+        text-align: center;
+        padding: var(--padding);
+        font-weight: bold;
+        color: var(--activity-color);
     }
 
     & .map-attribute {
         position: absolute;
-        top: 40px;
-        left: 0;
-        width: 200px;
-        text-align: center;
+        right: 5px;
+        top: 5px;
+        width: auto;
         padding: var(--padding);
         z-index: 100;
 
         color: #808080;
-    }
-    &.custom-map .map-attribute {
-        top: 5px;
-        width: 100%;
-    }
-
-    @media (max-width: 600px) {
-        & .logo {
-            display: none;
-        }
-        & .map-attribute, &.custom-map .map-attribute {
-            top: 5px;
-            width: auto;
-        }
     }
 }
 

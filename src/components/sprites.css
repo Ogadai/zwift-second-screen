@@ -1,0 +1,53 @@
+.zwiftgps-icon {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    min-width: 32px;
+    min-height: 32px;
+    background: url(/img/sprites.png);
+
+    &.icon-logout {
+        background-position: 0 0;
+    }
+
+    &.icon-feedback {
+        background-position: 0 -32px;
+    }
+
+    &.icon-ghosts {
+        background-position: 0 -64px;
+
+        &.active {
+            background-position: -32px -64px;
+        }
+    }
+
+    &.icon-follow {
+        background-position: 0 -96px;
+
+        &.active {
+            background-position: -32px -96px;
+        }
+    }
+
+    &.icon-menu {
+        background-position: 0 -128px;
+    }
+
+    &.icon-minimize {
+        background-position: 0 -160px;
+    }
+
+    &.icon-back {
+        background-position: 0 -192px;
+    }
+
+    &.icon-add {
+        background-position: 0 -224px;
+    }
+
+    &.icon-fullscreen {
+        background-position: 0 -256px;
+    }
+}
+

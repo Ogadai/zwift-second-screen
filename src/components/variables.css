@@ -8,9 +8,17 @@
     --button-background: #FC6719;
     --button-background-hover: #B7B7B7;
 
+    --app-button-background: #FC6719;
+
+    --ghosts-border: #FC6719;
+    --ghosts-background: rgba(255, 255, 255, 0.6);
+
+
     --highlight-color: white;
     --highlight-background: #FC6719;
     --shaded-background: #DDDDDD;
 
     --activity-color: #FC6719;
+
+    --menu-background: white;
 }

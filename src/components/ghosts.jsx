@@ -64,23 +64,28 @@ class Ghosts extends Component {
     return <div className={classnames("ghosts", { expanded: showPanel, hidden: !showButton })}>
       {addingGhost ? this.renderActivityList() : this.renderGhostList() }
 
-      <button className="ghosts-button" onClick={onToggleGhosts}>
-        <img src="/img/arrow.png" />
+      <button className="app-button ghosts-button" onClick={onToggleGhosts}>
+        <span className="zwiftgps-icon icon-ghosts">&nbsp;</span>
       </button>
     </div>
   }
 
 	renderGhostList() {
-    const { onToggleAddGhost, ghosts, requestingRegroup, onRequestRegroup, onChangedGhost } = this.props;
+    const { onToggleAddGhost, ghosts, requestingRegroup, onRequestRegroup, onChangedGhost, onToggleGhosts } = this.props;
     const disabled = requestingRegroup || ghosts.length == 0
 		return <div className="display-area">
 			<h1>Ghosts</h1>
+      <button className="minimize-button" onClick={onToggleGhosts}>
+        <span className="zwiftgps-icon icon-minimize">&nbsp;</span>
+      </button>
 			<div className="list" onClick={() => onChangedGhost(null)}>
         {ghosts && ghosts.length ?
           <ul>{ghosts.map(g => this.renderGhost(g))}</ul>
         : <span className="add-prompt">
             Click
-            <input className="add-ghost-button" type="button" value="+" onClick={onToggleAddGhost} />
+            <button className="add-ghost-button" onClick={onToggleAddGhost}>
+              <span className="zwiftgps-icon icon-add">&nbsp;</span>
+            </button>
             below to start adding Ghosts
           </span> }
 			</div>
@@ -89,19 +94,24 @@ class Ghosts extends Component {
           <input className={classnames("regroup-button", { disabled })}
             disabled={disabled} type="button" value="Regroup" onClick={onRequestRegroup} />
         </div>
-				<input className="add-ghost-button" type="button" value="+" onClick={onToggleAddGhost} />
+        <button className="add-ghost-button" onClick={onToggleAddGhost}>
+          <span className="zwiftgps-icon icon-add">&nbsp;</span>
+        </button>
 			</footer>
 		</div>;
 	}
 
   renderActivityList() {
     const { riders, riderId, loadingActivities, activities, activityId,
-      onToggleAddGhost, onChangeActivity, onSelectRider, onAddGhost, waitingAddGhost } = this.props;
+      onToggleAddGhost, onChangeActivity, onSelectRider, onAddGhost, waitingAddGhost, onToggleGhosts } = this.props;
     const disabled = !activityId || waitingAddGhost
 		return <div className="display-area adding">
       <header>
         <button className="back-button" onClick={onToggleAddGhost}>
-          <img src="/img/arrow.png" />
+          <span className="zwiftgps-icon icon-back">&nbsp;</span>
+        </button>
+        <button className="minimize-button" onClick={onToggleGhosts}>
+          <span className="zwiftgps-icon icon-minimize">&nbsp;</span>
         </button>
 
         <select value={riderId || -1} onChange={event => onSelectRider(event.target.value)}>

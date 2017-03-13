@@ -58,7 +58,6 @@ class Zoom extends Component {
                         onTouchEnd={e => this.onTouchEnd(e)}
                         onTouchMove={e => this.onTouchMove(e)}
                         onTouchCancel={e => this.onTouchCancel(e)}
-                        onDoubleClick={this.toggleFullScreen}
                     >
                 {this.props.children}
             </div>
@@ -255,25 +254,6 @@ class Zoom extends Component {
             center,
             scale
         }));
-    }
-
-    toggleFullScreen() {
-        var doc = window.document;
-        var docEl = doc.documentElement;
-
-        var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-        var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-        try {
-            if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-                requestFullScreen.call(docEl);
-            }
-            else {
-                cancelFullScreen.call(doc);
-            }
-        } catch(ex) {
-            console.log(`error trying to toggle full screen - ${ex.message}`);
-        }
     }
 }
 

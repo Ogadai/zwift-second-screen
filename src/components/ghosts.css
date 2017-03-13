@@ -47,7 +47,7 @@
         width: 400px;
         height: 400px;
         border: 1px solid var(--ghosts-border);
-        background-color: white;
+        background-color: var(--ghosts-background);
         border-radius: 8px;
         
         & .display-area {

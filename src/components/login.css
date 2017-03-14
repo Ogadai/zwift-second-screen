@@ -9,6 +9,7 @@
     left: 0;
     right: 1px;
     bottom: 1px;
+    min-height: 410px;
     
     & h2 {
         background-color: #3e3e3e;

@@ -7,6 +7,7 @@ class PooledRider {
         this.lastTime = new Date();
         this.last = null;
         this.previous = null;
+        this.skip = 0;
 
         this.promise = null;
 
@@ -24,7 +25,7 @@ class PooledRider {
         if (this.promise) {
             return this.promise;
         }
-        else if (this.last) {
+        else if (this.last || this.skip > 0) {
             return new Promise(resolve => resolve(this.last));
         }
         return this.refresh();
@@ -33,6 +34,11 @@ class PooledRider {
     refresh() {
         if (!this.staticPromise) {
             this.getStatic();
+        }
+
+        if (this.skip > 0) {
+            this.skip--;
+            return Promise.resolve(this.last);
         }
     
         this.promise = new Promise(resolve => {
@@ -55,6 +61,7 @@ class PooledRider {
                     console.log(`Failed to get status for ${this.riderId}${errorMessage(ex)}`);
                     this.promise = null;
                     this.last = null;
+                    this.skip = 5;
                     resolve(null);
                 });
         });

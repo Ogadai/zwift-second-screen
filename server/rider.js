@@ -55,6 +55,7 @@ class Rider extends EventEmitter {
 
   getRiders() {
     return this.getProfile().then(profile => {
+      profile.me = true;
       return this.getFriends(profile.id).then(friends => {
         return [profile].concat(friends.map(this.friendMap));
       });
@@ -119,6 +120,7 @@ class Rider extends EventEmitter {
         if (status) {
           return {
             id: rider.id,
+            me: rider.me,
             firstName: rider.firstName,
             lastName: rider.lastName,
             distance: status.distance,

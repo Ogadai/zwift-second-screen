@@ -39,6 +39,7 @@ class Map extends Component {
       activityInterval: null,
       selected: -1
     }
+    this.onWindowFocus = this.onWindowFocus.bind(this);
   }
 
   componentDidMount() {
@@ -48,6 +49,7 @@ class Map extends Component {
     onStartPolling();
 
     if (develop) this.loadDevelop(worldId);
+    window.addEventListener('focus', this.onWindowFocus);
   }
 
   componentWillReceiveProps(props) {
@@ -85,6 +87,7 @@ class Map extends Component {
   componentWillUnmount() {
     const { onStopPolling } = this.props;
     onStopPolling();
+    window.removeEventListener('focus', this.onWindowFocus);
   }
 
   loadDevelop(worldId) {
@@ -210,7 +213,9 @@ class Map extends Component {
     const { selected } = this.state;
 
     return positions.slice(0).sort((a, b) => {
-      if (a.ghost !== b.ghost) {
+      if (a.me !== b.me) {
+        return a.me ? 1 : -1;
+      } else if (a.ghost !== b.ghost) {
         return a.ghost ? -1 : 1;
       } else if (a.id === selected) {
         return 1;
@@ -281,6 +286,11 @@ class Map extends Component {
     const startPos = svgFile.indexOf(tag);
     const endPos = svgFile.indexOf('"', startPos + tag);
     return `${svgFile.substring(0, startPos)}viewBox="${viewBox}" class="full-size" style="width:auto;height:auto;background-color: rgba(255, 0, 0, 0.1);" ${svgFile.substring(endPos)}`;
+  }
+
+  onWindowFocus() {
+    const { overlay, worldId, onFetchSettings } = this.props;
+    onFetchSettings(worldId, overlay);
   }
 }
 

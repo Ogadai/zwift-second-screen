@@ -7,7 +7,7 @@ import momentGB from 'moment/locale/en-gb';
 import {
   toggleGhosts, toggleAddGhost, selectRider, changedActivity,
   fetchGhosts, addGhost, changedGhost, removeGhost,
-  requestRegroup, fetchActivity
+  requestRegroup, fetchActivity, resetGhosts
 } from '../actions/ghosts';
 import { fetchRiders } from '../actions/fetch';
 
@@ -16,6 +16,7 @@ import s from './ghosts.css';
 class Ghosts extends Component {
   static get propTypes() {
     return {
+			worldId: PropTypes.number,
       ghosts: PropTypes.array,
       showButton: PropTypes.bool,
       showPanel: PropTypes.bool,
@@ -38,6 +39,7 @@ class Ghosts extends Component {
       requestingRegroup: PropTypes.bool,
       onRequestRegroup: PropTypes.func.isRequired,
       onFetchActivity: PropTypes.func.isRequired,
+      onResetGhosts: PropTypes.func.isRequired
     }
   }
 
@@ -48,7 +50,10 @@ class Ghosts extends Component {
   }
 
   componentWillReceiveProps(props) {
-    const { onFetchGhosts } = this.props;
+    const { worldId, onResetGhosts, onFetchGhosts } = this.props;
+    if (props.worldId !== worldId) {
+      onResetGhosts();
+    }
 
     const wasShowingGhosts = this.props.showPanel && !this.props.addingGhost;
     const isShowingGhosts = props.showPanel && !props.addingGhost;
@@ -211,6 +216,7 @@ class Ghosts extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    worldId: state.world.worldId,
     ghosts: state.ghosts.ghosts,
     showButton: state.ghosts.showButton,
     showPanel: state.ghosts.show,
@@ -238,7 +244,8 @@ const mapDispatchToProps = (dispatch) => {
     onChangedGhost: (ghostId) => dispatch(changedGhost(parseInt(ghostId))),
     onRemoveGhost: (ghostId) => dispatch(removeGhost(ghostId)),
     onRequestRegroup: () => dispatch(requestRegroup()),
-    onFetchActivity: (riderId, activityId) => dispatch(fetchActivity(riderId, activityId))
+    onFetchActivity: (riderId, activityId) => dispatch(fetchActivity(riderId, activityId)),
+    onResetGhosts: () => dispatch(resetGhosts())
   }
 }
 

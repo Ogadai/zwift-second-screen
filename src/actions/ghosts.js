@@ -177,3 +177,26 @@ function receiveActivity(data) {
     data
   };
 }
+
+export const RESET_GHOSTS = "RESET_GHOSTS";
+
+export function resetGhosts() {
+  return dispatch => {
+     dispatch({
+      type: RESET_GHOSTS
+    });
+
+    axios.delete(`/ghosts`)
+      .then(() => {
+        dispatch({ type: RESET_GHOSTS });
+      })
+      .catch(error => {
+        if (error.response) {
+          const { status, statusMessage } = error.response;
+          console.error(`Error removing ghosts : ${status} - ${statusMessage}`);
+        } else {
+          console.error(error);
+        }
+      })
+  }
+}

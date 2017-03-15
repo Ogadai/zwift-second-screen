@@ -78,12 +78,13 @@ class Map {
     return `${styleStart}${styleData}${styleEnd}`;
   }
 
-  getSettings(worldId, overlay) {
-    return this.getSvg(worldId).then(map => {
+  getSettings(requestWorldId, overlay) {
+    return this.getSvg(requestWorldId).then(map => {
       const worldId = this.getSvgParam(map, 'id="world_');
 
       const worldSettings = (!overlay && this.worldSettings) ? this.worldSettings[worldId] : null;
       const mapImage = worldSettings ? worldSettings.map : null;
+      const background = worldSettings ? worldSettings.background : null;
       const credit = worldSettings && worldSettings.credit ? worldSettings.credit : defaultCredit;
       const viewBoxSettings = worldSettings ? worldSettings.viewBox : null;
 
@@ -91,6 +92,7 @@ class Map {
         worldId,
         credit,
         map: mapImage,
+        background,
         viewBox: viewBoxSettings ? viewBoxSettings : this.getSvgParam(map, 'viewBox="'),
         rotate: this.getSvgParam(map, 'transform="rotate'),
         translate: this.getSvgParam(map, 'transform="translate')

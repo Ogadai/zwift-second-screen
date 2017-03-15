@@ -39,7 +39,6 @@ class Map extends Component {
       activityInterval: null,
       selected: -1
     }
-    this.onWindowFocus = this.onWindowFocus.bind(this);
   }
 
   componentDidMount() {
@@ -49,7 +48,6 @@ class Map extends Component {
     onStartPolling();
 
     if (develop) this.loadDevelop(worldId);
-    window.addEventListener('focus', this.onWindowFocus);
   }
 
   componentWillReceiveProps(props) {
@@ -87,7 +85,6 @@ class Map extends Component {
   componentWillUnmount() {
     const { onStopPolling } = this.props;
     onStopPolling();
-    window.removeEventListener('focus', this.onWindowFocus);
   }
 
   loadDevelop(worldId) {
@@ -107,7 +104,10 @@ class Map extends Component {
     const mapUrl = mapSettings.map ? mapSettings.map : this.svgPath(worldId);
     const labelRotate = this.getLabelRotate();
 
-    return <div className={classnames("map", { "custom-map": mapSettings && mapSettings.map })}>
+    return <div
+        className={classnames("map", { "custom-map": mapSettings && mapSettings.map })}
+        style={{ backgroundColor: mapSettings.background }}
+      >
       <div className="map-route">
         <div className="full-size img" style={{ backgroundImage: `url(${mapUrl})` }} />
       </div>
@@ -286,11 +286,6 @@ class Map extends Component {
     const startPos = svgFile.indexOf(tag);
     const endPos = svgFile.indexOf('"', startPos + tag);
     return `${svgFile.substring(0, startPos)}viewBox="${viewBox}" class="full-size" style="width:auto;height:auto;background-color: rgba(255, 0, 0, 0.1);" ${svgFile.substring(endPos)}`;
-  }
-
-  onWindowFocus() {
-    const { overlay, worldId, onFetchSettings } = this.props;
-    onFetchSettings(worldId, overlay);
   }
 }
 

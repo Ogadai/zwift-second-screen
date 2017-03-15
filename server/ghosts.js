@@ -35,6 +35,10 @@ class Ghosts extends EventEmitter {
     this.ghostRiders = this.ghostRiders.filter(g => g.getId() !== ghostId);
   }
 
+  removeAll() {
+    this.ghostRiders = [];
+  }
+
   getList() {
     return this.ghostRiders.map(g => g.getDetails());
   }

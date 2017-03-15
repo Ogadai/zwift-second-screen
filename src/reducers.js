@@ -7,7 +7,7 @@ import { RECEIVE_HOST } from './actions/host';
 import {
   TOGGLE_GHOSTS, TOGGLE_ADDGHOST, CHANGED_RIDER, RECEIVE_ACTIVITIES, CHANGED_ACTIVITY,
   RECEIVE_GHOSTS, ADDING_GHOST, ADDED_GHOST, CHANGED_GHOST,
-  REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY
+  REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY, RESET_GHOSTS
 } from './actions/ghosts';
 import { SET_MENU_STATE } from './actions/summary';
 
@@ -144,6 +144,18 @@ function ghosts(state = defaultGhosts, action) {
     case RECEIVE_ACTIVITY:
       return Object.assign({}, state, {
         displayActivity: action.data
+      });
+    case RESET_GHOSTS:
+      return Object.assign({}, state, {
+        ghosts: [],
+        show: false,
+        addingGhost: false,
+        riderId: null,
+        loadingActivities: false,
+        activities: [],
+        activityId: null,
+        ghostId: null,
+        displayActivity: null
       });
     default:
       return state;

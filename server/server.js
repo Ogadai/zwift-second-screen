@@ -58,9 +58,16 @@ class Server {
     this.app.get('/positions', this.processRider(rider => rider.getPositions()))
     this.app.get('/riders', this.processRider(rider => rider.getRiders ? rider.getRiders() : Promise.resolve([])))
 
-    this.app.get('/world', this.processRider(rider => rider.getPositions().then(
-      positions => ({ worldId: rider.getWorld(), positions })
-    )))
+    this.app.get('/world', this.processRider(rider => {
+      const worldPromise = rider.getWorld()
+          ? Promise.resolve(rider.getWorld())
+          : this.map.getSettings().then(settings => settings.worldId)
+
+      return Promise.all([
+        worldPromise,
+        rider.getPositions()
+      ]).then(([worldId, positions]) => ({ worldId, positions }))
+    }))
 
     this.app.get('/activities/:playerId', this.processRider((rider, req) => {
       const targetWorldId = rider.getWorld()
@@ -77,6 +84,8 @@ class Server {
     this.app.get('/ghosts', this.processRider((rider, req) => Promise.resolve(rider.getGhosts ? rider.getGhosts().getList() : null)))
     this.app.options('/ghosts', respondCORS)
     this.app.put('/ghosts', this.processRider((rider, req) => rider.getGhosts().addGhost(parseInt(req.body.riderId), parseInt(req.body.activityId))))
+    this.app.delete('/ghosts', this.processRider((rider, req) => Promise.resolve(rider.getGhosts().removeAll())))
+
     this.app.options('/ghosts/:ghostId', respondCORS)
     this.app.delete('/ghosts/:ghostId', this.processRider((rider, req) => Promise.resolve(rider.getGhosts().removeGhost(parseInt(req.params.ghostId)))))
 

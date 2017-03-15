@@ -6,9 +6,10 @@
     --close-button: #F1F1F1;
     --close-button-hover: #808080;
     --button-background: #FC6719;
-    --button-background-hover: #B7B7B7;
+    --button-background-disabled: #B7B7B7;
 
     --app-button-background: #FC6719;
+    --app-button-background-pressed: #FF9035;
 
     --ghosts-border: #FC6719;
     --ghosts-background: rgba(255, 255, 255, 0.6);

@@ -51,6 +51,7 @@
                 flex-direction: row;
                 box-sizing: border-box;
                 padding: var(--padding) 20px;
+                -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 
                 & span {
                     flex: 1;
@@ -63,7 +64,7 @@
                     margin-right: 10px;
                 }
 
-                &:hover {
+                &:hover, &:active {
                     background-color: var(--shaded-background);
                 }
             }

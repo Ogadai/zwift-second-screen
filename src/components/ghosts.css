@@ -41,6 +41,9 @@
         &:hover {
             background-color: transparent;
         }
+        &:active {
+            background-color: var(--app-button-background-pressed);
+        }
     }
 
     &.expanded {

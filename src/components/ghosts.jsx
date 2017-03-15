@@ -51,7 +51,7 @@ class Ghosts extends Component {
 
   componentWillReceiveProps(props) {
     const { worldId, onResetGhosts, onFetchGhosts } = this.props;
-    if (props.worldId !== worldId) {
+    if (worldId && props.worldId !== worldId) {
       onResetGhosts();
     }
 

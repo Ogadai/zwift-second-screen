@@ -51,10 +51,10 @@ class Map extends Component {
   }
 
   componentWillReceiveProps(props) {
-    const { develop, worldId, onFetchSettings } = this.props;
+    const { develop, overlay, worldId, onFetchSettings } = this.props;
 
     if (props.worldId !== worldId) {
-      onFetchSettings(props.worldId);
+      onFetchSettings(props.worldId, overlay);
       if (develop) this.loadDevelop(props.worldId);
     }
 

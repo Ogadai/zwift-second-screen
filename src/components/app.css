@@ -127,3 +127,22 @@ input[type=submit], input[type=button], button {
         cursor: default;
     }
 }
+
+.close-button {
+    display: inline-block;
+    position: absolute;
+    top: 7px;
+    right: 10px;
+    padding: 5px 8px;
+    text-decoration: none;
+    color: var(--close-button);
+    font-size: 0.5em;
+    border: 2px var(--close-button) solid;
+    border-radius: 15px;
+    -webkit-app-region: no-drag;
+
+    &:hover {
+        color: var(--close-button-hover);
+        border-color: var(--close-button-hover);
+    }
+}

@@ -36,3 +36,14 @@
         }
     }
 }
+
+.zwift-app.overlay {
+    & .zoom-follow-btn {
+        opacity: 0;
+        transition: opacity ease 1s;
+    }
+
+    &.hovering .zoom-follow-btn {
+        opacity: 1;
+    }    
+}

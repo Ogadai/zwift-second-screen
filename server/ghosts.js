@@ -1,13 +1,10 @@
-﻿const EventEmitter = require('events')
-const Ghost = require('./ghost')
+﻿const Ghost = require('./ghost')
 const NodeCache = require('node-cache')
 
 const activityCache = new NodeCache({ stdTTL: 30 * 60, checkPeriod: 120, useClones: false });
 
-class Ghosts extends EventEmitter {
+class Ghosts {
   constructor(account, riderId) {
-    super();
-
     this.account = account;
     this.ghostRiders = [];
   }

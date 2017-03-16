@@ -1,5 +1,6 @@
-﻿const EventEmitter = require('events')
-const Ghosts = require('./ghosts')
+﻿const EventEmitter = require('events');
+const Ghosts = require('./ghosts');
+const AllRiders = require('./allRiders');
 
 const MAX_RIDERS = 10;
 
@@ -8,6 +9,7 @@ class Rider extends EventEmitter {
     super();
 
     this.account = account;
+    this.allRiders = new AllRiders(account);
     this.riderId = riderId;
     this.ghosts = new Ghosts(account, riderId);
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
@@ -95,7 +97,12 @@ class Rider extends EventEmitter {
   }
 
   requestRidingNow() {
-    return this.getRiders().then(riders => riders.filter(r => r.riding));
+    return Promise.all([
+      this.allRiders.get(),
+      this.getRiders()
+    ]).then(([worldRiders, riders]) => 
+      riders.filter(r => worldRiders.filter(wr => wr.playerId === r.id).length > 0)
+    );
   }
 
   friendMap(friend) {

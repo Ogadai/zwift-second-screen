@@ -34,7 +34,12 @@ class RiderId {
     return rider.getProfile()
       .then(profile => {
         const cookie = this.createCookieFromRiderId(riderId);
-        return { cookie }
+        return {
+          cookie,
+          id: profile.id,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+        };
       });
   }
 

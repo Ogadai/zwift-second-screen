@@ -43,7 +43,12 @@ class Login {
 
         const cookie = Guid.raw();
         sessionCache.set(cookie, new Session(rider));
-        return { cookie };
+        return {
+          cookie,
+          id: profile.id,
+          firstName: profile.firstName,
+          lastName: profile.lastName,
+        };
       });
   }
 

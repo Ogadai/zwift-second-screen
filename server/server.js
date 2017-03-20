@@ -209,7 +209,7 @@ class Server {
   processLogin(res, promise, redirect = false) {
 		promise
       .then(result => {
-        console.log('login successful')
+        console.log(`login successful (${result.id} - ${result.firstName} ${result.lastName})`)
 
         const expires = new Date()
         expires.setFullYear(expires.getFullYear() + 1);

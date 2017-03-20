@@ -14,8 +14,8 @@ class RiderPool {
 
   riderStatus(riderId) {
     if (!this.riders[riderId]) {
-        console.log(`added ${riderId}`);
         this.riders[riderId] = new PooledRider(this.account, riderId);
+        console.log(`added ${riderId} (${this.list().length})`);
         this.trigger();
     }
 
@@ -34,8 +34,8 @@ class RiderPool {
     let refreshList = [];
     this.list().forEach(rider => {
         if (rider.isStale) {
-            console.log(`removed ${rider.id}`);
             delete this.riders[rider.id];
+            console.log(`removed ${rider.id} (${this.list().length})`);
         } else {
             refreshList.push(rider);
         }

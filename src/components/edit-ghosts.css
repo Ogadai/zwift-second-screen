@@ -23,4 +23,69 @@
             opacity: 1;
         }
     }
+
+    & .ghosts {
+        & h1 {
+            display: none;
+        }
+        & header {
+            margin-right: 0;
+            & select {
+                font-size: 13px;
+                padding: 3px;
+                margin-left: 35px;
+                width: calc(100% - 40px);
+            }
+        }
+
+        & footer {
+            height: 31px;
+        }
+
+        & .list {
+            & li {
+                border: 1px solid var(--activity-color);
+            }
+
+            & .remove-button {
+                padding: 3px 8px;
+            }
+        }
+    }
+
+    & input[type=button], & button {
+        border-color: #fcaa0e;
+        background-color: #fece72;
+        background-image: linear-gradient(to bottom,#fece72 0,#fcaa0e 100%);
+        padding: 3px 8px;
+        line-height: 1.4;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        box-shadow: 0 1px 1px rgba(0,0,0,.06);
+        height: auto;
+        font-size: 13px;
+
+        &:active {
+            background-color: #fdbc40;
+            background-image: linear-gradient(to bottom,#fdbc40 0,#ee9d02 100%);            
+        }
+
+        &.add-ghost-button {
+            padding: 3px;
+            border-color: #388df8;
+            background-color: #6eb4f7;
+            background-image: linear-gradient(to bottom,#6eb4f7 0,#1a82fb 100%);
+            font-size: 13px;
+
+            &:active {
+                background-color: #3e9bf4;
+                background-image: linear-gradient(to bottom,#3e9bf4 0,#0469de 100%);            }
+            }
+
+        & .zwiftgps-icon {
+            margin: -7px;
+            transform: scale(0.5);
+            float: left;
+        }
+    }
 }

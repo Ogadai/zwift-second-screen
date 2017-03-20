@@ -8,6 +8,31 @@ import s from './edit-ghosts.css';
 class EditGhosts extends Component {
   static get propTypes() {
     return {
+      riderId: PropTypes.number,
+      activityId: PropTypes.number,
+      ghostId: PropTypes.number
+    }
+  }
+
+  constructor(props) {
+    super(props);
+
+    const electronRequire = window['require'];
+    if (electronRequire) {
+      this.ipcRenderer = electronRequire('electron').ipcRenderer
+    }
+
+    document.title = `${document.title} - ghosts`;
+  }
+
+  componentWillReceiveProps(props) {
+    const { riderId, activityId, ghostId } = props
+    if (this.ipcRenderer) {
+      if (activityId !== this.props.activityId) {
+        this.ipcRenderer.send('preview-activity', riderId, activityId);
+      } else if (ghostId !== this.props.ghostId) {
+        this.ipcRenderer.send('preview-activity', 0, ghostId);
+      }
     }
   }
 
@@ -20,6 +45,9 @@ class EditGhosts extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    riderId: state.ghosts.riderId,
+    activityId: state.ghosts.activityId,
+    ghostId: state.ghosts.ghostId,
   }
 }
 

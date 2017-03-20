@@ -76,8 +76,10 @@ class Ghosts extends Component {
   }
 
 	renderGhostList() {
-    const { onToggleAddGhost, ghosts, requestingRegroup, onRequestRegroup, onChangedGhost, onToggleGhosts } = this.props;
-    const disabled = requestingRegroup || ghosts.length == 0
+    const { onToggleAddGhost, riders, ghosts, requestingRegroup, onRequestRegroup, onChangedGhost, onToggleGhosts } = this.props;
+
+    const regroupDisabled = requestingRegroup || ghosts.length == 0
+    const addDisabled = !(riders && riders.length)
 		return <div className="display-area">
 			<h1>Ghosts</h1>
       <button className="minimize-button" onClick={onToggleGhosts}>
@@ -88,7 +90,8 @@ class Ghosts extends Component {
           <ul>{ghosts.map(g => this.renderGhost(g))}</ul>
         : <span className="add-prompt">
             Click
-            <button className="add-ghost-button" onClick={onToggleAddGhost}>
+            <button className={classnames("add-ghost-button", { disabled: addDisabled })}
+                onClick={onToggleAddGhost} disabled={addDisabled}>
               <span className="zwiftgps-icon icon-add">&nbsp;</span>
             </button>
             below to start adding Ghosts
@@ -96,10 +99,11 @@ class Ghosts extends Component {
 			</div>
       <footer>
         <div className="footer-middle">
-          <input className={classnames("regroup-button", { disabled })}
-            disabled={disabled} type="button" value="Regroup" onClick={onRequestRegroup} />
+          <input className={classnames("regroup-button", { disabled: regroupDisabled })}
+            disabled={regroupDisabled} type="button" value="Regroup" onClick={onRequestRegroup} />
         </div>
-        <button className="add-ghost-button" onClick={onToggleAddGhost}>
+        <button className={classnames("add-ghost-button", { disabled: addDisabled })}
+              onClick={onToggleAddGhost} disabled={addDisabled}>
           <span className="zwiftgps-icon icon-add">&nbsp;</span>
         </button>
 			</footer>

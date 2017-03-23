@@ -211,6 +211,17 @@ class Server {
       .then(result => {
         console.log(`login successful (${result.id} - ${result.firstName} ${result.lastName})`)
 
+        if (this.siteSettings && this.siteSettings.approvalRequired
+            && result.privacy && result.privacy.approvalRequired) {
+          res.status(403);
+          sendJson(res, {
+            status: 403,
+            statusText: this.siteSettings.approvalRequired.message,
+            alt: this.siteSettings.approvalRequired.alt
+          })
+          return;
+        }
+
         const expires = new Date()
         expires.setFullYear(expires.getFullYear() + 1);
         res.cookie('zssToken', result.cookie, { path: '/', httpOnly: true, expires });
@@ -231,6 +242,8 @@ class Server {
           sendJson(res, { status, statusText });
       })
   }
+
+
 
 	processRider(callbackFn) {
     return (req, res) => {

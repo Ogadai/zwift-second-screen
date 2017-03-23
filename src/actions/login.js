@@ -46,7 +46,7 @@ export function postLogin(username, password) {
       })
       .catch(error => {
         // Failed to login
-        dispatch(receiveLoginFailure(error.response));
+        dispatch(receiveLoginFailure(error.response.data || error.response));
       });
   }
 }

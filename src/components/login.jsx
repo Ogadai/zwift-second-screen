@@ -67,7 +67,17 @@ class Login extends Component {
           <h2>Log In</h2>
           {error ?
             <div className="error">
-              {error.status}: {error.statusText}
+              {!error.alt ? `${error.status}: ` : undefined}{error.statusText}
+
+              {error.alt ?
+                <div className="error-alt">
+                  {error.alt.message}&nbsp;
+
+                  {error.alt.link ?
+                    <a href={error.alt.link.addr}>{error.alt.link.caption}</a>
+                    : undefined}
+                </div>
+                : undefined}
             </div>
             : undefined}
 

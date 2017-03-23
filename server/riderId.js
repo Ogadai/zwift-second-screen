@@ -39,6 +39,7 @@ class RiderId {
           id: profile.id,
           firstName: profile.firstName,
           lastName: profile.lastName,
+          privacy: profile.privacy
         };
       });
   }

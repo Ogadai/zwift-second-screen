@@ -65,7 +65,13 @@
     & .error {
         margin-top: 20px;
         text-align: center;
-        font-size: 1.2em;
+        font-size: 1em;
+
+        & .error-alt {
+            margin-top: 20px;
+            font-size: 0.8em;
+            color: #3e3e3e;
+        }
     }
 
     & .logo {

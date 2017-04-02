@@ -135,23 +135,27 @@ class Rider extends EventEmitter {
     return this.riderStatusFn(rider.id)
       .then(status => {
         if (status) {
-          return {
+          return Object.assign({
             id: rider.id,
             me: rider.me,
             world: status.world,
             firstName: rider.firstName,
             lastName: rider.lastName,
-            distance: status.distance,
-            speed: status.speed,
-            power: status.power,
-            time: status.time,
-            climbing: status.climbing,
-            x: status.x,
-            y: status.y,
-            altitude: status.altitude,
-            heartrate: status.heartrate,
-            wattsPerKG: status.wattsPerKG
-          };
+            male: rider.male,
+            playerType: rider.playerType,
+            contryAlpha3: rider.countryAlpha3,
+            countryCode: rider.countryCode }, status);
+          //   distance: status.distance,
+          //   speed: status.speed,
+          //   power: status.power,
+          //   time: status.time,
+          //   climbing: status.climbing,
+          //   x: status.x,
+          //   y: status.y,
+          //   altitude: status.altitude,
+          //   heartrate: status.heartrate,
+          //   wattsPerKG: status.wattsPerKG
+          // };
         } else {
           return null;
         }

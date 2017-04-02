@@ -12,6 +12,10 @@ class Rider extends EventEmitter {
     this.allRiders = new AllRiders(account);
     this.riderId = riderId;
     this.ghosts = new Ghosts(account, riderId);
+
+    this.static = {};
+    this.staticPromise = null;
+
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
     this.worldId = undefined;
     this.statusWorldId = undefined;
@@ -144,7 +148,8 @@ class Rider extends EventEmitter {
             male: rider.male,
             playerType: rider.playerType,
             contryAlpha3: rider.countryAlpha3,
-            countryCode: rider.countryCode }, status);
+            countryCode: rider.countryCode,
+            TEMP: 'TEMP', weight: rider.weight }, status);
           //   distance: status.distance,
           //   speed: status.speed,
           //   power: status.power,
@@ -182,11 +187,41 @@ class Rider extends EventEmitter {
     return positions.concat(ghostPositions);
   }
 
+  getStatic() {
+    this.staticPromise = this.account.getProfile(this.riderId).profile()
+        .then(profile => {
+            this.static = {
+                weight: profile.weight
+            }
+        })
+        .catch(ex => {
+            console.log(`Failed to get profile for ${this.riderId}${errorMessage(ex)}`);
+        });
+  }
+
+  addStatic(status) {
+      const extra = {
+          // wattsPerKG: this.getWattsPerKg(status.power, this.static.weight),
+          roadID: status.roadID,
+          rideOns: status.rideOns,
+          isTurning: status.isTurning,
+          isForward: status.isForward,
+          sport: ~~status.f31
+      };
+      return Object.assign({}, status, extra);
+  }
+
+  getWattsPerKg(power, weight) {
+      return weight ? Math.round((10 * power) / (weight / 1000)) / 10 : undefined
+  }
+
+
   fallbackRiderStatusFn(id) {
     return new Promise(resolve => {
       this.account.getWorld(1).riderStatus(id)
           .then(status => {
-            resolve(status);
+            // resolve(status);
+            resolve(this.addStatic(status));
           })
           .catch(ex => {
             console.log(`Failed to get status for ${id}${errorMessage(ex)}`);

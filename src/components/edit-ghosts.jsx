@@ -30,7 +30,7 @@ class EditGhosts extends Component {
     if (this.ipcRenderer) {
       if (activityId !== this.props.activityId) {
         this.ipcRenderer.send('preview-activity', riderId, activityId);
-      } else if (ghostId !== this.props.ghostId) {
+      } else if (!activityId && ghostId !== this.props.ghostId) {
         this.ipcRenderer.send('preview-activity', 0, ghostId);
       }
     }

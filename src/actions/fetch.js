@@ -34,6 +34,15 @@ export function receiveWorld(data) {
   };
 }
 
+export const RECEIVE_STRAVA = "RECEIVE_STRAVA";
+
+export function receiveStrava(data) {
+  return {
+    type: RECEIVE_STRAVA,
+    data
+  };
+}
+
 export function fetchWorld() {
   return dispatchRequest('/world/', receiveWorld);
 }

@@ -15,6 +15,7 @@ class Summary extends Component {
       profile: PropTypes.object.isRequired,
       user: PropTypes.object,
       mapSettings: PropTypes.object,
+      stravaConnected: PropTypes.bool,
       onSetMenuState: PropTypes.func.isRequired,
       onRequestLoginType: PropTypes.func.isRequired,
       onFetch: PropTypes.func.isRequired
@@ -33,7 +34,7 @@ class Summary extends Component {
   }
 
   render() {
-    const { showingMenu, profile, mapSettings, user, onSetMenuState } = this.props;
+    const { showingMenu, profile, mapSettings, user, stravaConnected, onSetMenuState } = this.props;
     const { credit } = mapSettings;
     const disabled = !profile.riding;
     return (
@@ -69,6 +70,15 @@ class Summary extends Component {
                 <span>Full Screen</span>
               </a>
             </li>
+
+            { (user && user.canStrava)
+              ? <li>
+                  <a className="strava" href={stravaConnected ? '/strava/disconnect' : '/strava/connect'}>
+                      <span className="zwiftgps-icon icon-strava">&nbsp;</span>
+                      <span>{stravaConnected ? 'Disconnect' : 'Connect'}</span>
+                  </a>
+                </li>
+              : undefined }
 
             { (user && user.canLogout)
               ? <li>
@@ -148,7 +158,8 @@ const mapStateToProps = (state) => {
     showingMenu: state.summary.showingMenu,
     profile: state.profile,
 		user: state.login.user,
-    mapSettings: state.mapSettings
+    mapSettings: state.mapSettings,
+    stravaConnected: state.world.strava ? state.world.strava.connected : false
   }
 }
 

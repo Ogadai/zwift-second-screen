@@ -10,6 +10,10 @@
         background-position: 0 0;
     }
 
+    &.icon-strava {
+        background-position: -32px 0;
+    }
+
     &.icon-feedback {
         background-position: 0 -32px;
     }

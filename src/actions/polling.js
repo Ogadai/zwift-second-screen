@@ -1,7 +1,7 @@
 ﻿import axios from 'axios';
 import { push } from 'react-router-redux';
 
-import { fetchWorld, receivePositions, receiveWorld } from './fetch';
+import { fetchWorld, receivePositions, receiveWorld, receiveStrava } from './fetch';
 
 const POLLING_INTERVAL = 2500;
 
@@ -84,6 +84,9 @@ class PollingClient {
         break;
       case 'positions':
         this.dispatch(receivePositions(message.data));
+        break;
+      case 'strava':
+        this.dispatch(receiveStrava(message.data));
         break;
     }
   }

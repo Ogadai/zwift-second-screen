@@ -3,9 +3,11 @@ const expressWs = require('express-ws');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const stravaConnect = require('strava-live-segments/connect');
 
 const Map = require('./map');
 const insertSiteSettings = require('./siteSettings');
+const StravaSegments = require('./strava-segments');
 
 class Server {
   constructor(riderProvider, settings) {
@@ -13,6 +15,12 @@ class Server {
     this.hostData = settings ? settings.hostData : null;
     this.map = new Map(settings ? settings.worlds : null);
     this.siteSettings = settings ? settings.site : null;
+    this.stravaSettings = settings ? settings.strava : null;
+
+
+    if (this.stravaSettings) {
+      this.stravaSegments = new StravaSegments(this.stravaSettings);
+    }
 
     this.initialise();
   }
@@ -25,11 +33,17 @@ class Server {
 
     this.app.use(bodyParser.json())
     this.app.use(cookieParser())
+    
+    if (this.stravaSettings) {
+      const { clientId, clientSecret } = this.stravaSettings
+      this.app.use('/strava', stravaConnect({ clientId, clientSecret, afterUrl: '/' }))
+    }
 
     this.app.get('/logintype', (req, res) => {
       const type = this.riderProvider.login ? 'user' : 'id'
       const canLogout = this.riderProvider.canLogout;
-      sendJson(res, { type, canLogout });
+      const canStrava = !!this.stravaSettings;
+      sendJson(res, { type, canLogout, canStrava });
     })
 
 		// Enable CORS for post login
@@ -58,7 +72,7 @@ class Server {
     this.app.get('/positions', this.processRider(rider => rider.getPositions()))
     this.app.get('/riders', this.processRider(rider => rider.getRiders ? rider.getRiders() : Promise.resolve([])))
 
-    this.app.get('/world', this.processRider(rider => {
+    this.app.get('/world', this.processRider((rider, req) => {
       const worldPromise = rider.getWorld()
           ? Promise.resolve(rider.getWorld())
           : this.map.getSettings().then(settings => settings.worldId)
@@ -66,7 +80,17 @@ class Server {
       return Promise.all([
         worldPromise,
         rider.getPositions()
-      ]).then(([worldId, positions]) => ({ worldId, positions }))
+      ]).then(([worldId, positions]) => {
+        if (this.stravaSettings) {
+          const token = stravaConnect.getToken(req);
+          return this.stravaSegments.get(token, worldId, positions)
+              .then(strava => {
+                return { worldId, positions, strava };
+              })
+        } else {
+          return { worldId, positions };
+        }
+      })
     }))
 
     this.app.get('/activities/:playerId', this.processRider((rider, req) => {
@@ -98,8 +122,19 @@ class Server {
         const rider = this.riderProvider.getRider(cookie);
 
         if (rider) {
-          const sendPositions = positions => send('positions', positions);
           const sendWorld = worldId => send('world', { worldId });
+          const sendPositions = positions => {
+            send('positions', positions);
+
+            if (this.stravaSettings) {
+              const token = stravaConnect.getToken(req);
+              const worldId = rider.getWorld();
+              this.stravaSegments.get(token, worldId, positions)
+                .then(strava => {
+                  send('strava', strava);
+                })
+            }
+          }
 
           let unsubscribeRider;
 
@@ -242,8 +277,6 @@ class Server {
           sendJson(res, { status, statusText });
       })
   }
-
-
 
 	processRider(callbackFn) {
     return (req, res) => {

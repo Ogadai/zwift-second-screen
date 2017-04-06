@@ -1,0 +1,13 @@
+@import 'variables.css';
+
+.strava-route {
+    & .segment {
+        & polyline {
+            opacity: 0.5;
+            fill: none;
+            stroke-width: 5000;
+            stroke: var(--activity-color);
+            stroke-linejoin: round;
+        }
+    }
+}

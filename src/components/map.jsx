@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 import Rider from './rider.jsx';
+import StravaRoute from './strava-route.jsx';
 import { fetchMapSettings } from '../actions/fetch';
 import { startPolling, stopPolling } from '../actions/polling';
 
@@ -141,6 +142,8 @@ class Map extends Component {
                 { (displayActivity && displayActivity.positions)
                   ? this.renderActivity(displayActivity)
                   : undefined }
+
+                <StravaRoute />
 							</g>
 						</g>
 					</svg>

@@ -81,8 +81,8 @@ class Server {
         worldPromise,
         rider.getPositions()
       ]).then(([worldId, positions]) => {
-        if (this.stravaSettings) {
-          const token = stravaConnect.getToken(req);
+        const token = stravaConnect.getToken(req);
+        if (this.stravaSettings && token) {
           return this.stravaSegments.get(token, worldId, positions)
               .then(strava => {
                 return { worldId, positions, strava };
@@ -126,8 +126,8 @@ class Server {
           const sendPositions = positions => {
             send('positions', positions);
 
-            if (this.stravaSettings) {
-              const token = stravaConnect.getToken(req);
+            const token = stravaConnect.getToken(req);
+            if (this.stravaSettings && token) {
               const worldId = rider.getWorld();
               this.stravaSegments.get(token, worldId, positions)
                 .then(strava => {

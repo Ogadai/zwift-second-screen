@@ -1,7 +1,7 @@
 ﻿import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
-import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_STRAVA, RECEIVE_MAPSETTINGS, RECEIVE_RIDERS } from './actions/fetch';
+import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_STRAVA, RECEIVE_MAPSETTINGS, RECEIVE_RIDERS, RECEIVE_STRAVA_EFFORT } from './actions/fetch';
 import { RECEIVE_LOGINTYPE, RECEIVE_LOGINFAILURE } from './actions/login';
 import { RECEIVE_HOST } from './actions/host';
 import {
@@ -178,6 +178,18 @@ function summary(state = { showingMenu: false }, action) {
   }
 }
 
+function stravaEfforts(state = {}, action) {
+  switch (action.type) {
+    case RECEIVE_STRAVA_EFFORT:
+      let effortState = {}
+      effortState[action.data.id] = action.data.positions;
+
+      return Object.assign({}, state, effortState);
+    default:
+      return state;
+  }
+}
+
 const rootReducer = combineReducers({
   profile: createReducer(RECEIVE_PROFILE),
   mapSettings: createReducer(RECEIVE_MAPSETTINGS),
@@ -187,6 +199,7 @@ const rootReducer = combineReducers({
   environment,
 	ghosts,
   summary,
+  stravaEfforts,
   host: createReducer(RECEIVE_HOST),
   routing: routerReducer
 })

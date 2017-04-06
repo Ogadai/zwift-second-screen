@@ -73,12 +73,8 @@ class Server {
     this.app.get('/riders', this.processRider(rider => rider.getRiders ? rider.getRiders() : Promise.resolve([])))
 
     this.app.get('/world', this.processRider((rider, req) => {
-      const worldPromise = rider.getWorld()
-          ? Promise.resolve(rider.getWorld())
-          : this.map.getSettings().then(settings => settings.worldId)
-
       return Promise.all([
-        worldPromise,
+        this.worldPromise(rider),
         rider.getPositions()
       ]).then(([worldId, positions]) => {
         const token = stravaConnect.getToken(req);
@@ -91,6 +87,17 @@ class Server {
           return { worldId, positions };
         }
       })
+    }))
+
+    this.app.get('/strava-effort/:segmentId', this.processRider((rider, req) => {
+      const { segmentId } = req.params;
+      const token = stravaConnect.getToken(req);
+      if (this.stravaSettings && token) {
+        return this.worldPromise(rider)
+          .then(worldId => this.stravaSegments.segmentEffort(token, worldId, segmentId))
+      } else {
+				throw new Exception('Not connected to strava')
+      }
     }))
 
     this.app.get('/activities/:playerId', this.processRider((rider, req) => {
@@ -128,11 +135,12 @@ class Server {
 
             const token = stravaConnect.getToken(req);
             if (this.stravaSettings && token) {
-              const worldId = rider.getWorld();
-              this.stravaSegments.get(token, worldId, positions)
-                .then(strava => {
-                  send('strava', strava);
-                })
+              this.worldPromise(rider).then(worldId =>
+                this.stravaSegments.get(token, worldId, positions)
+                  .then(strava => {
+                    send('strava', strava);
+                  })
+              )
             }
           }
 
@@ -285,14 +293,7 @@ class Server {
 			if (rider) {
         callbackFn(rider, req)
           .then(respondJson(res))
-          .catch(err => {
-						console.log(err)
-            if (err.response) {
-              res.status(err.response.status).send(`${err.response.status} - ${err.response.statusText}`);
-            } else {
-              res.status(500).send(JSON.stringify(err));
-            }
-          });
+          .catch(responseError(res));
 			} else {
 				res.status(401);
 				sendJson(res, { status: 401, statusText: 'Unauthorised' });
@@ -300,8 +301,25 @@ class Server {
 		}
 	}
 
+  worldPromise(rider) {
+    return rider.getWorld()
+          ? Promise.resolve(rider.getWorld())
+          : this.map.getSettings().then(settings => parseInt(settings.worldId))
+  }
+
 }
 module.exports = Server;
+
+function responseError(res) {
+  return function (err) {
+    console.log(err)
+    if (err.response) {
+      res.status(err.response.status).send(`${err.response.status} - ${err.response.statusText}`);
+    } else {
+      res.status(500).send(JSON.stringify(err));
+    }
+  }
+}
 
 function respondJson(res) {
   return function (data) {

@@ -102,7 +102,7 @@ class Map extends Component {
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
 
-    const mapUrl = mapSettings.map ? mapSettings.map : this.svgPath(worldId);
+    const mapUrl = mapSettings.map ? this.filePath(mapSettings.map) : this.svgPath(worldId);
     const labelRotate = this.getLabelRotate();
 
     return <div
@@ -198,9 +198,21 @@ class Map extends Component {
     </g>
   }
 
+  baseUrl() {
+    return axios.defaults.baseURL ? axios.defaults.baseURL : ''
+  }
+
   svgPath(worldId) {
     const worldParam = worldId ? `?world=${worldId}` : '';
-    return `${axios.defaults.baseURL ? axios.defaults.baseURL : ''}/map.svg${worldParam}`;
+    return `${this.baseUrl()}/map.svg${worldParam}`;
+  }
+
+  filePath(path) {
+    if (path.substring(0, 4) === 'http') {
+      return path;
+    } else {
+      return `${this.baseUrl()}${path}`
+    }
   }
 	
   getLabelRotate() {

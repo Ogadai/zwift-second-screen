@@ -78,9 +78,29 @@ export function receiveRiders(data) {
   };
 }
 
+export function fetchStravaEffort(segmentId) {
+  return dispatchRequestIfNeeded(`/strava-effort/${segmentId}`,
+      (state, dispatch) => {
+        const isMissing = !state.stravaEfforts || !state.stravaEfforts[segmentId];
+        if (isMissing) {
+          dispatch(receiveStravaEffort({ id: segmentId, positions: [] }));
+        }
+        return isMissing;
+      }, receiveStravaEffort);
+}
+
+export const RECEIVE_STRAVA_EFFORT = "RECEIVE_STRAVA_EFFORT";
+
+function receiveStravaEffort(data) {
+  return {
+    type: RECEIVE_STRAVA_EFFORT,
+    data
+  };
+}
+
 export function dispatchRequestIfNeeded(path, shouldGetFn, dispatchFn) {
   return (dispatch, getState) => {
-    if (shouldGetFn(getState())) {
+    if (shouldGetFn(getState(), dispatch)) {
       return dispatch(dispatchRequest(path, dispatchFn));
     } else {
       return Promise.resolve();

@@ -35,6 +35,7 @@ class StravaSegments {
                         console.log(`Failed strava data: ${err.response.status} - ${err.response.statusText}`)
                     } else {
                         console.log(`Failed strava data: ${err.message}`)
+                        console.log(err.stack)
                     }
 
                     resolve({

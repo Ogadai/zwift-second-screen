@@ -1,0 +1,63 @@
+@import 'variables.css';
+
+.strava-segments {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 0;
+    z-index: 100;
+    overflow: hidden;
+    transition: height 300ms ease-in-out;
+
+    & .container {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        right: 0;
+    }
+
+    & ul {
+        width: 400px;
+        max-width: 80%;
+        max-width: calc(100% - 150px);
+        margin: 0 auto;
+    }
+
+    & .segment {
+        display: flex;
+        box-sizing: border-box;
+        padding: 5px;
+        flex-direction: row;
+        background-color: white;
+        border: 1px solid var(--ghosts-border);
+        border-radius: 5px;
+        opacity: 0.8;
+        margin-top: 2px;
+        height: 30px;
+
+        & .name {
+            display: inline-block;
+            flex: 1 0;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        & .difference {
+            display: inline-block;
+            font-weight: bold;
+            overflow: hidden;
+            min-width: 50px;
+            text-align: right;
+            flex: 0 0;
+
+            &.slower {
+                color: #E03C31; /* red */
+            }
+
+            &.faster {
+                color: #90EE90; /* green */                
+            }
+        }
+    }
+}

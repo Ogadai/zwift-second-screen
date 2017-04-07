@@ -33,9 +33,16 @@ class StravaRoute extends Component {
 
   render() {
     const { segments } = this.props;
+    const showSegments = segments.filter(s => this.showSegment(s));
+
     return <g className="strava-route">
-        { segments.map(s => this.renderSegment(s)) }
+        { showSegments.map(s => this.renderSegment(s)) }
     </g>
+  }
+
+  showSegment(segment) {
+    const distFn = (p1, p2) => Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+    return distFn(segment.start, segment.end) > 10000
   }
 
   renderSegment(segment) {

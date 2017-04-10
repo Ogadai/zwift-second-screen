@@ -21,6 +21,7 @@
         max-width: 80%;
         max-width: calc(100% - 150px);
         margin: 0 auto;
+        padding: 0;
     }
 
     & .segment {
@@ -29,11 +30,10 @@
         padding: 5px;
         flex-direction: row;
         background-color: white;
-        border: 1px solid var(--ghosts-border);
+        border: 2px solid var(--ghosts-border);
         border-radius: 5px;
         opacity: 0.8;
-        margin-top: 2px;
-        height: 30px;
+        margin-top: 4px;
 
         & .name {
             display: inline-block;
@@ -60,4 +60,21 @@
             }
         }
     }
+}
+
+@media (min-width: 1000px) {
+    .strava-segments {
+        & ul {
+            width: 800px;
+            font-size: 1.5em;
+        }
+
+        & .segment {
+            padding: 5px 20px;
+
+            & .difference {
+                min-width: 75px;
+            }
+        }
+    }    
 }

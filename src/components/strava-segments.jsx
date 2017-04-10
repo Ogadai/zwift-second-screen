@@ -18,14 +18,21 @@ class StravaSegments extends Component {
     let ordered = []
     segments.forEach(s => ordered.splice(0, 0, s));
 
-    const height = segments.length * 32;
-    return <div className="strava-segments" style={{ height }}>
+    const height = segments.length * 42;
+    return <div className="strava-segments" ref={c => this.updateContainerHeight(c)}>
         <div className="container">
             <ul>
                 { ordered.map(s => this.renderSegment(s)) }
             </ul>
         </div>
     </div>
+  }
+
+  updateContainerHeight(container) {
+    if (container) {
+      const listRect = container.children[0].getBoundingClientRect();
+      container.style.height = `${listRect.height}px`;
+    }
   }
 
   renderSegment(segment) {

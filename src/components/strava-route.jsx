@@ -28,15 +28,18 @@ class StravaRoute extends Component {
 
   loadEfforts(segments) {
     const { onFetchStravaEffort } = this.props;
-    segments.forEach(s => onFetchStravaEffort(s.id));
+    segments.forEach(s => {
+      if (this.showSegment(s)) {
+        onFetchStravaEffort(s.id);
+      }
+    });
   }
 
   render() {
     const { segments } = this.props;
-    const showSegments = segments.filter(s => this.showSegment(s));
 
     return <g className="strava-route">
-        { showSegments.map(s => this.renderSegment(s)) }
+        { segments.map(s => this.renderSegment(s)) }
     </g>
   }
 
@@ -52,6 +55,10 @@ class StravaRoute extends Component {
     return <g className="segment" key={`segment-${segment.id}`}>
         { points ?
           <polyline points={points} />
+        : undefined
+        }
+        { segment.pr ?
+          <circle cx={ segment.pr.x } cy={segment.pr.y} r="6000" />
         : undefined
         }
       </g>

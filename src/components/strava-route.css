@@ -2,6 +2,11 @@
 
 .strava-route {
     & .segment {
+        & circle {
+            opacity: 0.5;
+            fill: var(--activity-color);
+        }
+
         & polyline {
             opacity: 0.5;
             fill: none;

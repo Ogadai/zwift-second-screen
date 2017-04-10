@@ -46,6 +46,7 @@
         z-index: 350;
         user-select: none;
         touch-action: none;
+        overflow-y: auto;
         
         &.hide {
             left: -300px;
@@ -172,4 +173,15 @@
 }
 .overlay.hovering .summary {
     opacity: 1;
+}
+
+@media (max-height: 400px) {
+    .summary {
+        & .logo {
+            display: none;
+        }
+        & .player-name {
+            padding: 10px 0 0 0;
+        }
+    }
 }

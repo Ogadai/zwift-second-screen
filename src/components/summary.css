@@ -8,7 +8,7 @@
         z-index: 250;
     }
 
-    & .menu-overlay {
+    & .menu-overlay, & .popup-overlay {
         position: absolute;
         left: 0;
         top: 0;
@@ -21,6 +21,17 @@
 
         &.hide {
             display: none;
+        }
+    }
+    & .popup-overlay {
+        background-color: rgba(255, 255, 255, 0.4);
+
+        & .popup-content {
+            margin-left: auto;
+            margin-right: auto;
+            background-color: var(--menu-background);
+            border: 2px solid var(--activity-color);        
+            border-radius: 25px;
         }
     }
 
@@ -96,6 +107,62 @@
         z-index: 100;
 
         color: #808080;
+    }
+
+    & .world-selector {
+        box-sizing: border-box;
+        width: 440px;
+        margin-top: 30px;
+        max-width: 80%;
+        padding: 0 25px 25px 25px;
+        text-align: center;
+
+        & h2 {
+            margin: 20px 0 10px 0;
+        }
+
+        & ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        & li {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            margin: 10px;
+            background-color: var(--button-background);
+            border-radius: 25px;
+            padding: 10px;
+            cursor: pointer;
+
+            & .world-image {
+                display: inline-block;
+                width: 60px;
+                height: 60px;
+                border-radius: 10px;
+                background: url(/img/worlds.png);
+
+                &.world-1 {
+                    background-position: 0 0;
+                }
+
+                &.world-2 {
+                    background-position: 0 -60px;
+                }
+
+                &.world-3 {
+                    background-position: 0 -120px;
+                }
+            }
+
+            & .world-name {
+                font-size: 0.9em;
+                color: white;
+                font-weight: bold;
+            }
+        }
     }
 }
 

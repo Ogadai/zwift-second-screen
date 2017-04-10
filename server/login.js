@@ -19,6 +19,10 @@ class Login {
     return true;
   }
 
+  get canSetWorld() {
+    return true;
+  }
+
   subscribe(cookie) {
     const session = this.getSession(cookie);
     if (session) return session.subscribe();

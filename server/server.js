@@ -43,7 +43,8 @@ class Server {
       const type = this.riderProvider.login ? 'user' : 'id'
       const canLogout = this.riderProvider.canLogout;
       const canStrava = !!this.stravaSettings;
-      sendJson(res, { type, canLogout, canStrava });
+      const canSetWorld = this.riderProvider.canSetWorld;
+      sendJson(res, { type, canLogout, canStrava, canSetWorld });
     })
 
 		// Enable CORS for post login
@@ -87,6 +88,13 @@ class Server {
           return { worldId, positions };
         }
       })
+    }))
+
+    this.app.options('/world', respondCORS)
+    this.app.post('/world', this.processRider((rider, req) => {
+      const worldId = req.body.world;
+      rider.setWorld(worldId);
+      return Promise.resolve({});
     }))
 
     this.app.get('/strava-effort/:segmentId', this.processRider((rider, req) => {

@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 import { fetchProfile } from '../actions/fetch';
 import { requestLoginType } from '../actions/login';
-import { setMenuState } from '../actions/summary';
+import { setMenuState, showWorldSelector, setWorld } from '../actions/summary';
 
 import s from './summary.css';
 
@@ -12,11 +12,14 @@ class Summary extends Component {
   static get propTypes() {
     return {
       showingMenu: PropTypes.bool,
+      showingWorldSelector: PropTypes.bool,
       profile: PropTypes.object.isRequired,
       user: PropTypes.object,
       mapSettings: PropTypes.object,
       stravaConnected: PropTypes.bool,
       onSetMenuState: PropTypes.func.isRequired,
+      onShowWorldSelector: PropTypes.func.isRequired,
+      onSetWorld: PropTypes.func.isRequired,
       onRequestLoginType: PropTypes.func.isRequired,
       onFetch: PropTypes.func.isRequired
     };
@@ -34,9 +37,11 @@ class Summary extends Component {
   }
 
   render() {
-    const { showingMenu, profile, mapSettings, user, stravaConnected, onSetMenuState } = this.props;
+    const { showingMenu, showingWorldSelector, profile, mapSettings, user,
+      stravaConnected, onSetMenuState, onShowWorldSelector, onSetWorld } = this.props;
     const { credit } = mapSettings;
     const disabled = !profile.riding;
+
     return (
       <div className="summary">
         <button className="app-button menu-button" onClick={() => { onSetMenuState(!showingMenu); }}>
@@ -71,6 +76,15 @@ class Summary extends Component {
               </a>
             </li>
 
+            { (user && user.canSetWorld)
+              ? <li>
+                  <a className="world" href="#" onClick={e => this.showWorldSelector(e)}>
+                      <span className="zwiftgps-icon icon-setworld">&nbsp;</span>
+                      <span>Change World</span>
+                  </a>
+                </li>
+              : undefined }
+
             { (user && user.canStrava)
               ? <li>
                   <a className="strava" href={stravaConnected ? '/strava/disconnect' : '/strava/connect'}>
@@ -99,6 +113,31 @@ class Summary extends Component {
             : undefined }
           </ul>
         </div>
+
+        {showingWorldSelector ?
+          <div className="popup-overlay"
+                onMouseDown={() => onShowWorldSelector(false)}
+                onTouchStart={() => onShowWorldSelector(false)}
+              >
+            <div className="popup-content world-selector" onMouseDown={this.popupContentEvent} onTouchStart={this.popupContentEvent}>
+              <h2>Select World</h2>
+              <ul>
+                <li onClick={() => onSetWorld(1)}>
+                  <span className="world-image world-1"></span>
+                  <span className="world-name">Watopia</span>
+                </li>
+                <li onClick={() => onSetWorld(2)}>
+                  <span className="world-image world-2"></span>
+                  <span className="world-name">Richmond</span>
+                </li>
+                <li onClick={() => onSetWorld(3)}>
+                  <span className="world-image world-3"></span>
+                  <span className="world-name">London</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        : undefined }
 
         {credit ?
           <div className="map-attribute">
@@ -151,11 +190,23 @@ class Summary extends Component {
         console.log(`error trying to toggle full screen - ${ex.message}`);
     }
   }
+
+  showWorldSelector(event) {
+    const { onShowWorldSelector } = this.props;
+    event.preventDefault();
+    onShowWorldSelector(true);
+  }
+
+  popupContentEvent(event) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
 }
 
 const mapStateToProps = (state) => {
   return {
     showingMenu: state.summary.showingMenu,
+    showingWorldSelector: state.summary.worldSelector,
     profile: state.profile,
 		user: state.login.user,
     mapSettings: state.mapSettings,
@@ -166,6 +217,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onSetMenuState: showMenu => dispatch(setMenuState(showMenu)),
+    onShowWorldSelector: showSelector => dispatch(showWorldSelector(showSelector)),
+    onSetWorld: worldId => dispatch(setWorld(worldId)),
     onRequestLoginType: () => dispatch(requestLoginType()),
     onFetch: () => dispatch(fetchProfile())
   }

@@ -13,6 +13,7 @@ class Rider extends EventEmitter {
     this.riderId = riderId;
     this.ghosts = new Ghosts(account, riderId);
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
+    this.worldId = undefined;
   }
 
   setRiderId(riderId, riderStatusFn) {
@@ -20,12 +21,15 @@ class Rider extends EventEmitter {
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
   }
 
-  setWorld() {
-		// not implemented
+  setWorld(worldId) {
+    if (this.worldId !== worldId) {
+      this.worldId = worldId;
+      this.emit('world', this.worldId);
+    }
   }
+
   getWorld() {
-		// not implemented
-    return undefined
+    return this.worldId;
   }
 
   pollPositions() {

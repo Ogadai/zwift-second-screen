@@ -18,6 +18,10 @@
         background-position: 0 -32px;
     }
 
+    &.icon-setworld {
+        background-position: -32px -32px;
+    }
+
     &.icon-ghosts {
         background-position: 0 -64px;
 

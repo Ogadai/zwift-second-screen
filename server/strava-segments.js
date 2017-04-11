@@ -57,7 +57,7 @@ class StravaSegments {
     }
 
     getRiderPosition(positions) {
-        return positions.length > 0 ? positions[0] : {}
+        return positions ? positions.find(p => p.me) : null
     }
 }
 

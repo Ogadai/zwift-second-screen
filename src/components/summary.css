@@ -165,6 +165,28 @@
             }
         }
     }
+
+    & .strava-settings {
+        box-sizing: border-box;
+        width: 440px;
+        margin-top: 30px;
+        max-width: 80%;
+        padding: 0 25px 25px 25px;
+        text-align: center;
+
+        & h2 {
+            margin: 20px 0 20px 0;
+        }
+
+        & .description {
+            margin: 10px 0;
+            font-size: 0.9em;
+        }
+
+        & .popup-footer {
+            margin: 20px 0 0 0;
+        }
+    }
 }
 
 .overlay .summary {

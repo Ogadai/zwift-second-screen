@@ -9,7 +9,7 @@ import {
   RECEIVE_GHOSTS, ADDING_GHOST, ADDED_GHOST, CHANGED_GHOST,
   REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY, RESET_GHOSTS
 } from './actions/ghosts';
-import { SET_MENU_STATE, SHOW_WORLD_SELECTOR } from './actions/summary';
+import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS } from './actions/summary';
 
 import { COOKIE_WARNING } from './actions/cookie-warning'
 
@@ -167,7 +167,13 @@ function ghosts(state = defaultGhosts, action) {
   }
 }
 
-function summary(state = { showingMenu: false, worldSelector: false }, action) {
+const defaultSummary = {
+  showingMenu: false,
+  worldSelector: false,
+  stravaSettings: false
+}
+
+function summary(state = defaultSummary, action) {
   switch (action.type) {
     case SET_MENU_STATE:
       return Object.assign({}, state, {
@@ -176,6 +182,10 @@ function summary(state = { showingMenu: false, worldSelector: false }, action) {
     case SHOW_WORLD_SELECTOR:
       return Object.assign({}, state, {
         worldSelector: action.visible
+      });
+    case SHOW_STRAVA_SETTINGS:
+      return Object.assign({}, state, {
+        stravaSettings: action.visible
       });
     default:
       return state;

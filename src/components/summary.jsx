@@ -4,7 +4,7 @@ import classnames from 'classnames';
 
 import { fetchProfile } from '../actions/fetch';
 import { requestLoginType } from '../actions/login';
-import { setMenuState, showWorldSelector, setWorld } from '../actions/summary';
+import { setMenuState, showWorldSelector, setWorld, showStravaSettings } from '../actions/summary';
 
 import s from './summary.css';
 
@@ -16,6 +16,8 @@ class Summary extends Component {
       profile: PropTypes.object.isRequired,
       user: PropTypes.object,
       mapSettings: PropTypes.object,
+      onShowStravaSettings: PropTypes.func,
+      showingStravaSettings: PropTypes.bool,
       stravaConnected: PropTypes.bool,
       onSetMenuState: PropTypes.func.isRequired,
       onShowWorldSelector: PropTypes.func.isRequired,
@@ -38,7 +40,8 @@ class Summary extends Component {
 
   render() {
     const { showingMenu, showingWorldSelector, profile, mapSettings, user,
-      stravaConnected, onSetMenuState, onShowWorldSelector, onSetWorld } = this.props;
+      showingStravaSettings, stravaConnected, onShowStravaSettings,
+      onSetMenuState, onShowWorldSelector, onSetWorld } = this.props;
     const { credit } = mapSettings;
     const disabled = !profile.riding;
 
@@ -87,9 +90,9 @@ class Summary extends Component {
 
             { (user && user.canStrava)
               ? <li>
-                  <a className="strava" href={stravaConnected ? '/strava/disconnect' : '/strava/connect'}>
+                  <a className="world" href="#" onClick={e => this.showStravaSettings(e)}>
                       <span className="zwiftgps-icon icon-strava">&nbsp;</span>
-                      <span>{stravaConnected ? 'Disconnect' : 'Connect'}</span>
+                      <span>Strava</span>
                   </a>
                 </li>
               : undefined }
@@ -135,6 +138,28 @@ class Summary extends Component {
                   <span className="world-name">London</span>
                 </li>
               </ul>
+            </div>
+          </div>
+        : undefined }
+
+        {showingStravaSettings ?
+          <div className="popup-overlay"
+                onMouseDown={() => onShowStravaSettings(false)}
+                onTouchStart={() => onShowStravaSettings(false)}
+              >
+            <div className="popup-content strava-settings" onMouseDown={this.popupContentEvent} onTouchStart={this.popupContentEvent}>
+              <h2><span className="zwiftgps-icon icon-strava">&nbsp;</span> Strava Segments</h2>
+              <div className="description">
+                Live PR comparison for "ZwiftBlog verified" segments
+              </div>
+              <div className="description">
+                Star Strava segments to add them to ZwiftGPS
+              </div>
+              <div className="popup-footer">
+                <a className="button" href={stravaConnected ? '/strava/disconnect' : '/strava/connect'}>
+                    {stravaConnected ? 'Disconnect' : 'Connect'}
+                </a>
+              </div>
             </div>
           </div>
         : undefined }
@@ -197,6 +222,12 @@ class Summary extends Component {
     onShowWorldSelector(true);
   }
 
+  showStravaSettings(event) {
+    const { onShowStravaSettings } = this.props;
+    event.preventDefault();
+    onShowStravaSettings(true);
+  }
+
   popupContentEvent(event) {
     event.preventDefault();
     event.stopPropagation();
@@ -210,6 +241,7 @@ const mapStateToProps = (state) => {
     profile: state.profile,
 		user: state.login.user,
     mapSettings: state.mapSettings,
+    showingStravaSettings: state.summary.stravaSettings,
     stravaConnected: state.world.strava ? state.world.strava.connected : false
   }
 }
@@ -219,6 +251,7 @@ const mapDispatchToProps = (dispatch) => {
     onSetMenuState: showMenu => dispatch(setMenuState(showMenu)),
     onShowWorldSelector: showSelector => dispatch(showWorldSelector(showSelector)),
     onSetWorld: worldId => dispatch(setWorld(worldId)),
+    onShowStravaSettings: showStrava => dispatch(showStravaSettings(showStrava)),
     onRequestLoginType: () => dispatch(requestLoginType()),
     onFetch: () => dispatch(fetchProfile())
   }

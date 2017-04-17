@@ -33,3 +33,12 @@ export function setWorld(worldId) {
       })
   }
 }
+
+export const SHOW_STRAVA_SETTINGS = "SHOW_STRAVA_SETTINGS";
+
+export function showStravaSettings(showStrava) {
+  return {
+    type: SHOW_STRAVA_SETTINGS,
+    visible: showStrava
+  };
+}

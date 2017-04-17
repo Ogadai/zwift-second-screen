@@ -82,6 +82,7 @@ class PooledRider {
 
     addStatic(status) {
         const extra = {
+            world: status.world,
             wattsPerKG: this.getWattsPerKg(status.power, this.static.weight)
         };
         return Object.assign({}, status, extra);
@@ -121,5 +122,7 @@ class PooledRider {
 module.exports = PooledRider;
 
 function errorMessage(ex) {
-    return (ex && ex.response && ex.response.status) ? `- ${ex.response.status} (${ex.response.statusText})` : '';
+    return (ex && ex.response && ex.response.status)
+        ? `- ${ex.response.status} (${ex.response.statusText})`
+        : ex.message;
 }

@@ -109,13 +109,9 @@ class Server {
     }))
 
     this.app.get('/activities/:playerId', this.processRider((rider, req) => {
-      const targetWorldId = rider.getWorld()
       const { playerId } = req.params;
-      if (targetWorldId) {
-        return rider.getActivities(targetWorldId, playerId)
-      } else {
-        return this.map.getSettings().then(({ worldId }) => rider.getActivities(worldId, playerId))
-      }
+      return this.worldPromise(rider)
+        .then(worldId => rider.getActivities(worldId, playerId))
     }))
 
     this.app.get('/rider/:riderId/activity/:activityId', this.processRider((rider, req) => rider.getGhosts().getActivity(req.params.riderId, req.params.activityId)))
@@ -176,7 +172,7 @@ class Server {
             }
           }
 
-          const world = rider.getWorld();
+          const world = rider.getCurrentWorld();
           if (world) sendWorld(world);
 
           rider
@@ -310,9 +306,11 @@ class Server {
 	}
 
   worldPromise(rider) {
-    return rider.getWorld()
-          ? Promise.resolve(rider.getWorld())
-          : this.map.getSettings().then(settings => parseInt(settings.worldId))
+    if (rider.getCurrentWorld()) {
+      return Promise.resolve(rider.getCurrentWorld())
+    } else {
+      return this.map.getSettings().then(settings => parseInt(settings.worldId))
+    }
   }
 
 }

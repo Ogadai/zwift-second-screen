@@ -14,6 +14,7 @@ class Rider extends EventEmitter {
     this.ghosts = new Ghosts(account, riderId);
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
     this.worldId = undefined;
+    this.statusWorldId = undefined;
   }
 
   setRiderId(riderId, riderStatusFn) {
@@ -30,6 +31,10 @@ class Rider extends EventEmitter {
 
   getWorld() {
     return this.worldId;
+  }
+
+  getCurrentWorld() {
+    return this.worldId || this.statusWorldId;
   }
 
   pollPositions() {
@@ -121,6 +126,7 @@ class Rider extends EventEmitter {
           .map(r => this.riderPromise(r));
 
       return Promise.all(promises)
+        .then(positions => this.filterByWorld(positions))
         .then(positions => this.addGhosts(positions.filter(p => p !== null)));
     });
   }
@@ -132,6 +138,7 @@ class Rider extends EventEmitter {
           return {
             id: rider.id,
             me: rider.me,
+            world: status.world,
             firstName: rider.firstName,
             lastName: rider.lastName,
             distance: status.distance,
@@ -149,6 +156,21 @@ class Rider extends EventEmitter {
           return null;
         }
       });
+  }
+
+  filterByWorld(positions) {
+    const worldId = this.worldId || this.getWorldFromPositions(positions);
+    if (worldId) {
+      return positions.filter(p => p && p.world === worldId)
+    } else {
+      return positions;
+    }
+  }
+
+  getWorldFromPositions(positions) {
+    const mePosition = positions.find(p => p && p.me);
+    this.statusWorldId = mePosition ? mePosition.world : undefined;
+    return this.statusWorldId;
   }
 
   addGhosts(positions) {

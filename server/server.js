@@ -172,7 +172,7 @@ class Server {
             }
           }
 
-          const world = rider.getCurrentWorld();
+          const world = rider.getCurrentWorld ? rider.getCurrentWorld() : rider.getWorld();
           if (world) sendWorld(world);
 
           rider
@@ -306,8 +306,9 @@ class Server {
 	}
 
   worldPromise(rider) {
-    if (rider.getCurrentWorld()) {
-      return Promise.resolve(rider.getCurrentWorld())
+    const worldId = rider.getCurrentWorld ? rider.getCurrentWorld() : rider.getWorld()
+    if (worldId) {
+      return Promise.resolve(worldId)
     } else {
       return this.map.getSettings().then(settings => parseInt(settings.worldId))
     }

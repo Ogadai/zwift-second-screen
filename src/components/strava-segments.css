@@ -1,5 +1,19 @@
 @import 'variables.css';
 
+@keyframes slider {
+    from {
+        left: -60%;
+    }
+
+    50% {
+        left: 80%;
+    }
+
+    to {
+        left: -60%;
+    }
+}
+
 .strava-segments {
     position: absolute;
     left: 0;
@@ -22,6 +36,32 @@
         max-width: calc(100% - 150px);
         margin: 0 auto;
         padding: 0;
+    }
+
+    & .strava-connected {
+        position: relative;
+        width: 200px;
+        height: 4px;
+        max-width: 40%;
+        max-width: calc(100% - 150px);
+        margin: 0 auto;
+        overflow: hidden;
+        border-radius: 5px;
+
+        & .anim {
+            display: block;
+            position: absolute;
+            top: 1px;
+            height: 3px;
+            width: 80%;
+            left: 0%;
+            background-color: var(--ghosts-border);
+            border-radius: 5px;
+
+            animation-duration: 3s;
+            animation-iteration-count: infinite;
+            animation-name: slider;
+        }
     }
 
     & .segment {

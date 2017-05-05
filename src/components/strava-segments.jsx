@@ -8,23 +8,30 @@ import s from './strava-segments.css';
 class StravaSegments extends Component {
   static get propTypes() {
     return {
+      connected: PropTypes.bool,
       segments: PropTypes.array
     }
   }
 
   render() {
-    const { segments } = this.props;
+    const { connected, segments } = this.props;
 
     let ordered = []
     segments.forEach(s => ordered.splice(0, 0, s));
 
     const height = segments.length * 42;
     return <div className="strava-segments" ref={c => this.updateContainerHeight(c)}>
+      { connected ?
         <div className="container">
             <ul>
                 { ordered.map(s => this.renderSegment(s)) }
             </ul>
+
+            { ordered.length === 0 ?
+              <div className="strava-connected"><span className="anim"></span></div>
+            : undefined }
         </div>
+      : undefined }
     </div>
   }
 
@@ -64,6 +71,7 @@ class StravaSegments extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    connected: (state.world.strava ? state.world.strava.connected : false) || false,
     segments: (state.world.strava ? state.world.strava.segments : null) || []
   }
 }

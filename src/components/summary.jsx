@@ -5,6 +5,7 @@ import classnames from 'classnames';
 import { fetchProfile } from '../actions/fetch';
 import { requestLoginType } from '../actions/login';
 import { setMenuState, showWorldSelector, setWorld, showStravaSettings } from '../actions/summary';
+import { connectStrava, disconnectStrava } from '../actions/strava';
 
 import s from './summary.css';
 
@@ -23,7 +24,9 @@ class Summary extends Component {
       onShowWorldSelector: PropTypes.func.isRequired,
       onSetWorld: PropTypes.func.isRequired,
       onRequestLoginType: PropTypes.func.isRequired,
-      onFetch: PropTypes.func.isRequired
+      onFetch: PropTypes.func.isRequired,
+      onConnectStrava: PropTypes.func.isRequired,
+      onDisconnectStrava: PropTypes.func.isRequired
     };
   }
 
@@ -156,7 +159,9 @@ class Summary extends Component {
                 Star Strava segments to add them to ZwiftGPS
               </div>
               <div className="popup-footer">
-                <a className="button" href={stravaConnected ? '/strava/disconnect' : '/strava/connect'}>
+                <a className="button" href="#"
+                    onClick={e => this.stravaToggleConnection(e)}
+                  >
                     {stravaConnected ? 'Disconnect' : 'Connect'}
                 </a>
               </div>
@@ -232,6 +237,18 @@ class Summary extends Component {
     event.preventDefault();
     event.stopPropagation();
   }
+
+  // func disable default
+  stravaToggleConnection(event) {
+    const { stravaConnected, onDisconnectStrava, onConnectStrava } = this.props;
+    event.preventDefault();
+
+    if (stravaConnected) {
+      onDisconnectStrava();
+    } else {
+      onConnectStrava();
+    }
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -253,7 +270,9 @@ const mapDispatchToProps = (dispatch) => {
     onSetWorld: worldId => dispatch(setWorld(worldId)),
     onShowStravaSettings: showStrava => dispatch(showStravaSettings(showStrava)),
     onRequestLoginType: () => dispatch(requestLoginType()),
-    onFetch: () => dispatch(fetchProfile())
+    onFetch: () => dispatch(fetchProfile()),
+    onConnectStrava: () => dispatch(connectStrava()),
+    onDisconnectStrava: () => dispatch(disconnectStrava())
   }
 }
 

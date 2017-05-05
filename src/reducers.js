@@ -10,6 +10,7 @@ import {
   REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY, RESET_GHOSTS
 } from './actions/ghosts';
 import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS } from './actions/summary';
+import { DISCONNECTED_STRAVA } from './actions/strava';
 
 import { COOKIE_WARNING } from './actions/cookie-warning'
 
@@ -30,6 +31,10 @@ function world(state = { positions: [], strava: { connected: false } }, action) 
     case RECEIVE_STRAVA:
       return Object.assign({}, state, {
         strava: action.data
+      });
+    case DISCONNECTED_STRAVA:
+      return Object.assign({}, state, {
+        strava: { connected: false }
       });
   default:
     return state;
@@ -186,6 +191,10 @@ function summary(state = defaultSummary, action) {
     case SHOW_STRAVA_SETTINGS:
       return Object.assign({}, state, {
         stravaSettings: action.visible
+      });
+    case DISCONNECTED_STRAVA:
+      return Object.assign({}, state, {
+        stravaSettings: false
       });
     default:
       return state;

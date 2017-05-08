@@ -23,20 +23,17 @@ class StravaSegments extends Component {
     return <div className="strava-segments" ref={c => this.updateContainerHeight(c)}>
       { connected ?
         <div className="container">
-            <ul>
-                { ordered.map(s => this.renderSegment(s)) }
-            </ul>
-
-            { ordered.length === 0 ?
-              <div className="strava-connected"><span className="anim"></span></div>
-            : undefined }
+            { ordered.length > 0 ? <ul>
+                  { ordered.map(s => this.renderSegment(s)) }
+              </ul>
+            : <div className="strava-connected"><span className="anim"></span></div> }
         </div>
       : undefined }
     </div>
   }
 
   updateContainerHeight(container) {
-    if (container) {
+    if (container && container.children.length > 0) {
       const listRect = container.children[0].getBoundingClientRect();
       container.style.height = `${listRect.height}px`;
     }

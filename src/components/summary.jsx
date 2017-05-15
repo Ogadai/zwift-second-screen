@@ -234,11 +234,9 @@ class Summary extends Component {
   }
 
   popupContentEvent(event) {
-    event.preventDefault();
     event.stopPropagation();
   }
 
-  // func disable default
   stravaToggleConnection(event) {
     const { stravaConnected, onDisconnectStrava, onConnectStrava } = this.props;
     event.preventDefault();

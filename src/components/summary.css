@@ -25,14 +25,16 @@
     }
     & .popup-overlay {
         background-color: rgba(255, 255, 255, 0.4);
-
-        & .popup-content {
-            margin-left: auto;
-            margin-right: auto;
-            background-color: var(--menu-background);
-            border: 2px solid var(--activity-color);        
-            border-radius: 25px;
-        }
+    }
+    & .popup-content {
+        position: absolute;
+        left: 0;
+        right: 0;
+        margin: 0 auto;
+        background-color: var(--menu-background);
+        border: 2px solid var(--activity-color);        
+        border-radius: 25px;
+        z-index: 400;
     }
 
     & .menu-content {
@@ -113,7 +115,7 @@
     & .world-selector {
         box-sizing: border-box;
         width: 440px;
-        margin-top: 30px;
+        top: 30px;
         max-width: 80%;
         padding: 0 25px 25px 25px;
         text-align: center;
@@ -169,7 +171,7 @@
     & .strava-settings {
         box-sizing: border-box;
         width: 440px;
-        margin-top: 30px;
+        top: 30px;
         max-width: 80%;
         padding: 0 25px 25px 25px;
         text-align: center;

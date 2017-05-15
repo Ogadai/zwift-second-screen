@@ -121,11 +121,13 @@ class Summary extends Component {
         </div>
 
         {showingWorldSelector ?
-          <div className="popup-overlay"
-                onMouseDown={() => onShowWorldSelector(false)}
-                onTouchStart={() => onShowWorldSelector(false)}
-              >
-            <div className="popup-content world-selector" onMouseDown={this.popupContentEvent} onTouchStart={this.popupContentEvent}>
+          <div>
+            <div className="popup-overlay"
+                  onMouseDown={() => onShowWorldSelector(false)}
+                  onTouchStart={() => onShowWorldSelector(false)}
+                >
+            </div>
+            <div className="popup-content world-selector">
               <h2>Select World</h2>
               <ul>
                 <li onClick={() => onSetWorld(1)}>
@@ -146,11 +148,13 @@ class Summary extends Component {
         : undefined }
 
         {showingStravaSettings ?
-          <div className="popup-overlay"
-                onMouseDown={() => onShowStravaSettings(false)}
-                onTouchStart={() => onShowStravaSettings(false)}
-              >
-            <div className="popup-content strava-settings" onMouseDown={this.popupContentEvent} onTouchStart={this.popupContentEvent}>
+          <div>
+            <div className="popup-overlay"
+                  onMouseDown={() => onShowStravaSettings(false)}
+                  onTouchStart={() => onShowStravaSettings(false)}
+                >
+            </div>
+            <div className="popup-content strava-settings">
               <h2><span className="zwiftgps-icon icon-strava">&nbsp;</span> Strava Segments</h2>
               <div className="description">
                 Live PR comparison for "ZwiftBlog verified" segments
@@ -231,10 +235,6 @@ class Summary extends Component {
     const { onShowStravaSettings } = this.props;
     event.preventDefault();
     onShowStravaSettings(true);
-  }
-
-  popupContentEvent(event) {
-    event.stopPropagation();
   }
 
   stravaToggleConnection(event) {

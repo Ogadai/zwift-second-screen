@@ -1,4 +1,7 @@
 import axios from 'axios';
+
+import { getStravaSettings } from './strava';
+
 export const SET_MENU_STATE = "SET_MENU_STATE";
 
 export function setMenuState(showMenu) {
@@ -37,8 +40,14 @@ export function setWorld(worldId) {
 export const SHOW_STRAVA_SETTINGS = "SHOW_STRAVA_SETTINGS";
 
 export function showStravaSettings(showStrava) {
-  return {
-    type: SHOW_STRAVA_SETTINGS,
-    visible: showStrava
-  };
+  return dispatch => {
+    if (showStrava) {
+      dispatch(getStravaSettings());
+    }
+
+    dispatch({
+      type: SHOW_STRAVA_SETTINGS,
+      visible: showStrava
+    });
+  }
 }

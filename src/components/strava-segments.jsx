@@ -41,29 +41,44 @@ class StravaSegments extends Component {
 
   renderSegment(segment) {
     const { name, difference } = segment;
+    let diffSeconds = Math.round(difference);
 
-    return <li className="segment" key={`segment-${segment.id}`}>
+    return <li className={classnames('segment', { slower: diffSeconds > 0, faster: diffSeconds < 0 })}
+        key={`segment-${segment.id}`}>
         <span className="name">{name}</span>
         {this.renderDifference(difference)}
+        {this.renderTime(segment)}
       </li>
   }
 
   renderDifference(difference) {
     let totalSeconds = Math.round(difference);
-    const faster = (totalSeconds < 0);
-    const slower = (totalSeconds > 0);
-    const sign = faster ? '-' : (slower ? '+' : '');
+    const sign = (totalSeconds < 0) ? '-' : ((totalSeconds > 0) ? '+' : '');
     totalSeconds = Math.abs(totalSeconds);
 
-    const minutes = Math.floor(totalSeconds / 60);
-    let secondsStr = (totalSeconds % 60) + '';
-    if (secondsStr.length < 2) secondsStr = '0' + secondsStr;
-
-    return <span className={classnames('difference', { slower, faster })}>
-        {`${sign}${minutes}:${secondsStr}`}
+    return <span className="difference">
+        {`${sign}${this.secondsToTime(totalSeconds)}`}
     </span>
   }
-    
+
+  renderTime(segment) {
+    const timeNow = new Date();
+    const timeStart = new Date(Date.parse(segment.startTime));
+    const elapsed = Math.round((timeNow.getTime() - timeStart.getTime()) / 1000);
+
+    return <span className="time">(
+      <span className="elapsed">{this.secondsToTime(elapsed)}</span>
+      /
+      <span className="pr">{this.secondsToTime(segment.pr.time)}</span>
+    )</span>
+  }
+
+  secondsToTime(seconds) {
+    const minutes = Math.floor(seconds / 60);
+    let secondsStr = (seconds % 60) + '';
+    if (secondsStr.length < 2) secondsStr = '0' + secondsStr;
+    return `${minutes}:${secondsStr}`;
+  }
 }
 
 const mapStateToProps = (state) => {

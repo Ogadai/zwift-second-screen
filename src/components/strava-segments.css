@@ -90,14 +90,25 @@
             min-width: 50px;
             text-align: right;
             flex: 0 0;
+        }
 
-            &.slower {
-                color: #E03C31; /* red */
-            }
+        &.slower .difference {
+            color: #E03C31; /* red */
+        }
+        &.faster .difference {
+            color: #90EE90; /* green */
+        }
 
-            &.faster {
-                color: #90EE90; /* green */                
-            }
+        & .time {
+            font-size: 0.8em;
+            margin: auto 0 auto 10px;
+        }
+
+        &.slower .time .elapsed {
+            color: #E03C31; /* red */
+        }
+        &.faster .time .elapsed {
+            color: #90EE90; /* green */
         }
     }
 }
@@ -116,5 +127,5 @@
                 min-width: 75px;
             }
         }
-    }    
+    }
 }

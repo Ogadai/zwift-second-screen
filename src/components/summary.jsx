@@ -5,7 +5,7 @@ import classnames from 'classnames';
 import { fetchProfile } from '../actions/fetch';
 import { requestLoginType } from '../actions/login';
 import { setMenuState, showWorldSelector, setWorld, showStravaSettings } from '../actions/summary';
-import { connectStrava, disconnectStrava } from '../actions/strava';
+import { connectStrava, disconnectStrava, saveStravaSettings } from '../actions/strava';
 
 import s from './summary.css';
 
@@ -20,14 +20,34 @@ class Summary extends Component {
       onShowStravaSettings: PropTypes.func,
       showingStravaSettings: PropTypes.bool,
       stravaConnected: PropTypes.bool,
+      stravaSettings: PropTypes.any.isRequired,
       onSetMenuState: PropTypes.func.isRequired,
       onShowWorldSelector: PropTypes.func.isRequired,
       onSetWorld: PropTypes.func.isRequired,
       onRequestLoginType: PropTypes.func.isRequired,
       onFetch: PropTypes.func.isRequired,
       onConnectStrava: PropTypes.func.isRequired,
-      onDisconnectStrava: PropTypes.func.isRequired
+      onDisconnectStrava: PropTypes.func.isRequired,
+      onSaveStravaSettings: PropTypes.func.isRequired
     };
+  }
+
+  constructor(props) {
+    super();
+
+    this.state = {
+      stravaAgeValid: true,
+      stravaDateValid: true,
+      stravaSettings: props.stravaSettings
+    }
+  }
+
+  componentWillReceiveProps(props) {
+    this.setState({
+      stravaAgeValid: true,
+      stravaDateValid: true,
+      stravaSettings: props.stravaSettings
+    });
   }
 
   componentDidMount() {
@@ -44,7 +64,8 @@ class Summary extends Component {
   render() {
     const { showingMenu, showingWorldSelector, profile, mapSettings, user,
       showingStravaSettings, stravaConnected, onShowStravaSettings,
-      onSetMenuState, onShowWorldSelector, onSetWorld } = this.props;
+      onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
+    const { stravaAgeValid, stravaDateValid, stravaSettings } = this.state;
     const { credit } = mapSettings;
     const disabled = !profile.riding;
 
@@ -162,12 +183,40 @@ class Summary extends Component {
               <div className="description">
                 Star Strava segments to add them to ZwiftGPS
               </div>
-              <div className="popup-footer">
+              <div className="connection-buttons">
                 <a className="button" href="#"
                     onClick={e => this.stravaToggleConnection(e)}
                   >
                     {stravaConnected ? 'Disconnect' : 'Connect'}
                 </a>
+              </div>
+              <div className="strava-config-startdate">
+                <h3>Lookup Strava Personal Records for</h3>
+                <ul>
+                  <li>
+                    <input type="radio" name="startdate" id="stravaStartNone"
+                        checked={!stravaSettings.startAge && !stravaSettings.startDate}
+                        onChange={() => onSaveStravaSettings({})} />
+                    <label htmlFor="stravaStartNone">all time</label>
+                  </li>
+                  <li>
+                    <input type="radio" name="startdate" id="stravaStartAge"
+                        checked={stravaSettings.startAge !== undefined}
+                        onChange={() => onSaveStravaSettings({ startAge: 90 })} />
+                    <label htmlFor="stravaStartAge">last
+                      <input type="text" value={stravaSettings.startAge !== undefined ? stravaSettings.startAge : 90}
+                          className={classnames("age", { error: !stravaAgeValid })}
+                          onChange={event => this.stravaSettingsAge(event)}
+                        />
+                    days</label>
+                  </li>
+                  <li>
+                    <input type="radio" name="startdate" id="stravaStartDate"
+                        checked={stravaSettings.startDate}
+                        onChange={() => onSaveStravaSettings({startDate: '2017-01-01T00:00:00Z'})} />
+                    <label htmlFor="stravaStartDate">since 1st Jan 2017</label>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
@@ -247,6 +296,22 @@ class Summary extends Component {
       onConnectStrava();
     }
   }
+
+  stravaSettingsAge(event) {
+    const { onSaveStravaSettings } = this.props;
+    const startAge = parseInt(event.target.value);
+
+    this.setState( {
+      stravaAgeValid: startAge > 0,
+      stravaSettings: {
+        startAge: event.target.value
+      }
+    });
+
+    if (startAge > 0) {
+      onSaveStravaSettings({ startAge });
+    }
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -256,8 +321,9 @@ const mapStateToProps = (state) => {
     profile: state.profile,
 		user: state.login.user,
     mapSettings: state.mapSettings,
-    showingStravaSettings: state.summary.stravaSettings,
-    stravaConnected: state.world.strava ? state.world.strava.connected : false
+    showingStravaSettings: state.summary.showStravaSettings,
+    stravaConnected: state.world.strava ? state.world.strava.connected : false,
+    stravaSettings: state.summary.stravaSettings
   }
 }
 
@@ -270,7 +336,8 @@ const mapDispatchToProps = (dispatch) => {
     onRequestLoginType: () => dispatch(requestLoginType()),
     onFetch: () => dispatch(fetchProfile()),
     onConnectStrava: () => dispatch(connectStrava()),
-    onDisconnectStrava: () => dispatch(disconnectStrava())
+    onDisconnectStrava: () => dispatch(disconnectStrava()),
+    onSaveStravaSettings: (settings) => dispatch(saveStravaSettings(settings))
   }
 }
 

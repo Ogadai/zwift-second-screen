@@ -33,7 +33,7 @@ class Server {
 
     this.app.use(bodyParser.json())
     this.app.use(cookieParser())
-    
+
     if (this.stravaSettings) {
       const { clientId, clientSecret } = this.stravaSettings
       this.app.use('/strava', stravaConnect({ clientId, clientSecret, afterUrl: '/' }))
@@ -80,7 +80,7 @@ class Server {
       ]).then(([worldId, positions]) => {
         const token = stravaConnect.getToken(req);
         if (this.stravaSettings && token) {
-          return this.stravaSegments.get(token, worldId, positions)
+          return this.stravaSegments.get(token, worldId, positions, stravaConnect.getSettings(req))
               .then(strava => {
                 return { worldId, positions, strava };
               })
@@ -102,7 +102,7 @@ class Server {
       const token = stravaConnect.getToken(req);
       if (this.stravaSettings && token) {
         return this.worldPromise(rider)
-          .then(worldId => this.stravaSegments.segmentEffort(token, worldId, segmentId))
+          .then(worldId => this.stravaSegments.segmentEffort(token, worldId, segmentId, stravaConnect.getSettings(req)))
       } else {
 				throw new Exception('Not connected to strava')
       }
@@ -140,7 +140,7 @@ class Server {
             const token = stravaConnect.getToken(req);
             if (this.stravaSettings && token) {
               this.worldPromise(rider).then(worldId =>
-                this.stravaSegments.get(token, worldId, positions)
+                this.stravaSegments.get(token, worldId, positions, stravaConnect.getSettings(req))
                   .then(strava => {
                     send('strava', strava);
                   })
@@ -222,7 +222,7 @@ class Server {
       // default to plain-text. send()
       res.type('txt').send('Not found');
     };
-    
+
     this.app.get('/', indexRoute)
 
     if (this.siteSettings && this.siteSettings.static) {

@@ -27,8 +27,12 @@ class Ghost extends EventEmitter {
     };
   }
 
+  getOffsetTime() {
+    return ((new Date()) - this.startTime + this.startOffset);
+  }
+
   getPosition() {
-    const offset = (new Date()) - this.startTime + this.startOffset;
+    const offset = this.getOffsetTime();
     const { positions } = this.activity;
 
     const index = this.getIndex();
@@ -77,14 +81,14 @@ class Ghost extends EventEmitter {
   }
 
   isFinished() {
-    const offset = (new Date()) - this.startTime + this.startOffset;
+    const offset = this.getOffsetTime();
     const { positions } = this.activity;
 
     return (offset > positions[positions.length - 1].time * 1000 + 10000);
   }
 
   getIndex() {
-    const offset = (new Date()) - this.startTime + this.startOffset;
+    const offset = this.getOffsetTime();
     const { positions } = this.activity;
 
     let index = 1;

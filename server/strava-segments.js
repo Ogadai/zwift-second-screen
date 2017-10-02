@@ -6,12 +6,15 @@ class StravaSegments {
         this.settings = settings
     }
 
-    tracker(token, worldId) {
+    tracker(token, worldId, userSettings) {
+        const startDate = this.getStartDate(userSettings);
+
         const world = worldId || 1
         const lastLng = latLngMap[world]
         const config = {
-            key: `world-${world}-${token}`,
+            key: `world-${world}-${token}-${startDate}`,
             segments: this.settings.segments,
+            startDate,
             map: point => {
                 return lastLng.toXY(point.lat + lastLng.offset.lat, point.lng + lastLng.offset.long)
             }
@@ -20,9 +23,22 @@ class StravaSegments {
         return stravaTracker.get(token, config)
     }
 
-    get(token, worldId, positions) {
+    getStartDate(userSettings) {
+        const subtractDays = days => {
+            let theDate = new Date();
+            theDate.setDate(theDate.getDate() - days);
+            theDate.setHours(0, 0, 0, 0);
+            return theDate.toISOString();
+        };
+
+        return userSettings
+            ? (userSettings.startAge ? subtractDays(userSettings.startAge) : userSettings.startDate)
+            : undefined;
+    }
+
+    get(token, worldId, positions, userSettings) {
         return new Promise(resolve => {
-            return this.tracker(token, worldId)
+            return this.tracker(token, worldId, userSettings)
                 .active(this.getRiderPosition(positions)).then(segments => {
                     return {
                         connected: !!token,
@@ -45,8 +61,8 @@ class StravaSegments {
         })
     }
 
-    segmentEffort(token, worldId, segmentId) {
-        return this.tracker(token, worldId)
+    segmentEffort(token, worldId, segmentId, userSettings) {
+        return this.tracker(token, worldId, userSettings)
             .effort(segmentId)
             .then(positions => {
                 return {
@@ -57,7 +73,7 @@ class StravaSegments {
     }
 
     getRiderPosition(positions) {
-        return positions ? positions.find(p => p.me) : null
+        return positions ? positions.find(p => p.me) : null;
     }
 }
 

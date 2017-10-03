@@ -223,6 +223,9 @@
     opacity: 0;
     transition: opacity ease 1s;
 }
+.overlay.openfin .summary {
+    transition: none;
+}
 .overlay.hovering .summary {
     opacity: 1;
 }

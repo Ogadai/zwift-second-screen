@@ -95,7 +95,7 @@ class Map extends Component {
       });
     })
   }
-	
+
   render() {
     const { develop, worldId, positions, mapSettings, displayActivity } = this.props;
     const { svgFile } = this.state;
@@ -189,7 +189,7 @@ class Map extends Component {
         ? displayActivity.positions[activityIndex] : displayActivity.positions[0];
 
     const points = displayActivity.positions.map(p => `${p.x},${p.y}`).join(' ');
-    
+
     return <g id="display-activity" className="display-activity">
       <polyline points={points} />
       { activityPosition
@@ -214,7 +214,7 @@ class Map extends Component {
       return `${this.baseUrl()}${path}`
     }
   }
-	
+
   getLabelRotate() {
     const { mapSettings } = this.props;
     if (mapSettings.rotate) {
@@ -281,7 +281,7 @@ class Map extends Component {
     const params = viewBox.split(' ')
 			.filter(v => v.length)
       .map(v => parseInt(v));
-    
+
     const updatedParams = adjustFn(params)
 
     const newViewBox = updatedParams.join(' ')
@@ -308,7 +308,7 @@ const mapStateToProps = (state) => {
   return {
     worldId: state.world.worldId,
     positions: state.world.positions,
-    overlay: state.environment.electron,
+    overlay: state.environment.electron || state.environment.openfin,
     mapSettings: state.mapSettings,
     displayActivity: state.ghosts.displayActivity
   }

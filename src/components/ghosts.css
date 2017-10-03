@@ -52,7 +52,7 @@
         border: 1px solid var(--ghosts-border);
         background-color: var(--ghosts-background);
         border-radius: 8px;
-        
+
         & .display-area {
             opacity: 1;
         }
@@ -243,7 +243,11 @@
         transition: opacity ease 1s;
     }
 
+    &.openfin .ghosts {
+        transition: none;
+    }
+
     &.hovering .ghosts {
         opacity: 1;
-    }    
+    }
 }

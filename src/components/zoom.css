@@ -43,7 +43,11 @@
         transition: opacity ease 1s;
     }
 
+    &.openfin .zoom-follow-btn {
+        transition: none;
+    }
+
     &.hovering .zoom-follow-btn {
         opacity: 1;
-    }    
+    }
 }

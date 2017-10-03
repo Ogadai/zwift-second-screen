@@ -38,6 +38,11 @@ body {
         background: transparent;
         transition: background-color ease 1s;
 
+        &.openfin {
+            background: rgb(200, 200, 200);
+            transition: none;
+        }
+
         &.hovering {
             background-color: rgba(222, 220, 220, 0.5);
 
@@ -51,6 +56,10 @@ body {
             opacity: 0;
             transition: opacity ease 1s;
             -webkit-app-region: drag;
+        }
+
+        &.openfin .title-bar {
+            transition: none;
         }
     }
 }

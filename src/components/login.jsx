@@ -113,7 +113,7 @@ class Login extends Component {
               </div>
 						</div>
           : undefined}
-        
+
         <div className="feedback">
           <a href="http://zwiftblog.com/zwiftgps/" target="_blank">Feedback</a>
         </div>
@@ -139,7 +139,7 @@ class Login extends Component {
 
 const mapStateToProps = (state) => {
   return {
-    overlay: state.environment.electron,
+    overlay: state.environment.electron || state.environment.openfin,
 		user: state.login.user,
     error: state.login.error,
 		host: state.host

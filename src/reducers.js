@@ -58,6 +58,7 @@ function login(state = {}, action) {
 
 const defaultEnv = {
     electron: navigator.userAgent.toLowerCase().indexOf('electron') !== -1,
+    openfin: !!window.fin,
     analytics: (window.ga && window.ga.trackingId) ? { trackingId: window.ga.trackingId } : {},
     cookieWarning: false
 }

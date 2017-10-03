@@ -19,6 +19,7 @@ class App extends Component {
     return {
       develop: PropTypes.bool,
       overlay: PropTypes.bool,
+      openfin: PropTypes.bool,
       onCloseApp: PropTypes.func
     };
   }
@@ -38,11 +39,11 @@ class App extends Component {
   }
 
   render() {
-    const { develop, overlay, onCloseApp } = this.props;
+    const { develop, overlay, openfin, onCloseApp } = this.props;
     const { hovering } = this.state;
 
     return (
-      <div className={classnames("zwift-app", { overlay, hovering })}>
+      <div className={classnames("zwift-app", { overlay, openfin, hovering })}>
         <CookieWarning />
         <h1 className="title-bar">
           {document.title}
@@ -81,7 +82,8 @@ class App extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     develop: ownProps.params.filter === 'dev',
-    overlay: state.environment.electron
+    overlay: state.environment.electron || state.environment.openfin,
+    openfin: state.environment.openfin
   }
 }
 

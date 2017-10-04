@@ -55,7 +55,7 @@
             opacity: 0.8;
             fill: var(--activity-color);
         }
-        
+
         & polyline {
             opacity: 0.5;
             fill: none;
@@ -79,9 +79,9 @@
 
 .map-develop {
     position: absolute;
-    bottom: 5px;
+    bottom: 50px;
     left: 5px;
     & .viewbox {
-        width: 200px;
+        width: 300px;
     }
 }

@@ -10,6 +10,7 @@ const WHEEL_RATE = 0.1;
 class Zoom extends Component {
   static get propTypes() {
     return {
+      defaultZoom: PropTypes.number,
       followSelector: PropTypes.string
     };
   }
@@ -18,7 +19,7 @@ class Zoom extends Component {
         super(props)
 
         this.state = {
-            scale: 1,
+            scale: props.defaultZoom || 1,
             center: {
                 x: 0.5,
                 y: 0.5
@@ -26,13 +27,18 @@ class Zoom extends Component {
             dragging: false,
             touchStart: {},
             touchLast: {},
-            follow: false
+            follow: true
         }
     }
 
     componentWillReceiveProps(props) {
-        const { follow, scale } = this.state;
-        if (follow && scale > 1.1) {
+        let { follow, scale } = this.state;
+
+        if (props.defaultZoom && props.defaultZoom !== this.props.defaultZoom) {
+           scale = props.defaultZoom;
+           follow = true;
+           this.setZoom({ scale, follow });
+        } else if (follow && scale > 1.1) {
             this.centerOnRider();
         }
     }
@@ -110,7 +116,7 @@ class Zoom extends Component {
         const { scale } = this.state;
         const dir = event.deltaY < 0 ? 1 : -1;
         const newScale = scale + dir * scale * WHEEL_RATE;
-        
+
         this.setZoom({ scale: newScale, follow: false });
     }
 
@@ -223,13 +229,13 @@ class Zoom extends Component {
     getSpread(touch) {
         const { points } = touch;
         const { width, height } = this.screenSize;
-        
+
         let maxDist = 0;
         for(let n = 0; n < points.length - 1; n++) {
             for(let m = n + 1; m < points.length; m++) {
                 const p1 = points[n],
                       p2 = points[m];
-                
+
                 const dist = Math.sqrt( Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2) );
                 maxDist = Math.max(maxDist, dist);
             }

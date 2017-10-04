@@ -14,9 +14,16 @@ import { closeApp } from '../actions/host';
 
 import s from './app.css';
 
+const mapZoomLevels = {
+  1: 2.5,
+  2: 1,
+  3: 1
+};
+
 class App extends Component {
   static get propTypes() {
     return {
+			worldId: PropTypes.number,
       develop: PropTypes.bool,
       overlay: PropTypes.bool,
       openfin: PropTypes.bool,
@@ -39,7 +46,7 @@ class App extends Component {
   }
 
   render() {
-    const { develop, overlay, openfin, onCloseApp } = this.props;
+    const { worldId, develop, overlay, openfin, onCloseApp } = this.props;
     const { hovering } = this.state;
 
     return (
@@ -50,7 +57,7 @@ class App extends Component {
 					<a className="close-button" href="#" onClick={onCloseApp}>X</a>
 				</h1>
         <div className="content" onMouseMove={() => this.onMouseMove()}>
-          <Zoom followSelector=".rider-position circle">
+          <Zoom followSelector=".rider-position circle" defaultZoom={mapZoomLevels[worldId] || 1}>
             <Map develop={develop} />
           </Zoom>
           <Summary />
@@ -81,6 +88,7 @@ class App extends Component {
 
 const mapStateToProps = (state, ownProps) => {
   return {
+    worldId: state.world.worldId,
     develop: ownProps.params.filter === 'dev',
     overlay: state.environment.electron || state.environment.openfin,
     openfin: state.environment.openfin

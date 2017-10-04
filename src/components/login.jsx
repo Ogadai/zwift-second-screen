@@ -114,6 +114,14 @@ class Login extends Component {
 						</div>
           : undefined}
 
+        {!overlay
+          ? <div className={classnames('download', { show: host && host.os === 'Windows' })}>
+              <h2>Desktop Overlay</h2>
+              <p>Install the desktop application to show a transparent overlay on top of Zwift on your Windows PC</p>
+              <p><a href="https://install.openfin.co/download/?config=http%3A%2F%2Fwww.zwiftgps.com%2Fapp.json&fileName=zwiftgps-installer&unzipped=true">Download Installer</a></p>
+            </div>
+          : undefined}
+
         <div className="feedback">
           <a href="http://zwiftblog.com/zwiftgps/" target="_blank">Feedback</a>
         </div>
@@ -142,7 +150,7 @@ const mapStateToProps = (state) => {
     overlay: state.environment.electron || state.environment.openfin,
 		user: state.login.user,
     error: state.login.error,
-		host: state.host
+    host: state.host
   }
 }
 

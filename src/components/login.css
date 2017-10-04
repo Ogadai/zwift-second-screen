@@ -3,14 +3,14 @@
 .login {
     border: 1px solid #4d4d4d;
     background-color: #ede9e9;
-    
+
     position: absolute;
     top: 0;
     left: 0;
     right: 1px;
     bottom: 1px;
     min-height: 410px;
-    
+
     & h2 {
         background-color: #3e3e3e;
         color: white;
@@ -21,7 +21,7 @@
         border-top-left-radius: 20px;
     }
 
-    & form, & .host {
+    & form, & .host, & .download {
         -webkit-app-region: no-drag;
         background-color: white;
         border-top-left-radius: 20px;
@@ -60,6 +60,28 @@
     }
     & .host-info {
         padding: 20px;
+    }
+
+    & .download {
+        position: absolute;
+        right: -300px;
+        bottom: 20px;
+        width: 300px;
+        visibility: hidden;
+        transition: right ease 400ms;
+
+        &.show {
+            visibility: visible;
+            right: 20px;
+        }
+
+        & h2 {
+            font-size: 1em;
+        }
+        & p {
+            margin: 10px;
+            text-align: center;
+        }
     }
 
     & .error {

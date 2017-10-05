@@ -13,6 +13,26 @@ class StravaSegments extends Component {
     }
   }
 
+  constructor() {
+    super();
+
+    this.state = {
+      timeNow: new Date()
+    };
+  }
+
+  componentDidMount() {
+    this.updateInterval = setInterval(() => {
+      this.setState({
+        timeNow: new Date()
+      });
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.updateInterval);
+  }
+  
   render() {
     const { connected, segments } = this.props;
 
@@ -62,15 +82,15 @@ class StravaSegments extends Component {
   }
 
   renderTime(segment) {
-    const timeNow = new Date();
+    const { timeNow } = this.state;
     const timeStart = new Date(Date.parse(segment.startTime));
     const elapsed = Math.round((timeNow.getTime() - timeStart.getTime()) / 1000);
 
     return <span className="time">(
       <span className="elapsed">{this.secondsToTime(elapsed)}</span>
-      /
+      ) <span className="pr-label">PR</span>
       <span className="pr">{this.secondsToTime(segment.pr.time)}</span>
-    )</span>
+    </span>
   }
 
   secondsToTime(seconds) {

@@ -104,6 +104,10 @@
             margin: auto 0 auto 10px;
         }
 
+        & .pr-label {
+            font-size: 0.5em;
+        }
+
         &.slower .time .elapsed {
             color: #E03C31; /* red */
         }

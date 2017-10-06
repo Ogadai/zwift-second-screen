@@ -96,7 +96,7 @@
             color: #E03C31; /* red */
         }
         &.faster .difference {
-            color: #90EE90; /* green */
+            color: #3CC031; /* green */
         }
 
         & .time {
@@ -112,7 +112,7 @@
             color: #E03C31; /* red */
         }
         &.faster .time .elapsed {
-            color: #90EE90; /* green */
+            color: #3CC031; /* green */
         }
     }
 }

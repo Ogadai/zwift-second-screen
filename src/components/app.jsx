@@ -57,9 +57,11 @@ class App extends Component {
 					<a className="close-button" href="#" onClick={onCloseApp}>X</a>
 				</h1>
         <div className="content" onMouseMove={() => this.onMouseMove()}>
-          <Zoom followSelector=".rider-position circle" defaultZoom={mapZoomLevels[worldId] || 1}>
-            <Map develop={develop} />
-          </Zoom>
+          {!develop
+          ? <Zoom followSelector=".rider-position circle" defaultZoom={mapZoomLevels[worldId] || 1}>
+              <Map />
+            </Zoom>
+          : <Map develop={develop} /> }
           <Summary />
 					<Ghosts />
           <StravaSegments />

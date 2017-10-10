@@ -251,8 +251,9 @@ class Map extends Component {
 
     this.adjustViewBox(params => {
       const adjust = this.adjustVal.bind(this, params);
+      const keyCode = event.shiftKey ? event.keyCode + 32 : event.keyCode;
 
-      switch (event.keyCode) {
+      switch (keyCode) {
         case 119: // w
           return adjust(1, speed);
         case 97: // a

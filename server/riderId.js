@@ -2,6 +2,7 @@
 const ZwiftAccount = require('zwift-mobile-api');
 const Rider = require('./rider');
 const RiderPool = require('./riderPool');
+const RiderRealList = require('./riderRealLife');
 
 const COOKIE_PREFIX = 'rider-';
 const sessionTimeout = 30 * 60;
@@ -11,6 +12,7 @@ class RiderId {
   constructor(username, password) {
     this.account = new ZwiftAccount(username, password);
     this.riderPool = new RiderPool(this.account);
+    this.riderRealLife = new RiderRealList();
   }
 
   getRider(cookie) {
@@ -19,6 +21,10 @@ class RiderId {
       return this.getOrCreateRider(riderId);
     }
     return null;
+  }
+
+  setRealLifePosition(riderId, position) {
+    this.riderRealLife.setPosition(riderId, position);
   }
 
   get canLogout() {
@@ -56,6 +62,8 @@ class RiderId {
     }
 
     const newRider = new Rider(this.account, riderId, id => this.riderStatusFn(id));
+    newRider.setRiderRealLife(this.riderRealLife);
+
     sessionCache.set(riderId, newRider);
     return newRider;
   }

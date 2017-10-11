@@ -11,13 +11,15 @@ class StravaSegments {
 
         const world = worldId || 1
         const lastLng = latLngMap[world]
+        const map = lastLng
+            ? point => { return lastLng.toXY(point.lat + lastLng.offset.lat, point.lng + lastLng.offset.long) }
+            : point => { return { x: point.lat, y: point.lng } }
+
         const config = {
             key: `world-${world}-${token}-${startDate}`,
             segments: this.settings.segments,
             startDate,
-            map: point => {
-                return lastLng.toXY(point.lat + lastLng.offset.lat, point.lng + lastLng.offset.long)
-            }
+            map
         }
 
         return stravaTracker.get(token, config)

@@ -163,6 +163,10 @@ class Summary extends Component {
                   <span className="world-image world-3"></span>
                   <span className="world-name">London</span>
                 </li>
+                <li onClick={() => onSetWorld(-1)}>
+                  <span className="world-image world-0"></span>
+                  <span className="world-name">Real Life</span>
+                </li>
               </ul>
             </div>
           </div>

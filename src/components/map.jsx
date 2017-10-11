@@ -109,9 +109,12 @@ class Map extends Component {
         className={classnames("map", { "custom-map": mapSettings && mapSettings.map })}
         style={{ backgroundColor: mapSettings.background }}
       >
-      <div className="map-route">
-        <div className="full-size img" style={{ backgroundImage: `url(${mapUrl})` }} />
-      </div>
+      {(worldId === -1)
+      ? undefined
+      : <div className="map-route">
+          <div className="full-size img" style={{ backgroundImage: `url(${mapUrl})` }} />
+        </div>
+      }
       {svgFile ?
         <div className="map-route" dangerouslySetInnerHTML={{ __html: this.replaceViewBox(svgFile) }} />
 				: undefined

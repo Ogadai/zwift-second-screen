@@ -15,6 +15,11 @@ class Rider extends EventEmitter {
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
     this.worldId = undefined;
     this.statusWorldId = undefined;
+    this.riderRealLife = null;
+  }
+
+  setRiderRealLife(riderRealLife) {
+    this.riderRealLife = riderRealLife;
   }
 
   setRiderId(riderId, riderStatusFn) {
@@ -106,10 +111,14 @@ class Rider extends EventEmitter {
   }
 
   requestRidingNow() {
+    const allRidersPromise = (this.worldId === -1 && this.riderRealLife)
+          ? Promise.resolve(this.riderRealLife.getRidingNow())
+          : this.allRiders.get();
+
     return Promise.all([
-      this.allRiders.get(),
+      allRidersPromise,
       this.getRiders()
-    ]).then(([worldRiders, riders]) => 
+    ]).then(([worldRiders, riders]) =>
       riders.filter(r => worldRiders.filter(wr => wr.playerId === r.id).length > 0)
     );
   }
@@ -132,7 +141,11 @@ class Rider extends EventEmitter {
   }
 
   riderPromise(rider) {
-    return this.riderStatusFn(rider.id)
+    const riderStatusPromise = (this.worldId === -1 && this.riderRealLife)
+        ? Promise.resolve(this.riderRealLife.getRiderStatus(rider.id))
+        : this.riderStatusFn(rider.id);
+
+    return riderStatusPromise
       .then(status => {
         if (status) {
           return {

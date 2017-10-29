@@ -2,7 +2,9 @@
 const fs = require('fs');
 const NodeCache = require('node-cache')
 
-const downloadUrl = '/zwiftmap/svg/world?background=0.8',
+const downloadUrl = '/zwiftmap/svg/world',
+  // downloadParam = '?background=0.8',
+  downloadParam = '?background=0',
   cssUrl = '/zwiftmap/app/world-web.css',
   svgStart = '<svg ',
   svgEnd = '</svg>',
@@ -39,7 +41,6 @@ class Map {
       return Promise.resolve(cached);
     } else {
       return this.downloadMap(worldId).then(map => {
-        console.log(map);
         mapCache.set(this.key(worldId), map);
         return map;
       });
@@ -53,7 +54,7 @@ class Map {
   downloadMap(worldId) {
     const worldParam = worldId ? `/${worldId}` : '';
     const promises = [
-      axios.get(`${downloadUrl}${worldParam}`, requesOptions),
+      axios.get(`${downloadUrl}${worldParam}${downloadParam}`, requesOptions),
       axios.get(cssUrl, requesOptions)
     ];
 
@@ -66,7 +67,6 @@ class Map {
         
         if (end !== -1) {
           const svgData = map.substring(start, end);
-          // console.log('svgData: ------------------- >>>>> ' + svgData);
           const mapStyle = this.getMapStyle(cssResponse.data);
 
           return `${svgStart}${addedAttributes}${svgData}${mapStyle}${svgEnd}`;

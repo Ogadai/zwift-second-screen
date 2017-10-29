@@ -2,11 +2,11 @@
 const fs = require('fs');
 const NodeCache = require('node-cache')
 
-const downloadUrl = '/zwiftmap/svg/world',
+const downloadUrl = '/zwiftmap/svg/world?background=0.8',
   cssUrl = '/zwiftmap/app/world-web.css',
   svgStart = '<svg ',
   svgEnd = '</svg>',
-  addedAttributes = 'xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  version="1.2" baseProfile="tiny" ',
+  addedAttributes = 'version="1.2" baseProfile="tiny" ',
   styleStart = '<style>/* <![CDATA[ */',
   styleEnd = '/* ]]> */</style>';
 
@@ -18,7 +18,7 @@ const requesOptions = {
 };
 
 const defaultCredit = {
-  name: 'Zwift Hacks',
+  name: 'ZwiftHacks',
   href: 'http://zwifthacks.com'
 }
 
@@ -39,6 +39,7 @@ class Map {
       return Promise.resolve(cached);
     } else {
       return this.downloadMap(worldId).then(map => {
+        console.log(map);
         mapCache.set(this.key(worldId), map);
         return map;
       });
@@ -62,9 +63,10 @@ class Map {
       if (pos !== -1) {
         const start = pos + svgStart.length;
         const end = map.indexOf(svgEnd, start);
-
+        
         if (end !== -1) {
           const svgData = map.substring(start, end);
+          // console.log('svgData: ------------------- >>>>> ' + svgData);
           const mapStyle = this.getMapStyle(cssResponse.data);
 
           return `${svgStart}${addedAttributes}${svgData}${mapStyle}${svgEnd}`;

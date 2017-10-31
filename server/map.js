@@ -3,8 +3,7 @@ const fs = require('fs');
 const NodeCache = require('node-cache')
 
 const downloadUrl = '/zwiftmap/svg/world',
-  // downloadParam = '?background=0.8',
-  downloadParam = '?background=0',
+  downloadParam = '?background=1.0', // use value 0 to disable background
   cssUrl = '/zwiftmap/app/world-web.css',
   svgStart = '<svg ',
   svgEnd = '</svg>',

@@ -143,7 +143,7 @@ class Map extends Component {
                   ? this.renderActivity(displayActivity)
                   : undefined }
 
-                <StravaRoute />
+                <StravaRoute develop={develop} />
 							</g>
 						</g>
 					</svg>

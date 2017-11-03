@@ -10,6 +10,8 @@ import s from './strava-route.css';
 class StravaRoute extends Component {
   static get propTypes() {
     return {
+      develop: PropTypes.bool,
+      worldId: PropTypes.number,
       segments: PropTypes.array,
       efforts: PropTypes.object,
       onFetchStravaEffort: PropTypes.func
@@ -26,9 +28,25 @@ class StravaRoute extends Component {
     this.loadEfforts(props.segments);
   }
 
+  getSegments(segments) {
+    const { worldId, develop } = this.props;
+    if (develop) {
+      const ids = [
+          [12109030,12128029,11596903],
+          [12128826,12128917,12128762],
+          [12749402,12749649]
+        ][worldId-1];
+      if (ids) {
+        return ids.map(i => ({ id: i, start: { x: 0, y: 0}, end: { x: 100000, y: 100000 } }));
+      }
+    }
+    return segments;
+  }
+
   loadEfforts(segments) {
     const { onFetchStravaEffort } = this.props;
-    segments.forEach(s => {
+
+    this.getSegments(segments).forEach(s => {
       if (this.showSegment(s)) {
         onFetchStravaEffort(s.id);
       }
@@ -39,7 +57,7 @@ class StravaRoute extends Component {
     const { segments } = this.props;
 
     return <g className="strava-route">
-        { segments.map(s => this.renderSegment(s)) }
+        { this.getSegments(segments).map(s => this.renderSegment(s)) }
     </g>
   }
 
@@ -63,11 +81,12 @@ class StravaRoute extends Component {
         }
       </g>
   }
-    
+
 }
 
 const mapStateToProps = (state) => {
   return {
+    worldId: state.world.worldId,
     segments: (state.world.strava ? state.world.strava.segments : null) || [],
     efforts: state.stravaEfforts
   }

@@ -210,8 +210,7 @@ class Rider extends EventEmitter {
           powerup: status.powerup,
           hasFeatherBoost: status.hasFeatherBoost,
           hasDraftBoost: status.hasDraftBoost,
-          hasAeroBoost: status.hasAeroBoost,
-          sport: ~~status.f31
+          hasAeroBoost: status.hasAeroBoost
       };
       return Object.assign({}, status, extra);
   }

@@ -1,0 +1,31 @@
+{
+  "startup_app": {
+    "name": "zwift-gps",
+    "uuid": "zwift-gps",
+    "url": "http://www.zwiftgps.com/",
+    "autoShow": true,
+    "defaultWidth": 800,
+    "defaultHeight": 600,
+    "frame": false,
+    "alwaysOnTop": true,
+    "resizeRegion": {
+      "size": 4,
+      "bottomRightCorner": 10
+    },
+    "alphaMask": {
+      "red": 200,
+      "green": 200,
+      "blue": 200
+    }
+  },
+  "runtime": {
+    "arguments": "--v=1 -disable-legacy-window  --disable-gpu",
+    "version": "6.49.20.22"
+  },
+  "shortcut": {
+    "company": "ZwiftGPS",
+    "description": "ZwiftGPS",
+    "icon": "http://www.zwiftgps.com/favicon.ico",
+    "name": "ZwiftGPS"
+  }
+}

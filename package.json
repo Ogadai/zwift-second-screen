@@ -25,7 +25,7 @@
   },
   "dependencies": {
     "body-parser": "^1.18.2",
-    "caniuse-db": "^1.0.30000652",
+    "caniuse-db": "^1.0.30000758",
     "cookie-parser": "^1.4.3",
     "express": "^4.16.2",
     "express-ws": "^2.0.0",
@@ -33,7 +33,7 @@
     "moment": "^2.19.1",
     "node-cache": "^4.1.1",
     "strava-live-segments": "0.0.9",
-    "zwift-mobile-api": "^0.3.0"
+    "zwift-mobile-api": "^0.3.1"
   },
   "devDependencies": {
     "axios": "^0.15.3",

@@ -3,10 +3,11 @@ const fs = require('fs');
 const NodeCache = require('node-cache')
 
 const downloadUrl = '/zwiftmap/svg/world',
+  downloadParam = '?encodeminimap=1&background=1.0', // use value 0 to disable background
   cssUrl = '/zwiftmap/app/world-web.css',
   svgStart = '<svg ',
   svgEnd = '</svg>',
-  addedAttributes = 'xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  version="1.2" baseProfile="tiny" ',
+  addedAttributes = 'version="1.2" baseProfile="tiny" ',
   styleStart = '<style>/* <![CDATA[ */',
   styleEnd = '/* ]]> */</style>';
 
@@ -18,7 +19,7 @@ const requesOptions = {
 };
 
 const defaultCredit = {
-  name: 'Zwift Hacks',
+  name: 'ZwiftHacks',
   href: 'http://zwifthacks.com'
 }
 
@@ -52,7 +53,7 @@ class Map {
   downloadMap(worldId) {
     const worldParam = worldId ? `/${worldId}` : '';
     const promises = [
-      axios.get(`${downloadUrl}${worldParam}`, requesOptions),
+      axios.get(`${downloadUrl}${worldParam}${downloadParam}`, requesOptions),
       axios.get(cssUrl, requesOptions)
     ];
 
@@ -62,7 +63,7 @@ class Map {
       if (pos !== -1) {
         const start = pos + svgStart.length;
         const end = map.indexOf(svgEnd, start);
-
+        
         if (end !== -1) {
           const svgData = map.substring(start, end);
           const mapStyle = this.getMapStyle(cssResponse.data);

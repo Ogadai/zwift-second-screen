@@ -27,7 +27,7 @@ build/Release
 node_modules
 
 # Ignore build files
-public
+#public
 
 .vs/
 npm-debug.log*

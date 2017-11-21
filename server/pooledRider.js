@@ -83,7 +83,11 @@ class PooledRider {
     addStatic(status) {
         const extra = {
             world: status.world,
-            wattsPerKG: this.getWattsPerKg(status.power, this.static.weight)
+            wattsPerKG: this.getWattsPerKg(status.power, this.static.weight),
+            roadID: status.roadID,
+            rideOns: status.rideOns,
+            isTurning: status.isTurning,
+            isForward: status.isForward
         };
         return Object.assign({}, status, extra);
     }

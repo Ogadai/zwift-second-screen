@@ -150,7 +150,23 @@ class Rider extends EventEmitter {
             y: status.y,
             altitude: status.altitude,
             heartrate: status.heartrate,
-            wattsPerKG: status.wattsPerKG
+            wattsPerKG: status.wattsPerKG, 
+            roadID: status.roadID,
+            rideOns: status.rideOns,
+            isTurning: status.isTurning,
+            isForward: status.isForward,
+            roadDirection: status.roadDirection,
+            turnSignal: status.turnSignal,
+            powerup: status.powerup,
+            hasFeatherBoost: status.hasFeatherBoost,
+            hasDraftBoost: status.hasDraftBoost,
+            hasAeroBoost: status.hasAeroBoost,
+            sport: status.sport,
+            male: rider.male,
+            playerType: rider.playerType,
+            contryAlpha3: rider.countryAlpha3,
+            countryCode: rider.countryCode,
+            weight: rider.weight
           };
         } else {
           return null;

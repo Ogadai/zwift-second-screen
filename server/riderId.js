@@ -29,6 +29,10 @@ class RiderId {
     return true;
   }
 
+  get canFilterRiders() {
+    return true;
+  }
+
   loginWithId(riderId) {
     if (!riderId || riderId.length == 0) {
       return Promise.reject({ response: { status: 401, statusText: 'Missing rider id' }});

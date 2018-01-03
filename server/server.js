@@ -44,7 +44,8 @@ class Server {
       const canLogout = this.riderProvider.canLogout;
       const canStrava = !!this.stravaSettings;
       const canSetWorld = this.riderProvider.canSetWorld;
-      sendJson(res, { type, canLogout, canStrava, canSetWorld });
+      const canFilterRiders = this.riderProvider.canFilterRiders;
+      sendJson(res, { type, canLogout, canStrava, canSetWorld, canFilterRiders });
     })
 
 		// Enable CORS for post login
@@ -94,6 +95,16 @@ class Server {
     this.app.post('/world', this.processRider((rider, req) => {
       const worldId = req.body.world;
       rider.setWorld(worldId);
+      return Promise.resolve({});
+    }))
+
+    this.app.options('/riderfilter', respondCORS)
+    this.app.get('/riderfilter', this.processRider((rider, req) => {
+      return Promise.resolve({ filter: rider.getFilter() });
+    }))
+    this.app.post('/riderfilter', this.processRider((rider, req) => {
+      const filter = req.body.filter;
+      rider.setFilter(filter && filter.length >= 2 ? filter : undefined);
       return Promise.resolve({});
     }))
 

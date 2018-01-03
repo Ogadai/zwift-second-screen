@@ -2,9 +2,9 @@
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import { fetchProfile } from '../actions/fetch';
+import { fetchProfile, fetchRiderFilterIfNeeded } from '../actions/fetch';
 import { requestLoginType } from '../actions/login';
-import { setMenuState, showWorldSelector, setWorld, showStravaSettings } from '../actions/summary';
+import { setMenuState, showWorldSelector, setWorld, showStravaSettings, showRiderFilter, setRiderFilter } from '../actions/summary';
 import { connectStrava, disconnectStrava, saveStravaSettings } from '../actions/strava';
 
 import s from './summary.css';
@@ -21,6 +21,8 @@ class Summary extends Component {
       showingStravaSettings: PropTypes.bool,
       stravaConnected: PropTypes.bool,
       stravaSettings: PropTypes.any.isRequired,
+      showingRiderFilter: PropTypes.bool,
+      riderFilter: PropTypes.string,
       onSetMenuState: PropTypes.func.isRequired,
       onShowWorldSelector: PropTypes.func.isRequired,
       onSetWorld: PropTypes.func.isRequired,
@@ -28,7 +30,10 @@ class Summary extends Component {
       onFetch: PropTypes.func.isRequired,
       onConnectStrava: PropTypes.func.isRequired,
       onDisconnectStrava: PropTypes.func.isRequired,
-      onSaveStravaSettings: PropTypes.func.isRequired
+      onSaveStravaSettings: PropTypes.func.isRequired,
+      onFetchRiderFilter: PropTypes.func.isRequired,
+      onShowRiderFilter: PropTypes.func.isRequired,
+      onSetRiderFilter: PropTypes.func.isRequired
     };
   }
 
@@ -38,7 +43,9 @@ class Summary extends Component {
     this.state = {
       stravaAgeValid: true,
       stravaDateValid: true,
-      stravaSettings: props.stravaSettings
+      stravaSettings: props.stravaSettings,
+      filterOn: props.riderFilter && props.riderFilter.length > 0,
+      riderFilter: props.riderFilter
     }
   }
 
@@ -46,13 +53,16 @@ class Summary extends Component {
     this.setState({
       stravaAgeValid: true,
       stravaDateValid: true,
-      stravaSettings: props.stravaSettings
+      stravaSettings: props.stravaSettings,
+      filterOn: props.riderFilter && props.riderFilter.length > 0,
+      riderFilter: props.riderFilter
     });
   }
 
   componentDidMount() {
-    const { onFetch, onRequestLoginType } = this.props;
+    const { onFetch, onRequestLoginType, onFetchRiderFilter } = this.props;
     onFetch();
+    onFetchRiderFilter();
     onRequestLoginType();
     this.fetchInterval = setInterval(onFetch, 10000);
   }
@@ -64,8 +74,9 @@ class Summary extends Component {
   render() {
     const { showingMenu, showingWorldSelector, profile, mapSettings, user,
       showingStravaSettings, stravaConnected, onShowStravaSettings,
+      showingRiderFilter, onShowRiderFilter, onSetRiderFilter,
       onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
-    const { stravaAgeValid, stravaDateValid, stravaSettings } = this.state;
+    const { stravaAgeValid, stravaDateValid, stravaSettings, filterOn, riderFilter } = this.state;
     const { credit } = mapSettings;
     const disabled = !profile.riding;
 
@@ -102,6 +113,15 @@ class Summary extends Component {
                 <span>Full Screen</span>
               </a>
             </li>
+
+            { (user && user.canFilterRiders)
+              ? <li>
+                  <a className="riderFilter" href="#" onClick={e => this.showRiderFilter(e)}>
+                    <span className="zwiftgps-icon icon-riderfilter">&nbsp;</span>
+                    <span>Find riders</span>
+                  </a>
+                </li>
+              : undefined }
 
             { (user && user.canSetWorld)
               ? <li>
@@ -222,6 +242,46 @@ class Summary extends Component {
           </div>
         : undefined }
 
+        {showingRiderFilter ?
+          <div>
+            <div className="popup-overlay"
+                  onMouseDown={() => onShowRiderFilter(false)}
+                  onTouchStart={() => onShowRiderFilter(false)}
+                >
+            </div>
+            <div className="popup-content rider-filter">
+              <h2>Find riders</h2>
+              <form onSubmit={() => this.applyRiderFilter()}>
+                <div className="description">
+                  Show currently riding riders filtered by their last name (max. 40)
+                </div>
+                <ul>
+                  <li>
+                    <input type="radio" name="filternone" id="filternone"
+                        checked={!filterOn}
+                        onChange={() => this.setFilterOn(false)} />
+                    <label htmlFor="filternone">Myself and friends</label>
+                  </li>
+                  <li>
+                    <input type="radio" name="filterset" id="filterset"
+                        checked={filterOn}
+                        onChange={() => this.setFilterOn(true)} />
+                    <label htmlFor="stravaStartAge">Where
+                      <input type="text" value={riderFilter}
+                            className={classnames("riderfilter")}
+                            onChange={event => this.updateRiderFilter(event)}
+                          />
+                    is in last name</label>
+                  </li>
+                </ul>
+                <div className="filter-buttons">
+                  <input type="submit" value="Search" />
+                </div>
+              </form>
+            </div>
+          </div>
+        : undefined }
+
         {credit ?
           <div className="map-attribute">
             {credit.prompt || 'Map by'} <a href={credit.href} target="_blank">{credit.name}</a>
@@ -312,6 +372,33 @@ class Summary extends Component {
       onSaveStravaSettings({ startAge });
     }
   }
+
+  setFilterOn(filterOn) {
+    this.setState({
+      filterOn
+    });
+  }
+
+  updateRiderFilter(event) {
+    const riderFilter = event.target.value;
+    this.setState({
+      filterOn: riderFilter && riderFilter.length > 0,
+      riderFilter
+    });
+  }
+
+  applyRiderFilter() {
+    const { onSetRiderFilter } = this.props;
+    const { filterOn, riderFilter } = this.state;
+
+    onSetRiderFilter(filterOn ? riderFilter : '');
+  }
+
+  showRiderFilter(event) {
+    const { onShowRiderFilter } = this.props;
+    event.preventDefault();
+    onShowRiderFilter(true);
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -323,7 +410,9 @@ const mapStateToProps = (state) => {
     mapSettings: state.mapSettings,
     showingStravaSettings: state.summary.showStravaSettings,
     stravaConnected: state.world.strava ? state.world.strava.connected : false,
-    stravaSettings: state.summary.stravaSettings
+    stravaSettings: state.summary.stravaSettings,
+    showingRiderFilter: state.summary.showRiderFilter,
+    riderFilter: state.summary.riderFilter
   }
 }
 
@@ -337,7 +426,10 @@ const mapDispatchToProps = (dispatch) => {
     onFetch: () => dispatch(fetchProfile()),
     onConnectStrava: () => dispatch(connectStrava()),
     onDisconnectStrava: () => dispatch(disconnectStrava()),
-    onSaveStravaSettings: (settings) => dispatch(saveStravaSettings(settings))
+    onSaveStravaSettings: (settings) => dispatch(saveStravaettings(settings)),
+    onFetchRiderFilter: () => dispatch(fetchRiderFilterIfNeeded()),
+    onShowRiderFilter: show => dispatch(showRiderFilter(show)),
+    onSetRiderFilter: filter => dispatch(setRiderFilter(filter))
   }
 }
 

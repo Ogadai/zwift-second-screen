@@ -1,7 +1,7 @@
 ﻿import { combineReducers } from 'redux'
 import { routerReducer } from 'react-router-redux'
 
-import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_STRAVA, RECEIVE_MAPSETTINGS, RECEIVE_RIDERS, RECEIVE_STRAVA_EFFORT } from './actions/fetch';
+import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_STRAVA, RECEIVE_MAPSETTINGS, RECEIVE_RIDERS, RECEIVE_STRAVA_EFFORT, RECEIVE_RIDERFILTER } from './actions/fetch';
 import { RECEIVE_LOGINTYPE, RECEIVE_LOGINFAILURE } from './actions/login';
 import { RECEIVE_HOST } from './actions/host';
 import {
@@ -9,7 +9,7 @@ import {
   RECEIVE_GHOSTS, ADDING_GHOST, ADDED_GHOST, CHANGED_GHOST,
   REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY, RESET_GHOSTS
 } from './actions/ghosts';
-import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS } from './actions/summary';
+import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS, SHOW_RIDER_FILTER, SET_RIDER_FILTER } from './actions/summary';
 import { DISCONNECTED_STRAVA, GOT_STRAVA_SETTINGS } from './actions/strava';
 
 import { COOKIE_WARNING } from './actions/cookie-warning'
@@ -177,7 +177,9 @@ const defaultSummary = {
   showingMenu: false,
   worldSelector: false,
   showStravaSettings: false,
-  stravaSettings: {}
+  showRiderFilter: false,
+  stravaSettings: {},
+  riderFilter: undefined
 }
 
 function summary(state = defaultSummary, action) {
@@ -193,6 +195,18 @@ function summary(state = defaultSummary, action) {
     case SHOW_STRAVA_SETTINGS:
       return Object.assign({}, state, {
         showStravaSettings: action.visible
+      });
+    case SHOW_RIDER_FILTER:
+      return Object.assign({}, state, {
+        showRiderFilter: action.visible
+      });
+    case RECEIVE_RIDERFILTER:
+      return Object.assign({}, state, {
+        riderFilter: action.filter
+      });
+    case SET_RIDER_FILTER:
+      return Object.assign({}, state, {
+        riderFilter: action.filter
       });
     case DISCONNECTED_STRAVA:
       return Object.assign({}, state, {

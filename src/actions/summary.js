@@ -51,3 +51,36 @@ export function showStravaSettings(showStrava) {
     });
   }
 }
+
+export const SHOW_RIDER_FILTER = "SHOW_RIDER_FILTER";
+
+export function showRiderFilter(showFilter) {
+  return {
+    type: SHOW_RIDER_FILTER,
+    visible: showFilter
+  };
+}
+
+export const SET_RIDER_FILTER = "SET_RIDER_FILTER";
+
+export function setRiderFilter(filter) {
+  return dispatch => {
+    dispatch({
+      type: SET_RIDER_FILTER,
+      filter
+    });
+
+    axios.post(`/riderfilter`, { filter })
+      .then(() => {
+        dispatch(showRiderFilter(false));
+      })
+      .catch(error => {
+        if (error.response) {
+          const { status, statusMessage } = error.response;
+          console.error(`Error setting world : ${status} - ${statusMessage}`);
+        } else {
+          console.error(error);
+        }
+      })
+  }
+}

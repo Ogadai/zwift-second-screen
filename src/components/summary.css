@@ -217,6 +217,34 @@
             text-align: center;
         }
     }
+
+    & .rider-filter {
+        box-sizing: border-box;
+        width: 400px;
+        top: 30px;
+        max-width: 80%;
+        padding: 0 25px 25px 25px;
+        text-align: center;
+
+        & h2 {
+            margin: 20px 0 10px 0;
+        }
+
+        & ul {
+            list-style: none;
+            margin: 10px 0;
+            padding: 0;
+            text-align: left;
+        }
+
+        & li {
+            display: inline-block;
+        }
+
+        & .riderfilter {
+            width: 120px;
+        }
+    }
 }
 
 .overlay .summary {

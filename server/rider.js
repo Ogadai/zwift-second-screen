@@ -2,7 +2,7 @@
 const Ghosts = require('./ghosts');
 const AllRiders = require('./allRiders');
 
-const MAX_RIDERS = 10;
+const MAX_RIDERS = 40;
 
 class Rider extends EventEmitter {
   constructor(account, riderId, riderStatusFn) {
@@ -15,6 +15,7 @@ class Rider extends EventEmitter {
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
     this.worldId = undefined;
     this.statusWorldId = undefined;
+    this.filter = undefined;
   }
 
   setRiderId(riderId, riderStatusFn) {
@@ -31,6 +32,17 @@ class Rider extends EventEmitter {
 
   getWorld() {
     return this.worldId;
+  }
+
+  setFilter(filter) {
+    if (this.filter !== filter) {
+      this.filter = filter;
+      this.ridingNow = null;
+    }
+  }
+
+  getFilter() {
+    return this.filter;
   }
 
   getCurrentWorld() {
@@ -106,12 +118,44 @@ class Rider extends EventEmitter {
   }
 
   requestRidingNow() {
+    return this.filter
+      ? this.requestRidingFiltered()
+      : this.requestRidingFriends();
+  }
+
+  requestRidingFriends() {
     return Promise.all([
       this.allRiders.get(),
       this.getRiders()
-    ]).then(([worldRiders, riders]) => 
+    ]).then(([worldRiders, riders]) =>
       riders.filter(r => worldRiders.filter(wr => wr.playerId === r.id).length > 0)
     );
+  }
+
+  requestRidingFiltered() {
+    return this.allRiders.get()
+      .then(worldRiders =>
+        worldRiders
+          .filter(r => this.filterWorldRider(r))
+          .map(r => this.mapWorldRider(r))
+    );
+  }
+
+  filterWorldRider(rider) {
+    return rider.lastName &&
+        rider.lastName.toLowerCase().indexOf(this.filter) !== -1;
+  }
+
+  mapWorldRider(rider) {
+    return {
+      id: rider.playerId,
+      me: false,
+      firstName: rider.firstName,
+      lastName: rider.lastName,
+      male: rider.male,
+      playerType: rider.playerType,
+      countryCode: rider.countryISOCode
+    };
   }
 
   friendMap(friend) {
@@ -150,7 +194,7 @@ class Rider extends EventEmitter {
             y: status.y,
             altitude: status.altitude,
             heartrate: status.heartrate,
-            wattsPerKG: status.wattsPerKG, 
+            wattsPerKG: status.wattsPerKG,
             roadID: status.roadID,
             rideOns: status.rideOns,
             isTurning: status.isTurning,

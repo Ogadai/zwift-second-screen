@@ -25,15 +25,6 @@ export function receivePositions(data) {
   };
 }
 
-export const RECEIVE_WORLD = "RECEIVE_WORLD";
-
-export function receiveWorld(data) {
-  return {
-    type: RECEIVE_WORLD,
-    data
-  };
-}
-
 export const RECEIVE_STRAVA = "RECEIVE_STRAVA";
 
 export function receiveStrava(data) {
@@ -43,8 +34,40 @@ export function receiveStrava(data) {
   };
 }
 
+export const RECEIVE_WORLD = "RECEIVE_WORLD";
+
+export function receiveWorld(data) {
+  return {
+    type: RECEIVE_WORLD,
+    data
+  };
+}
+
 export function fetchWorld() {
   return dispatchRequest('/world/', receiveWorld);
+}
+
+export const RECEIVE_RIDERFILTER = "RECEIVE_RIDERFILTER";
+
+export function receiveRiderFilter(data) {
+  return {
+    type: RECEIVE_RIDERFILTER,
+    filter: data.filter || ''
+  };
+}
+
+export function fetchRiderFilter() {
+  return dispatchRequest('/riderfilter/', receiveRiderFilter);
+}
+
+export function fetchRiderFilterIfNeeded() {
+  return (dispatch, getState) => {
+    if (!getState().summary.riderFilter) {
+      return dispatch(fetchRiderFilter());
+    } else {
+      return Promise.resolve();
+    }
+  }
 }
 
 export const RECEIVE_MAPSETTINGS = "RECEIVE_MAPSETTINGS";

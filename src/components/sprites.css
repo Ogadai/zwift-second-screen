@@ -57,5 +57,9 @@
     &.icon-fullscreen {
         background-position: 0 -256px;
     }
+
+    &.icon-riderfilter {
+        background-position: 0 -288px;
+    }
 }
 

@@ -8,6 +8,15 @@ const riderColours = 5;
 const powerMax = 750;
 const powerColours = 6;
 
+const colours = [
+  'green',
+  'blue',
+  'red',
+  'black',
+  'purple',
+  'orange'
+];
+
 class Rider extends Component {
   static get propTypes() {
     return {
@@ -24,7 +33,7 @@ class Rider extends Component {
 
     return <g className={this.getRiderClass()}
 				transform={`translate(${position.x},${position.y})`}>
-      { position.trail 
+      { position.trail
         ? this.renderTrail()
         : undefined }
       <g transform={`rotate(${labelRotate})`} onClick={onClick}>
@@ -38,8 +47,10 @@ class Rider extends Component {
   getRiderClass() {
     const { selected, position } = this.props;
     const powerIndex = Math.min(Math.floor(position.wattsPerKG), 8);
+    const riderName = this.getName();
 
     return classnames('rider-position', `rider-power-${powerIndex}`,
+            riderName.colour && `rider-${riderName.colour}`,
             { selected, 'rider-ghost': position.ghost });
   }
 
@@ -52,22 +63,45 @@ class Rider extends Component {
   }
 
   renderName() {
-    const { position } = this.props;
-    const nameLabel = `${position.firstName ? position.firstName.substring(0, 1) : ''} ${position.lastName}`;
+    const riderName = this.getName();
 
     return <g>
-      <text className="glow" x="10000" y="2000">{nameLabel}</text>
-      <text x="10000" y="2000">{nameLabel}</text>
+      <text className="glow" x="10000" y="2000">{riderName.name}</text>
+      <text x="10000" y="2000">{riderName.name}</text>
     </g>
   }
 
-  renderLabel() {
+  getName() {
     const { position } = this.props;
-    return <g>
-        <text x="10000" y="15000">Label</text>
-    </g>
+    const { firstName, lastName, colour } = position;
+
+    let modifiedLastName = lastName;
+    let derivedColour = colour;
+
+    if (!colour && modifiedLastName) {
+      const hashPos = modifiedLastName.indexOf('#');
+      if (hashPos !== -1) {
+        const endPos = modifiedLastName.indexOf(' ', hashPos);
+        const colourName = (endPos!== -1)
+            ? modifiedLastName.substring(hashPos + 1, endPos).toLowerCase()
+            : modifiedLastName.substring(hashPos + 1).toLowerCase();
+        if (colours.find(c => (c == colourName))) {
+          derivedColour = colourName;
+
+          modifiedLastName = modifiedLastName.substring(0, hashPos) +
+              ((endPos!== -1) ? modifiedLastName.substring(endPos + 1) : '');
+        }
+      }
+    }
+
+    const name = `${firstName ? firstName.substring(0, 1) : ''} ${modifiedLastName}`;
+
+    return {
+      name,
+      colour: derivedColour
+    };
   }
-	
+
 }
 
 export default Rider;

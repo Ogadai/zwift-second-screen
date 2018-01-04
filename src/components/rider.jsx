@@ -17,6 +17,8 @@ const colours = [
   'orange'
 ];
 
+const blankSpace = ' []()-_:.';
+
 class Rider extends Component {
   static get propTypes() {
     return {
@@ -24,7 +26,8 @@ class Rider extends Component {
       index: PropTypes.number,
       labelRotate: PropTypes.number,
       selected: PropTypes.bool,
-      onClick: PropTypes.func.isRequired
+      onClick: PropTypes.func.isRequired,
+      riderFilter: PropTypes.string
     };
   }
 
@@ -72,7 +75,7 @@ class Rider extends Component {
   }
 
   getName() {
-    const { position } = this.props;
+    const { position, riderFilter } = this.props;
     const { firstName, lastName, colour } = position;
 
     let modifiedLastName = lastName;
@@ -94,7 +97,32 @@ class Rider extends Component {
       }
     }
 
-    const name = `${firstName ? firstName.substring(0, 1) : ''} ${modifiedLastName}`;
+    if (riderFilter && modifiedLastName) {
+      const filterPos = modifiedLastName.toLowerCase().indexOf(riderFilter.toLowerCase());
+      const filterLen = riderFilter.length;
+
+      const isBlank = (char) => {
+        return blankSpace.indexOf(char) !== -1;
+      }
+
+      if (
+           filterPos !== -1
+        && ((filterPos === 0) || isBlank(modifiedLastName[filterPos-1]))
+        && ((filterPos + filterLen === modifiedLastName.length) || isBlank(modifiedLastName[filterPos+filterLen]))
+        ) {
+        // Remove the filter from the name
+        modifiedLastName = modifiedLastName.substring(0, filterPos).trim() + ' '
+            + modifiedLastName.substring(filterPos + filterLen).trim();
+      }
+    }
+
+    modifiedLastName = modifiedLastName.trim();
+
+    const displayFirstName = (firstName && modifiedLastName.length > 3)
+        ? firstName.substring(0, 1)
+        : (firstName || '');
+
+    const name = `${displayFirstName} ${modifiedLastName}`.trim();
 
     return {
       name,

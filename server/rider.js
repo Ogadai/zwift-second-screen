@@ -142,8 +142,8 @@ class Rider extends EventEmitter {
   }
 
   filterWorldRider(rider) {
-    return rider.lastName &&
-        rider.lastName.toLowerCase().indexOf(this.filter) !== -1;
+    const fullName = `${rider.firstName ? rider.firstName : ''} ${rider.lastName ? rider.lastName: ''}`;
+    return fullName.toLowerCase().indexOf(this.filter) !== -1;
   }
 
   mapWorldRider(rider) {

@@ -251,9 +251,9 @@ class Summary extends Component {
             </div>
             <div className="popup-content rider-filter">
               <h2>Find riders</h2>
-              <form onSubmit={() => this.applyRiderFilter()}>
+              <form onSubmit={event => this.applyRiderFilter(event)}>
                 <div className="description">
-                  Show currently riding riders filtered by their last name (max. 40)
+                  Show currently riding riders filtered by their name (max. 40)
                 </div>
                 <ul>
                   <li>
@@ -387,9 +387,11 @@ class Summary extends Component {
     });
   }
 
-  applyRiderFilter() {
+  applyRiderFilter(event) {
     const { onSetRiderFilter } = this.props;
     const { filterOn, riderFilter } = this.state;
+
+    event.preventDefault();
 
     onSetRiderFilter(filterOn ? riderFilter : '');
   }

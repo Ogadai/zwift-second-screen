@@ -104,7 +104,7 @@ class Server {
     }))
     this.app.post('/riderfilter', this.processRider((rider, req) => {
       const filter = req.body.filter;
-      rider.setFilter(filter && filter.length >= 2 ? filter : undefined);
+      rider.setFilter(filter && filter.length >= 2 ? filter.toLowerCase() : undefined);
       return Promise.resolve({});
     }))
 

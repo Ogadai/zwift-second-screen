@@ -26,7 +26,8 @@ class Map extends Component {
           x: PropTypes.number,
           y: PropTypes.number
         }))
-      })
+      }),
+      riderFilter: PropTypes.string
     };
   }
 
@@ -97,7 +98,7 @@ class Map extends Component {
   }
 
   render() {
-    const { develop, worldId, positions, mapSettings, displayActivity } = this.props;
+    const { develop, worldId, positions, mapSettings, displayActivity, riderFilter } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
@@ -134,6 +135,7 @@ class Map extends Component {
                           labelRotate={labelRotate}
                           selected={p.id === this.state.selected}
                           onClick={ev => this.clickRider(ev, p) }
+                          riderFilter={riderFilter}
                         />)
                       }
 								    </g>
@@ -311,7 +313,8 @@ const mapStateToProps = (state) => {
     positions: state.world.positions,
     overlay: state.environment.electron || state.environment.openfin,
     mapSettings: state.mapSettings,
-    displayActivity: state.ghosts.displayActivity
+    displayActivity: state.ghosts.displayActivity,
+    riderFilter: state.summary.riderFilter
   }
 }
 

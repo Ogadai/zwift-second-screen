@@ -1,5 +1,6 @@
 const NodeCache = require('node-cache')
 const eventsCache = new NodeCache({ stdTTL: 10 * 60, checkPeriod: 120, useClones: false });
+const ridersCache = new NodeCache({ stdTTL: 2 * 60, checkPeriod: 30, useClones: false });
 
 const BEFORE_MINUTES = 180;
 const AFTER_MINUTES = 20;
@@ -10,20 +11,30 @@ class Events {
   }
 
   getEvents() {
-    const cached = this.getFromCache();
+    const cached = this.eventsFromCache();
 
     if (cached) {
       return Promise.resolve(cached);
     } else {
-      return this.download();
+      return this.downloadEvents();
     }
   }
 
-  getFromCache() {
-    return eventsCache.get(this.cacheId());
+  getRiders(subGroupId) {
+    const cached = this.ridersFromCache(subGroupId);
+
+    if (cached) {
+      return Promise.resolve(cached);
+    } else {
+      return this.downloadRiders(subGroupId);
+    }
   }
 
-  download() {
+  eventsFromCache() {
+    return eventsCache.get(this.eventsCacheId());
+  }
+
+  downloadEvents() {
     const timeNow = Date.now();
     const params = {
       eventStartsAfter: timeNow - BEFORE_MINUTES * 60 * 1000,
@@ -34,13 +45,29 @@ class Events {
       .then(events => {
         console.log(`${events.length} events`);
 
-        eventsCache.set(this.cacheId(), events);
+        eventsCache.set(this.eventsCacheId(), events);
         return events;
       });
   }
 
-  cacheId() {
+  eventsCacheId() {
     return `events`;
+  }
+
+  ridersFromCache(subGroupId) {
+    return ridersCache.get(this.ridersCacheId(subGroupId));
+  }
+
+  downloadRiders(subGroupId) {
+    return this.account.getEvent().riders(subGroupId)
+      .then(riders => {
+        ridersCache.set(this.ridersCacheId(subGroupId), riders);
+        return riders;
+      });
+  }
+
+  ridersCacheId(subGroupId) {
+    return `riders-${subGroupId}`;
   }
 }
 module.exports = Events;

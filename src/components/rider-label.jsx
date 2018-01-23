@@ -10,12 +10,13 @@ class RiderLabel extends Component {
   }
 
   render() {
-    const { position } = this.props;
+    const { position, scale } = this.props;
     const { distance, time, power, wattsPerKG, speed, heartrate } = position;
     const width = heartrate ? 265000 : 230000;
 
-    return <g className="rider-label" transform={`translate(${50000 - width / 2},10000)`}>
-        <rect className="background" x="0" y="0" width={width} height="30000" rx="5000" ry="5000" />
+    return <g className="rider-label" transform={`translate(${(50000 - width / 2) / scale},${10000 / scale})`}>
+        <rect className="background" x="0" y="0" width={width / scale} height={30000 / scale}
+            rx={5000 / scale} ry={5000 / scale} />
 
         {this.renderData('KM', Math.round(distance / 100) / 10, 20000)}
         {this.renderData('HRS', Math.round(time / (60*60)), 55000)}
@@ -29,9 +30,14 @@ class RiderLabel extends Component {
   }
 
   renderData(label, value, offset) {
+    const { scale } = this.props;
+    const style = {
+      fontSize: 7000 / scale
+    };
+
     return <g>
-      <text className="label" x={offset} y="12000" textAnchor="middle">{label}</text>
-      <text className="value" x={offset} y="25000" textAnchor="middle">{value}</text>
+      <text className="label" x={offset / scale} y={12000 / scale} textAnchor="middle" style={style}>{label}</text>
+      <text className="value" x={offset / scale} y={25000 / scale} textAnchor="middle" style={style}>{value}</text>
     </g>
   }
 }

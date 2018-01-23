@@ -182,8 +182,8 @@ class Rider extends EventEmitter {
   }
 
   getSubgroupRiders(subGroupId, label) {
-    return this.account.getEvent().riders(subGroupId)
-      .then(riders => riders.map(r => Object.assign(r, {
+    return this.events.getRiders(subGroupId)
+      .then(riders => riders.map(r => Object.assign({}, r, {
         me: r.id === this.riderId,
         group: label
       })));

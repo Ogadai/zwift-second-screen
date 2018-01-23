@@ -11,7 +11,8 @@ class Zoom extends Component {
   static get propTypes() {
     return {
       defaultZoom: PropTypes.number,
-      followSelector: PropTypes.string
+      followSelector: PropTypes.string,
+      onChangeZoomLevel: PropTypes.func
     };
   }
 
@@ -244,6 +245,7 @@ class Zoom extends Component {
     }
 
     setZoom(state) {
+        const { onChangeZoomLevel } = this.props;
         let { center, scale } = state;
         if (!center) center = this.state.center;
         if (!scale) scale = this.state.scale;
@@ -260,6 +262,10 @@ class Zoom extends Component {
             center,
             scale
         }));
+
+        if (onChangeZoomLevel) {
+            onChangeZoomLevel(scale);
+        }
     }
 }
 

@@ -9,7 +9,7 @@ import {
   RECEIVE_GHOSTS, ADDING_GHOST, ADDED_GHOST, CHANGED_GHOST,
   REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY, RESET_GHOSTS
 } from './actions/ghosts';
-import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS, SHOW_RIDER_FILTER, SET_RIDER_FILTER } from './actions/summary';
+import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS, SHOW_RIDER_FILTER, SET_RIDER_FILTER, SET_ZOOM_LEVEL } from './actions/summary';
 import { DISCONNECTED_STRAVA, GOT_STRAVA_SETTINGS } from './actions/strava';
 
 import { COOKIE_WARNING } from './actions/cookie-warning'
@@ -180,7 +180,8 @@ const defaultSummary = {
   showRiderFilter: false,
   stravaSettings: {},
   riderFilter: undefined,
-  events: []
+  events: [],
+  zoomLevel: 1
 }
 
 function summary(state = defaultSummary, action) {
@@ -220,6 +221,11 @@ function summary(state = defaultSummary, action) {
     case RECEIVE_EVENTS:
       return Object.assign({}, state, {
         events: action.events
+      });
+    case SET_ZOOM_LEVEL:
+      console.log(`zoom level ${action.level}`);
+      return Object.assign({}, state, {
+        zoomLevel: action.level
       });
     default:
       return state;

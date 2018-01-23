@@ -18,6 +18,7 @@ class Map extends Component {
 			worldId: PropTypes.number,
       positions: PropTypes.array,
       mapSettings: PropTypes.object,
+      zoomLevel: PropTypes.number,
       onFetchSettings: PropTypes.func.isRequired,
       onStartPolling: PropTypes.func.isRequired,
       onStopPolling: PropTypes.func.isRequired,
@@ -89,6 +90,30 @@ class Map extends Component {
     onStopPolling();
   }
 
+  componentDidUpdate() {
+    if (this.riders) {
+      const labels = this.riders.querySelectorAll('.rider-name');
+      if (labels) {
+        const rects = [];
+        for(let n = labels.length - 1; n >= 0; n--) {
+          const label = labels[n];
+          const rect = label.querySelector('.rider-name-text').getBoundingClientRect();
+
+          const hidden = rects.find(r => this.rectsOverlap(rect, r));
+          label.style.visibility = hidden ? 'hidden' : '';
+          if (!hidden) {
+            rects.push(rect);
+          }
+        }
+      }
+    }
+  }
+
+  rectsOverlap(r1, r2) {
+    return (r1.left < r2.right && r1.right > r2.left )
+        && (r1.top < r2.bottom && r1.bottom > r2.top );
+  }
+
   loadDevelop(worldId) {
     axios.get(this.svgPath(worldId)).then(response => {
       this.setState({
@@ -98,7 +123,7 @@ class Map extends Component {
   }
 
   render() {
-    const { develop, worldId, positions, mapSettings, displayActivity, riderFilter } = this.props;
+    const { develop, worldId, positions, mapSettings, displayActivity, riderFilter, zoomLevel } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
@@ -128,7 +153,7 @@ class Map extends Component {
               <g transform={`translate${mapSettings.translate}`}>
 
                 { positions
-								  ? <g id="riders" className="riders">
+								  ? <g id="riders" className="riders" ref={input => this.riders = input}>
 									    { this.sortRiders(positions).map((p, i) =>
                         <Rider key={`rider-${i}`}
                           position={p}
@@ -136,6 +161,7 @@ class Map extends Component {
                           selected={p.id === this.state.selected}
                           onClick={ev => this.clickRider(ev, p) }
                           riderFilter={riderFilter}
+                          scale={Math.pow(zoomLevel, 0.5)}
                         />)
                       }
 								    </g>
@@ -241,7 +267,7 @@ class Map extends Component {
       } else if (a.lastName && b.lastName) {
         return a.lastName.localeCompare(b.lastName)
       } else {
-        return a.id -  b.id;
+        return a.id - b.id;
       }
     });
   }
@@ -314,7 +340,8 @@ const mapStateToProps = (state) => {
     overlay: state.environment.electron || state.environment.openfin,
     mapSettings: state.mapSettings,
     displayActivity: state.ghosts.displayActivity,
-    riderFilter: state.summary.riderFilter
+    riderFilter: state.summary.riderFilter,
+    zoomLevel: state.summary.zoomLevel,
   }
 }
 

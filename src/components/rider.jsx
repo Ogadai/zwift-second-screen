@@ -28,12 +28,13 @@ class Rider extends Component {
       labelRotate: PropTypes.number,
       selected: PropTypes.bool,
       onClick: PropTypes.func.isRequired,
-      riderFilter: PropTypes.string
+      riderFilter: PropTypes.string,
+      scale: PropTypes.number
     };
   }
 
   render() {
-    const { position, selected, labelRotate, onClick } = this.props;
+    const { position, selected, labelRotate, scale, onClick } = this.props;
 
     return <g className={this.getRiderClass()}
 				transform={`translate(${position.x},${position.y})`}>
@@ -41,9 +42,9 @@ class Rider extends Component {
         ? this.renderTrail()
         : undefined }
       <g transform={`rotate(${labelRotate})`} onClick={onClick}>
-        <circle cx="0" cy="0" r="6000" />
+        <circle cx="0" cy="0" r={ 6000 / scale } style={{ strokeWidth: 2000 / scale }} />
         {this.renderName()}
-        { selected ? <RiderLabel position={position} /> : undefined }
+        { selected ? <RiderLabel position={position}  scale={scale} /> : undefined }
       </g>
     </g>
   }
@@ -67,11 +68,18 @@ class Rider extends Component {
   }
 
   renderName() {
+    const { scale } = this.props;
     const riderName = this.getName();
 
-    return <g>
-      <text className="glow" x="10000" y="2000">{riderName.name}</text>
-      <text x="10000" y="2000">{riderName.name}</text>
+    const props = {
+      x: 10000 / scale,
+      y: 3000 / scale,
+      style: { fontSize: 9000 / scale }
+    };
+
+    return <g className="rider-name">
+      <text className="glow" {...props}>{riderName.name}</text>
+      <text className="rider-name-text" {...props}>{riderName.name}</text>
     </g>
   }
 

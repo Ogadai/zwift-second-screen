@@ -11,6 +11,7 @@ import Analytics from './analytics';
 import Zoom from './zoom';
 
 import { closeApp } from '../actions/host';
+import { setZoomLevel } from '../actions/summary';
 
 import s from './app.css';
 
@@ -46,7 +47,7 @@ class App extends Component {
   }
 
   render() {
-    const { worldId, develop, overlay, openfin, onCloseApp } = this.props;
+    const { worldId, develop, overlay, openfin, onCloseApp, onSetZoomLevel } = this.props;
     const { hovering } = this.state;
 
     return (
@@ -58,7 +59,11 @@ class App extends Component {
 				</h1>
         <div className="content" onMouseMove={() => this.onMouseMove()}>
           {!develop
-          ? <Zoom followSelector=".rider-position circle" defaultZoom={mapZoomLevels[worldId] || 1}>
+          ? <Zoom
+                followSelector=".rider-position circle"
+                defaultZoom={mapZoomLevels[worldId] || 1}
+                onChangeZoomLevel={onSetZoomLevel}
+              >
               <Map />
             </Zoom>
           : <Map develop={develop} /> }
@@ -99,7 +104,8 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onCloseApp: closeApp
+    onCloseApp: closeApp,
+    onSetZoomLevel: level => dispatch(setZoomLevel(level))
   }
 }
 

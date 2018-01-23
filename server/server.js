@@ -17,7 +17,6 @@ class Server {
     this.siteSettings = settings ? settings.site : null;
     this.stravaSettings = settings ? settings.strava : null;
 
-
     if (this.stravaSettings) {
       this.stravaSegments = new StravaSegments(this.stravaSettings);
     }
@@ -209,6 +208,16 @@ class Server {
         this.hostData.getHostInfo().then(respondJson(res));
       } else {
         sendJson(res, {});
+      }
+    })
+
+    this.app.get('/events', (req, res) => {
+      if (this.riderProvider.getEvents) {
+        this.riderProvider.getEvents().then(events => {
+          sendJson(res, { events });
+        });
+      } else {
+        sendJson(res, { events: [] });
       }
     })
 

@@ -244,6 +244,10 @@
         & .riderfilter {
             width: 120px;
         }
+
+        & .eventfilter {
+            width: 250px;
+        }
     }
 }
 

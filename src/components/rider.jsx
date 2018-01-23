@@ -14,7 +14,8 @@ const colours = [
   'red',
   'black',
   'purple',
-  'orange'
+  'orange',
+  'yellow'
 ];
 
 const blankSpace = ' []()-_:.';

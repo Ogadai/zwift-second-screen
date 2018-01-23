@@ -1,13 +1,21 @@
 ﻿import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
+import moment from 'moment';
 
-import { fetchProfile, fetchRiderFilterIfNeeded } from '../actions/fetch';
+import { fetchProfile, fetchRiderFilterIfNeeded, fetchEvents } from '../actions/fetch';
 import { requestLoginType } from '../actions/login';
 import { setMenuState, showWorldSelector, setWorld, showStravaSettings, showRiderFilter, setRiderFilter } from '../actions/summary';
 import { connectStrava, disconnectStrava, saveStravaSettings } from '../actions/strava';
 
 import s from './summary.css';
+
+const filterTypeFromFilter = riderFilter => {
+  if (riderFilter && riderFilter.length > 0) {
+    return riderFilter.indexOf('eventid:') === 0 ? 2 : 1;
+  }
+  return 0;
+}
 
 class Summary extends Component {
   static get propTypes() {
@@ -23,6 +31,7 @@ class Summary extends Component {
       stravaSettings: PropTypes.any.isRequired,
       showingRiderFilter: PropTypes.bool,
       riderFilter: PropTypes.string,
+      events: PropTypes.array,
       onSetMenuState: PropTypes.func.isRequired,
       onShowWorldSelector: PropTypes.func.isRequired,
       onSetWorld: PropTypes.func.isRequired,
@@ -44,18 +53,19 @@ class Summary extends Component {
       stravaAgeValid: true,
       stravaDateValid: true,
       stravaSettings: props.stravaSettings,
-      filterOn: props.riderFilter && props.riderFilter.length > 0,
+      filterType: filterTypeFromFilter(props.riderFilter),
       riderFilter: props.riderFilter
     }
   }
 
   componentWillReceiveProps(props) {
+    const updatedFilter = !this.state.filterType || props.riderFilter !== this.props.riderFilter;
     this.setState({
       stravaAgeValid: true,
       stravaDateValid: true,
       stravaSettings: props.stravaSettings,
-      filterOn: props.riderFilter && props.riderFilter.length > 0,
-      riderFilter: props.riderFilter
+      filterType: updatedFilter ? filterTypeFromFilter(props.riderFilter) : this.state.filterType,
+      riderFilter: updatedFilter ? props.riderFilter : this.state.riderFilter
     });
   }
 
@@ -72,11 +82,11 @@ class Summary extends Component {
   }
 
   render() {
-    const { showingMenu, showingWorldSelector, profile, mapSettings, user,
+    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events,
       showingStravaSettings, stravaConnected, onShowStravaSettings,
       showingRiderFilter, onShowRiderFilter, onSetRiderFilter,
       onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
-    const { stravaAgeValid, stravaDateValid, stravaSettings, filterOn, riderFilter } = this.state;
+    const { stravaAgeValid, stravaDateValid, stravaSettings, filterType, riderFilter } = this.state;
     const { credit } = mapSettings;
     const disabled = !profile.riding;
 
@@ -258,21 +268,41 @@ class Summary extends Component {
                 <ul>
                   <li>
                     <input type="radio" name="filternone" id="filternone"
-                        checked={!filterOn}
-                        onChange={() => this.setFilterOn(false)} />
+                        checked={filterType === 0}
+                        onChange={() => this.setFilterType(0)} />
                     <label htmlFor="filternone">Myself and friends</label>
                   </li>
                   <li>
                     <input type="radio" name="filterset" id="filterset"
-                        checked={filterOn}
-                        onChange={() => this.setFilterOn(true)} />
-                    <label htmlFor="stravaStartAge">Where
-                      <input type="text" value={riderFilter}
+                        checked={filterType === 1}
+                        onChange={() => this.setFilterType(1)} />
+                    <label htmlFor="filterset">Where
+                      <input type="text" value={filterType === 1 ? riderFilter : ''}
                             className={classnames("riderfilter")}
                             onChange={event => this.updateRiderFilter(event)}
                           />
                     is in last name</label>
                   </li>
+                  {events &&
+                    <li>
+                      <input type="radio" name="filterevent" id="filterevent"
+                          checked={filterType === 2}
+                          onChange={() => this.setFilterType(2)} />
+                      <label htmlFor="filterevent">Event
+                        <select
+                          value={filterType === 2 ? riderFilter : ''}
+                          onChange={event => this.updateRiderFilter(event)}
+                          className={classnames("eventfilter")}
+                        >
+                          <option value=""></option>
+                          {events.map(e => <option
+                                key={e.id}
+                                value={`eventid:${e.id}`}
+                              >{`${moment(e.eventStart).format('LT')} - ${e.name}`}</option>)}
+                        </select>
+                      </label>
+                    </li>
+                  }
                 </ul>
                 <div className="filter-buttons">
                   <input type="submit" value="Search" />
@@ -373,33 +403,34 @@ class Summary extends Component {
     }
   }
 
-  setFilterOn(filterOn) {
+  setFilterType(filterType) {
     this.setState({
-      filterOn
+      filterType
     });
   }
 
   updateRiderFilter(event) {
     const riderFilter = event.target.value;
     this.setState({
-      filterOn: riderFilter && riderFilter.length > 0,
+      filterType: filterTypeFromFilter(riderFilter),
       riderFilter
     });
   }
 
   applyRiderFilter(event) {
     const { onSetRiderFilter } = this.props;
-    const { filterOn, riderFilter } = this.state;
+    const { filterType, riderFilter } = this.state;
 
     event.preventDefault();
 
-    onSetRiderFilter(filterOn ? riderFilter : '');
+    onSetRiderFilter((filterType !== 0) ? riderFilter : '');
   }
 
   showRiderFilter(event) {
-    const { onShowRiderFilter } = this.props;
+    const { onShowRiderFilter, onGetEvents } = this.props;
     event.preventDefault();
     onShowRiderFilter(true);
+    onGetEvents();
   }
 }
 
@@ -414,7 +445,8 @@ const mapStateToProps = (state) => {
     stravaConnected: state.world.strava ? state.world.strava.connected : false,
     stravaSettings: state.summary.stravaSettings,
     showingRiderFilter: state.summary.showRiderFilter,
-    riderFilter: state.summary.riderFilter
+    riderFilter: state.summary.riderFilter,
+    events: state.summary.events
   }
 }
 
@@ -431,7 +463,8 @@ const mapDispatchToProps = (dispatch) => {
     onSaveStravaSettings: (settings) => dispatch(saveStravaettings(settings)),
     onFetchRiderFilter: () => dispatch(fetchRiderFilterIfNeeded()),
     onShowRiderFilter: show => dispatch(showRiderFilter(show)),
-    onSetRiderFilter: filter => dispatch(setRiderFilter(filter))
+    onSetRiderFilter: filter => dispatch(setRiderFilter(filter)),
+    onGetEvents: () => dispatch(fetchEvents())
   }
 }
 

@@ -162,4 +162,18 @@
             }
         }
    }
+
+    & .rider-yellow {
+        & circle {
+            stroke: #A0A000;
+        }
+
+        & text {
+            fill: #A0A000;
+
+            &.glow {
+                fill: #fff;
+            }
+        }
+   }
 }

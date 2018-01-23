@@ -2,6 +2,7 @@
 const ZwiftAccount = require('zwift-mobile-api');
 const Rider = require('./rider');
 const RiderPool = require('./riderPool');
+const Events = require('./events');
 
 const COOKIE_PREFIX = 'rider-';
 const sessionTimeout = 30 * 60;
@@ -11,6 +12,7 @@ class RiderId {
   constructor(username, password) {
     this.account = new ZwiftAccount(username, password);
     this.riderPool = new RiderPool(this.account);
+    this.events = new Events(this.account);
   }
 
   getRider(cookie) {
@@ -31,6 +33,10 @@ class RiderId {
 
   get canFilterRiders() {
     return true;
+  }
+
+  getEvents() {
+    return this.events.getEvents();
   }
 
   loginWithId(riderId) {

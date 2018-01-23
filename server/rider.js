@@ -1,8 +1,18 @@
 ﻿const EventEmitter = require('events');
 const Ghosts = require('./ghosts');
 const AllRiders = require('./allRiders');
+const Events = require('./events');
 
 const MAX_RIDERS = 40;
+
+const GROUP_COLOURS = [
+  'red',
+  'green',
+  'blue',
+  'yellow'
+];
+
+const EVENTID_PREFIX = "eventid:";
 
 class Rider extends EventEmitter {
   constructor(account, riderId, riderStatusFn) {
@@ -10,6 +20,7 @@ class Rider extends EventEmitter {
 
     this.account = account;
     this.allRiders = new AllRiders(account);
+    this.events = new Events(account);
     this.riderId = riderId;
     this.ghosts = new Ghosts(account, riderId);
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
@@ -118,6 +129,7 @@ class Rider extends EventEmitter {
   }
 
   requestRidingNow() {
+    // return this.requestRidingEvent();
     return this.filter
       ? this.requestRidingFiltered()
       : this.requestRidingFriends();
@@ -133,12 +145,48 @@ class Rider extends EventEmitter {
   }
 
   requestRidingFiltered() {
+    if (this.filter.indexOf(EVENTID_PREFIX) === 0) {
+      const eventId = parseInt(this.filter.substring(EVENTID_PREFIX.length));
+      return this.requestRidingEvent(eventId);
+    } else {
+      return this.requestRidingFilterName();
+    }
+  }
+
+  requestRidingFilterName() {
     return this.allRiders.get()
       .then(worldRiders =>
         worldRiders
           .filter(r => this.filterWorldRider(r))
           .map(r => this.mapWorldRider(r))
     );
+  }
+
+  requestRidingEvent(eventId) {
+    return this.events.getEvents().then(events => {
+      const event = events.find(e => e.id === eventId);
+
+      return Promise.all(
+        event.eventSubgroups.map(g => this.getSubgroupRiders(g.id, g.label))
+      ).then(groupedRiders => {
+        const allRiders = [].concat.apply([], groupedRiders);
+
+        const meGroup = allRiders.find(r => r.id === this.riderId);
+        if (meGroup) {
+          allRiders.sort((a, b) => Math.abs(a.group - meGroup.group) - Math.abs(b.group - meGroup.group));
+        }
+
+        return allRiders;
+      });
+    });
+  }
+
+  getSubgroupRiders(subGroupId, label) {
+    return this.account.getEvent().riders(subGroupId)
+      .then(riders => riders.map(r => Object.assign(r, {
+        me: r.id === this.riderId,
+        group: label
+      })));
   }
 
   filterWorldRider(rider) {
@@ -149,7 +197,7 @@ class Rider extends EventEmitter {
   mapWorldRider(rider) {
     return {
       id: rider.playerId,
-      me: false,
+      me: rider.playerId === this.riderId,
       firstName: rider.firstName,
       lastName: rider.lastName,
       male: rider.male,
@@ -210,12 +258,17 @@ class Rider extends EventEmitter {
             playerType: rider.playerType,
             contryAlpha3: rider.countryAlpha3,
             countryCode: rider.countryCode,
-            weight: rider.weight
+            weight: rider.weight,
+            colour: this.colourFromGroup(rider.group)
           };
         } else {
           return null;
         }
       });
+  }
+
+  colourFromGroup(group) {
+    return group ? GROUP_COLOURS[group-1] : undefined;
   }
 
   filterByWorld(positions) {

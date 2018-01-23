@@ -149,3 +149,16 @@ export function dispatchRequest(path, dispatchFn) {
       });
   }
 }
+
+export const RECEIVE_EVENTS = "RECEIVE_EVENTS";
+
+export function receiveEvents(data) {
+  return {
+    type: RECEIVE_EVENTS,
+    events: data.events || []
+  };
+}
+
+export function fetchEvents() {
+  return dispatchRequest('/events/', receiveEvents);
+}

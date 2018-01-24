@@ -122,14 +122,24 @@ class Map extends Component {
     })
   }
 
+  viewScale() {
+    const { zoomLevel } = this.props;
+
+    const winSize = Math.min(window.innerWidth, window.innerHeight);
+
+    return Math.pow(zoomLevel, 0.8) * (winSize / 1000);
+  }
+
   render() {
-    const { develop, worldId, positions, mapSettings, displayActivity, riderFilter, zoomLevel } = this.props;
+    const { develop, worldId, positions, mapSettings, displayActivity, riderFilter } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
 
     const mapUrl = mapSettings.map ? this.filePath(mapSettings.map) : this.svgPath(worldId);
     const labelRotate = this.getLabelRotate();
+
+    const scale = this.viewScale();
 
     return <div
         className={classnames("map", { "custom-map": mapSettings && mapSettings.map })}
@@ -161,7 +171,7 @@ class Map extends Component {
                           selected={p.id === this.state.selected}
                           onClick={ev => this.clickRider(ev, p) }
                           riderFilter={riderFilter}
-                          scale={Math.pow(zoomLevel, 0.5)}
+                          scale={scale}
                         />)
                       }
 								    </g>

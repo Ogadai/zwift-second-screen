@@ -72,9 +72,9 @@ class Rider extends Component {
     const riderName = this.getName();
 
     const props = {
-      x: 10000 / scale,
-      y: 3000 / scale,
-      style: { fontSize: 9000 / scale }
+      x: 10000,
+      y: 3000,
+      style: { transform: `scale(${1/scale})` }
     };
 
     return <g className="rider-name">

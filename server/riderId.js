@@ -1,10 +1,12 @@
-﻿const NodeCache = require('node-cache')
+﻿const Guid = require('guid');
+const NodeCache = require('node-cache')
 const ZwiftAccount = require('zwift-mobile-api');
 const Rider = require('./rider');
 const RiderPool = require('./riderPool');
 const Events = require('./events');
 
 const COOKIE_PREFIX = 'rider-';
+const ANON_PREFIX = 'anon-';
 const sessionTimeout = 30 * 60;
 const sessionCache = new NodeCache({ stdTTL: sessionTimeout, checkPeriod: 120, useClones: false });
 
@@ -20,7 +22,7 @@ class RiderId {
     if (riderId) {
       return this.getOrCreateRider(riderId);
     }
-    return null;
+    return this.getAnonymous(cookie);
   }
 
   get canLogout() {
@@ -56,6 +58,27 @@ class RiderId {
           privacy: profile.privacy
         };
       });
+  }
+
+  loginAnonymous() {
+    const cookie = Guid.raw();
+
+    const newRider = new Rider(this.account, 0, id => this.riderStatusFn(id));
+    sessionCache.set(`${ANON_PREFIX}${cookie}`, newRider);
+
+    return {
+      cookie
+    };
+  }
+
+  getAnonymous(cookie) {
+    const key = `${ANON_PREFIX}${cookie}`;
+    const cachedRider = sessionCache.get(key);
+    if (cachedRider) {
+      sessionCache.ttl(key, sessionTimeout);
+      return cachedRider;
+    }
+    return cachedRider;
   }
 
   getOrCreateRider(riderId) {

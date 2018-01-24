@@ -223,6 +223,8 @@ class Server {
 
     const indexRoute = (req, res) => {
       if (req.accepts('html')) {
+        this.setupQueryCookie(req, res);
+
 				// respond with html index page
         const htmlPath = path.resolve(`${__dirname}/../public/index.html`);
         if (this.siteSettings) {
@@ -256,6 +258,28 @@ class Server {
 
 		// Handle 404s (React app routing)
     this.app.use(indexRoute);
+  }
+
+  setupQueryCookie(req, res) {
+    const eventFilter = req.query.event;
+    if (!eventFilter || !this.riderProvider.canFilterRiders) return;
+
+    const filter = `event:${eventFilter}`;
+
+    const cookie = req.cookies.zssToken;
+    const rider = this.riderProvider.getRider(cookie);
+    if (rider) {
+      rider.setFilter(filter);
+    } else if (this.riderProvider.loginAnonymous) {
+      const result = this.riderProvider.loginAnonymous();
+
+      const expires = new Date()
+      expires.setFullYear(expires.getFullYear() + 1);
+      res.cookie('zssToken', result.cookie, { path: '/', httpOnly: true, expires });
+
+      const newRider = this.riderProvider.getRider(result.cookie);
+      newRider.setFilter(filter);
+    }
   }
 
   start(port) {

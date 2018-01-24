@@ -13,7 +13,7 @@ const GROUP_COLOURS = [
   'yellow'
 ];
 
-const EVENTID_PREFIX = "eventid:";
+const EVENT_PREFIX = "event:";
 
 class Rider extends EventEmitter {
   constructor(account, riderId, riderStatusFn) {
@@ -86,10 +86,20 @@ class Rider extends EventEmitter {
   }
 
   getProfile() {
-    return this.profile.getProfile(this.riderId);
+    if (!this.riderId) {
+      return Promise.resolve({
+        anonymous: true
+      });
+    } else {
+      return this.profile.getProfile(this.riderId);
+    }
   }
 
   getRiders() {
+    if (!this.riderId) {
+      return Promise.resolve([]);
+    }
+
     return this.getProfile().then(profile => {
       profile.me = true;
       return this.getFriends(profile.id).then(friends => {
@@ -147,9 +157,9 @@ class Rider extends EventEmitter {
   }
 
   requestRidingFiltered() {
-    if (this.filter.indexOf(EVENTID_PREFIX) === 0) {
-      const eventId = parseInt(this.filter.substring(EVENTID_PREFIX.length));
-      return this.requestRidingEvent(eventId);
+    if (this.filter.indexOf(EVENT_PREFIX) === 0) {
+      const eventSearch = this.filter.substring(EVENT_PREFIX.length);
+      return this.requestRidingEvent(eventSearch);
     } else {
       return this.requestRidingFilterName();
     }
@@ -164,23 +174,42 @@ class Rider extends EventEmitter {
     );
   }
 
-  requestRidingEvent(eventId) {
+  requestRidingEvent(eventSearch) {
     return this.events.getEvents().then(events => {
-      const event = events.find(e => e.id === eventId);
+      const event = this.findMatchingEvent(events, eventSearch);
 
-      return Promise.all(
-        event.eventSubgroups.map(g => this.getSubgroupRiders(g.id, g.label))
-      ).then(groupedRiders => {
-        const allRiders = [].concat.apply([], groupedRiders);
+      if (event) {
+        return Promise.all(
+          event.eventSubgroups.map(g => this.getSubgroupRiders(g.id, g.label))
+        ).then(groupedRiders => {
+          const allRiders = [].concat.apply([], groupedRiders);
 
-        const meGroup = allRiders.find(r => r.id === this.riderId);
-        if (meGroup) {
-          allRiders.sort((a, b) => Math.abs(a.group - meGroup.group) - Math.abs(b.group - meGroup.group));
-        }
+          const meGroup = allRiders.find(r => r.id === this.riderId);
+          if (meGroup) {
+            allRiders.sort((a, b) => Math.abs(a.group - meGroup.group) - Math.abs(b.group - meGroup.group));
+          }
 
-        return allRiders;
-      });
+          return allRiders;
+        });
+      } else {
+        // No matching event
+        return [];
+      }
     });
+  }
+
+  findMatchingEvent(events, eventSearch) {
+    const eventId = parseInt(eventSearch);
+    const eventMatch = eventSearch.toLowerCase();
+
+    for(let n = events.length -1; n >= 0; n--) {
+      const event = events[n];
+      if ( (event.id === eventId)
+        || (event.name.toLowerCase().indexOf(eventMatch) !== -1)) {
+        return event;
+      }
+    }
+    return null;
   }
 
   getSubgroupRiders(subGroupId, label) {

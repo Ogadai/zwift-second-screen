@@ -10,9 +10,11 @@ import { connectStrava, disconnectStrava, saveStravaSettings } from '../actions/
 
 import s from './summary.css';
 
+const EVENT_PREFIX = "event:";
+
 const filterTypeFromFilter = riderFilter => {
   if (riderFilter && riderFilter.length > 0) {
-    return riderFilter.indexOf('eventid:') === 0 ? 2 : 1;
+    return riderFilter.indexOf(EVENT_PREFIX) === 0 ? 2 : 1;
   }
   return 0;
 }
@@ -142,7 +144,7 @@ class Summary extends Component {
                 </li>
               : undefined }
 
-            { (user && user.canStrava)
+            { (user && user.canStrava && !profile.anonymous)
               ? <li>
                   <a className="world" href="#" onClick={e => this.showStravaSettings(e)}>
                       <span className="zwiftgps-icon icon-strava">&nbsp;</span>
@@ -164,7 +166,7 @@ class Summary extends Component {
               ? <li>
                   <a className="logout" href="/login">
                     <span className="zwiftgps-icon icon-logout">&nbsp;</span>
-                    <span>Logout</span>
+                    <span>{profile.anonymous ? 'Login' : 'Logout'}</span>
                   </a>
                 </li>
             : undefined }
@@ -262,16 +264,14 @@ class Summary extends Component {
             <div className="popup-content rider-filter">
               <h2>Find riders</h2>
               <form onSubmit={event => this.applyRiderFilter(event)}>
-                <div className="description">
-                  Show currently riding riders filtered by their name (max. 40)
-                </div>
                 <ul>
-                  <li>
-                    <input type="radio" name="filternone" id="filternone"
-                        checked={filterType === 0}
-                        onChange={() => this.setFilterType(0)} />
-                    <label htmlFor="filternone">Myself and friends</label>
-                  </li>
+                  {(!profile.anonymous) && <li>
+                      <input type="radio" name="filternone" id="filternone"
+                          checked={filterType === 0}
+                          onChange={() => this.setFilterType(0)} />
+                      <label htmlFor="filternone">Myself and friends</label>
+                    </li>
+                  }
                   <li>
                     <input type="radio" name="filterset" id="filterset"
                         checked={filterType === 1}
@@ -297,7 +297,7 @@ class Summary extends Component {
                           <option value=""></option>
                           {events.map(e => <option
                                 key={e.id}
-                                value={`eventid:${e.id}`}
+                                value={`${EVENT_PREFIX}${e.id}`}
                               >{`${moment(e.eventStart).format('LT')} - ${e.name}`}</option>)}
                         </select>
                       </label>

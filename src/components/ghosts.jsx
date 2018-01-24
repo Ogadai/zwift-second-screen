@@ -16,6 +16,7 @@ import s from './ghosts.css';
 class Ghosts extends Component {
   static get propTypes() {
     return {
+      profile: PropTypes.object,
 			worldId: PropTypes.number,
       ghosts: PropTypes.array,
       showButton: PropTypes.bool,
@@ -64,7 +65,10 @@ class Ghosts extends Component {
   }
 
   render() {
-    const { showButton, showPanel, addingGhost, onToggleGhosts } = this.props;
+    const { profile, showButton, showPanel, addingGhost, onToggleGhosts } = this.props;
+    if (profile.anonymous) {
+      return <div></div>;
+    }
 
     return <div className={classnames("ghosts", { expanded: showPanel, hidden: !showButton })}>
       {addingGhost ? this.renderActivityList() : this.renderGhostList() }
@@ -220,6 +224,7 @@ class Ghosts extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    profile: state.profile,
     worldId: state.world.worldId,
     ghosts: state.ghosts.ghosts,
     showButton: state.ghosts.showButton,

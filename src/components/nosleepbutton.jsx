@@ -2,7 +2,7 @@ import React, { Component, PropTypes } from 'react';
 import classnames from 'classnames';
 import NoSleep from 'nosleep.js';
 
-import s from './nosleep.css';
+import s from './nosleepbutton.css';
 
 class NoSleepButton extends Component {
 

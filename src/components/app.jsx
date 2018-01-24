@@ -9,7 +9,7 @@ import Ghosts from './ghosts';
 import StravaSegments from './strava-segments';
 import Analytics from './analytics';
 import Zoom from './zoom';
-import NoSleep from './nosleep';
+import NoSleepButton from './nosleepbutton';
 
 import { closeApp } from '../actions/host';
 import { setZoomLevel } from '../actions/summary';
@@ -69,7 +69,7 @@ class App extends Component {
             </Zoom>
           : <Map develop={develop} /> }
           <Summary />
-          <NoSleep />
+          <NoSleepButton />
 					<Ghosts />
           <StravaSegments />
 				</div>

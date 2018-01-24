@@ -2,6 +2,7 @@
 const Ghosts = require('./ghosts');
 const AllRiders = require('./allRiders');
 const Events = require('./events');
+const Profile = require('./profile');
 
 const MAX_RIDERS = 40;
 
@@ -21,6 +22,7 @@ class Rider extends EventEmitter {
     this.account = account;
     this.allRiders = new AllRiders(account);
     this.events = new Events(account);
+    this.profile = new Profile(account);
     this.riderId = riderId;
     this.ghosts = new Ghosts(account, riderId);
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
@@ -84,7 +86,7 @@ class Rider extends EventEmitter {
   }
 
   getProfile() {
-    return this.account.getProfile(this.riderId).profile();
+    return this.profile.getProfile(this.riderId);
   }
 
   getRiders() {
@@ -97,7 +99,7 @@ class Rider extends EventEmitter {
   }
 
 	getFriends(riderId) {
-		return this.account.getProfile(riderId).followees();
+    return this.profile.getFollowees(riderId);
 	}
 
   getActivities(worldId, riderId) {

@@ -1,0 +1,8 @@
+@import 'variables.css';
+
+.nosleep {
+  position: absolute;
+  top: 80px;
+  left: var(--padding);
+  z-index: 250;
+}

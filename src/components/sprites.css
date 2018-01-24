@@ -61,5 +61,9 @@
     &.icon-riderfilter {
         background-position: 0 -288px;
     }
+
+    &.icon-lockscreen {
+        background-position: 0 -320px;
+    }
 }
 

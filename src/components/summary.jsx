@@ -7,6 +7,7 @@ import { fetchProfile, fetchRiderFilterIfNeeded, fetchEvents } from '../actions/
 import { requestLoginType } from '../actions/login';
 import { setMenuState, showWorldSelector, setWorld, showStravaSettings, showRiderFilter, setRiderFilter } from '../actions/summary';
 import { connectStrava, disconnectStrava, saveStravaSettings } from '../actions/strava';
+import { toggleFullScreen } from './full-screen';
 
 import s from './summary.css';
 
@@ -346,22 +347,7 @@ class Summary extends Component {
 
   toggleFullScreen(event) {
     event.preventDefault();
-    var doc = window.document;
-    var docEl = doc.documentElement;
-
-    var requestFullScreen = docEl.requestFullscreen || docEl.mozRequestFullScreen || docEl.webkitRequestFullScreen || docEl.msRequestFullscreen;
-    var cancelFullScreen = doc.exitFullscreen || doc.mozCancelFullScreen || doc.webkitExitFullscreen || doc.msExitFullscreen;
-
-    try {
-        if(!doc.fullscreenElement && !doc.mozFullScreenElement && !doc.webkitFullscreenElement && !doc.msFullscreenElement) {
-            requestFullScreen.call(docEl);
-        }
-        else {
-            cancelFullScreen.call(doc);
-        }
-    } catch(ex) {
-        console.log(`error trying to toggle full screen - ${ex.message}`);
-    }
+    toggleFullScreen();
   }
 
   showWorldSelector(event) {

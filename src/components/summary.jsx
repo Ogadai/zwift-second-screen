@@ -15,7 +15,10 @@ const EVENT_PREFIX = "event:";
 
 const filterTypeFromFilter = riderFilter => {
   if (riderFilter && riderFilter.length > 0) {
-    return riderFilter.indexOf(EVENT_PREFIX) === 0 ? 2 : 1;
+    if (riderFilter.indexOf(EVENT_PREFIX) === 0) {
+      return isNaN(riderFilter.substring(EVENT_PREFIX.length)) ? 1 : 2;
+    }
+    return 1;
   }
   return 0;
 }

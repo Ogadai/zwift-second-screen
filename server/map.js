@@ -63,7 +63,7 @@ class Map {
       if (pos !== -1) {
         const start = pos + svgStart.length;
         const end = map.indexOf(svgEnd, start);
-        
+
         if (end !== -1) {
           const svgData = map.substring(start, end);
           const mapStyle = this.getMapStyle(cssResponse.data);
@@ -79,11 +79,17 @@ class Map {
     return `${styleStart}${styleData}${styleEnd}`;
   }
 
-  getSettings(requestWorldId, overlay) {
+  getSettings(requestWorldId, overlay, event) {
     return this.getSvg(requestWorldId).then(map => {
       const worldId = this.getSvgParam(map, 'id="world_');
 
-      const worldSettings = (!overlay && this.worldSettings) ? this.worldSettings[worldId] : null;
+      const baseSettings = (!overlay && this.worldSettings) ? this.worldSettings[worldId] : null;
+      const eventSettings = event && this.worldSettings.events && this.worldSettings.events[event]
+            ? this.worldSettings.events[event][worldId]
+            : undefined;
+
+      const worldSettings = Object.assign({}, baseSettings, eventSettings);
+
       const mapImage = worldSettings ? worldSettings.map : null;
       const background = worldSettings ? worldSettings.background : null;
       const credit = worldSettings && worldSettings.credit ? worldSettings.credit : defaultCredit;

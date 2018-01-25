@@ -9,6 +9,8 @@ const Map = require('./map');
 const insertSiteSettings = require('./siteSettings');
 const StravaSegments = require('./strava-segments');
 
+const EVENT_PREFIX = "event:";
+
 class Server {
   constructor(riderProvider, settings) {
     this.riderProvider = riderProvider;
@@ -197,11 +199,15 @@ class Server {
       this.map.getSvg(worldId).then(data => sendImg(res, data, 'image/svg+xml'));
     })
 
-    this.app.get('/mapSettings', (req, res) => {
+    this.app.get('/mapSettings', this.processRider((rider, req) => {
+      const filter = rider.getFilter ? rider.getFilter() : undefined;
+      const event = (filter && filter.indexOf(EVENT_PREFIX) === 0)
+            ? filter.substring(EVENT_PREFIX.length) : undefined;
+
       const worldId = req.query.world || undefined;
       const overlay = req.query.overlay === 'true';
-      this.map.getSettings(worldId, overlay).then(respondJson(res));
-    })
+      return this.map.getSettings(worldId, overlay, event);
+    }))
 
     this.app.get('/host', (req, res) => {
       if (this.hostData) {
@@ -223,8 +229,6 @@ class Server {
 
     const indexRoute = (req, res) => {
       if (req.accepts('html')) {
-        this.setupQueryCookie(req, res);
-
 				// respond with html index page
         const htmlPath = path.resolve(`${__dirname}/../public/index.html`);
         if (this.siteSettings) {
@@ -245,7 +249,15 @@ class Server {
       res.type('txt').send('Not found');
     };
 
-    this.app.get('/', indexRoute)
+    this.app.get('/', (req, res) => {
+      const eventFilter = req.query.event;
+      this.setupQueryCookie(req, res, eventFilter);
+      indexRoute(req, res);
+    })
+    this.app.get('/zwiftquest', (req, res) => {
+      this.setupQueryCookie(req, res, 'zwiftquest');
+      indexRoute(req, res);
+    })
 
     if (this.siteSettings && this.siteSettings.static) {
       const { route, path } = this.siteSettings.static
@@ -260,17 +272,16 @@ class Server {
     this.app.use(indexRoute);
   }
 
-  setupQueryCookie(req, res) {
-    const eventFilter = req.query.event;
-    if (!eventFilter || !this.riderProvider.canFilterRiders) return;
+  setupQueryCookie(req, res, eventFilter) {
+    if (!this.riderProvider.canFilterRiders) return;
 
-    const filter = `event:${eventFilter}`;
+    const filter = eventFilter ? `event:${eventFilter.toLowerCase()}` : null;
 
     const cookie = req.cookies.zssToken;
     const rider = this.riderProvider.getRider(cookie);
     if (rider) {
       rider.setFilter(filter);
-    } else if (this.riderProvider.loginAnonymous) {
+    } else if (filter && this.riderProvider.loginAnonymous) {
       const result = this.riderProvider.loginAnonymous();
 
       const expires = new Date()

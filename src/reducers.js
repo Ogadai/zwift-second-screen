@@ -223,7 +223,6 @@ function summary(state = defaultSummary, action) {
         events: action.events
       });
     case SET_ZOOM_LEVEL:
-      console.log(`zoom level ${action.level}`);
       return Object.assign({}, state, {
         zoomLevel: action.level
       });

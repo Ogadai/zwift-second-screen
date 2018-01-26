@@ -29,12 +29,13 @@ class Rider extends Component {
       selected: PropTypes.bool,
       onClick: PropTypes.func.isRequired,
       riderFilter: PropTypes.string,
-      scale: PropTypes.number
+      scale: PropTypes.number,
+      useMetric: PropTypes.bool
     };
   }
 
   render() {
-    const { position, selected, labelRotate, scale, onClick } = this.props;
+    const { position, selected, labelRotate, scale, useMetric, onClick } = this.props;
 
     return <g className={this.getRiderClass()}
 				transform={`translate(${position.x},${position.y})`}>
@@ -44,7 +45,7 @@ class Rider extends Component {
       <g transform={`rotate(${labelRotate})`} onClick={onClick}>
         <circle cx="0" cy="0" r={ 6000 / scale } style={{ strokeWidth: 2000 / scale }} />
         {this.renderName()}
-        { selected ? <RiderLabel position={position}  scale={scale} /> : undefined }
+        { selected ? <RiderLabel position={position}  scale={scale} useMetric={useMetric} /> : undefined }
       </g>
     </g>
   }

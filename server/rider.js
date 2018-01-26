@@ -88,7 +88,8 @@ class Rider extends EventEmitter {
   getProfile() {
     if (!this.riderId) {
       return Promise.resolve({
-        anonymous: true
+        anonymous: true,
+        useMetric: true
       });
     } else {
       return this.profile.getProfile(this.riderId);
@@ -184,7 +185,7 @@ class Rider extends EventEmitter {
         ).then(groupedRiders => {
           const allRiders = [].concat.apply([], groupedRiders);
 
-          const meGroup = allRiders.find(r => r.id === this.riderId);
+          const meGroup = allRiders.find(r => r.id == this.riderId);
           if (meGroup) {
             allRiders.sort((a, b) => Math.abs(a.group - meGroup.group) - Math.abs(b.group - meGroup.group));
           }
@@ -214,10 +215,12 @@ class Rider extends EventEmitter {
 
   getSubgroupRiders(subGroupId, label) {
     return this.events.getRiders(subGroupId)
-      .then(riders => riders.map(r => Object.assign({}, r, {
-        me: r.id === this.riderId,
+      .then(riders => riders.map(r => {
+        return Object.assign({}, r, {
+        me: r.id == this.riderId,
         group: label
-      })));
+      }
+      )}));
   }
 
   filterWorldRider(rider) {
@@ -228,7 +231,7 @@ class Rider extends EventEmitter {
   mapWorldRider(rider) {
     return {
       id: rider.playerId,
-      me: rider.playerId === this.riderId,
+      me: rider.playerId == this.riderId,
       firstName: rider.firstName,
       lastName: rider.lastName,
       male: rider.male,

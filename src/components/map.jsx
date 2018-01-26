@@ -19,6 +19,7 @@ class Map extends Component {
       positions: PropTypes.array,
       mapSettings: PropTypes.object,
       zoomLevel: PropTypes.number,
+      useMetric: PropTypes.bool,
       onFetchSettings: PropTypes.func.isRequired,
       onStartPolling: PropTypes.func.isRequired,
       onStopPolling: PropTypes.func.isRequired,
@@ -131,7 +132,7 @@ class Map extends Component {
   }
 
   render() {
-    const { develop, worldId, positions, mapSettings, displayActivity, riderFilter } = this.props;
+    const { develop, worldId, positions, useMetric, mapSettings, displayActivity, riderFilter } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
@@ -172,6 +173,7 @@ class Map extends Component {
                           onClick={ev => this.clickRider(ev, p) }
                           riderFilter={riderFilter}
                           scale={scale}
+                          useMetric={useMetric}
                         />)
                       }
 								    </g>
@@ -352,6 +354,7 @@ const mapStateToProps = (state) => {
     displayActivity: state.ghosts.displayActivity,
     riderFilter: state.summary.riderFilter,
     zoomLevel: state.summary.zoomLevel,
+    useMetric: !state.profile || state.profile.useMetric
   }
 }
 

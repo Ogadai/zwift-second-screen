@@ -145,6 +145,7 @@ class Rider extends EventEmitter {
     // return this.requestRidingEvent();
     return this.filter
       ? this.requestRidingFiltered()
+            .then(riders => this.addMeToRiders(riders))
       : this.requestRidingFriends();
   }
 
@@ -163,6 +164,17 @@ class Rider extends EventEmitter {
       return this.requestRidingEvent(eventSearch);
     } else {
       return this.requestRidingFilterName();
+    }
+  }
+
+  addMeToRiders(riders) {
+    if (this.riderId && !riders.find(r => r.id === this.riderId)) {
+      return this.getProfile().then(profile => {
+        profile.me = true;
+        return [profile].concat(riders);
+      })
+    } else {
+      return Promise.resolve(riders);
     }
   }
 

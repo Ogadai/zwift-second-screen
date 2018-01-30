@@ -75,7 +75,7 @@ class StravaRoute extends Component {
           <polyline points={points} />
         : undefined
         }
-        { segment.pr ?
+        { (segment.pr && (segment.pr.x !== undefined) && (segment.pr.y !== undefined)) ?
           <circle cx={ segment.pr.x } cy={segment.pr.y} r="6000" />
         : undefined
         }

@@ -3,7 +3,7 @@
 .strava-route {
     & .segment {
         & circle {
-            opacity: 0.5;
+            opacity: 0.8;
             fill: var(--activity-color);
         }
 

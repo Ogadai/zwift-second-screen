@@ -4,3 +4,4 @@ const settings = require('./settings');
 
 const server = new Server(new Login(), { worlds: settings.worlds });
 server.start(process.env.PORT || settings.port);
+document.ontouchmove = function(e){ e.preventDefault(); }

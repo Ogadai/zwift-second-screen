@@ -183,7 +183,7 @@ class Map extends Component {
                   ? this.renderActivity(displayActivity)
                   : undefined }
 
-                <StravaRoute develop={develop} />
+                <StravaRoute develop={develop} scale={scale} />
 							</g>
 						</g>
 					</svg>

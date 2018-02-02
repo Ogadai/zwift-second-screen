@@ -14,6 +14,7 @@ class StravaRoute extends Component {
       worldId: PropTypes.number,
       segments: PropTypes.array,
       efforts: PropTypes.object,
+      scale: PropTypes.number,
       onFetchStravaEffort: PropTypes.func
     }
   }
@@ -67,6 +68,7 @@ class StravaRoute extends Component {
   }
 
   renderSegment(segment) {
+    const { scale } = this.props;
     const effort = this.props.efforts[segment.id];
     const points = effort ? effort.map(p => `${p.x},${p.y}`).join(' ') : null;
 
@@ -76,7 +78,7 @@ class StravaRoute extends Component {
         : undefined
         }
         { (segment.pr && (segment.pr.x !== undefined) && (segment.pr.y !== undefined)) ?
-          <circle cx={ segment.pr.x } cy={segment.pr.y} r="6000" />
+          <circle cx={ segment.pr.x } cy={segment.pr.y} r={ 7000 / scale } />
         : undefined
         }
       </g>

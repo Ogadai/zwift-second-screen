@@ -1,0 +1,14 @@
+@import 'variables.css';
+
+.map {
+    & .point-of-interest {
+        & circle {
+            stroke: red;
+            fill: transparent;
+        }
+
+        &.visited image {
+            filter: url(#grayscale)
+        }
+    }
+}

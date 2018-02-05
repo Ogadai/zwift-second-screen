@@ -6,6 +6,7 @@ const path = require('path');
 const stravaConnect = require('strava-live-segments/connect');
 
 const Map = require('./map');
+const PointsOfInterest = require('./pointsOfInterest');
 const insertSiteSettings = require('./siteSettings');
 const StravaSegments = require('./strava-segments');
 
@@ -14,8 +15,10 @@ const EVENT_PREFIX = "event:";
 class Server {
   constructor(riderProvider, settings) {
     this.riderProvider = riderProvider;
+    this.settings = settings;
     this.hostData = settings ? settings.hostData : null;
     this.map = new Map(settings ? settings.worlds : null);
+    this.pointsOfInterest = new PointsOfInterest(settings ? settings.worlds : null);
     this.siteSettings = settings ? settings.site : null;
     this.stravaSettings = settings ? settings.strava : null;
 
@@ -81,14 +84,14 @@ class Server {
         rider.getPositions()
       ]).then(([worldId, positions]) => {
         const token = stravaConnect.getToken(req);
-        if (this.stravaSettings && token) {
-          return this.stravaSegments.get(token, worldId, positions, stravaConnect.getSettings(req))
-              .then(strava => {
-                return { worldId, positions, strava };
-              })
-        } else {
-          return { worldId, positions };
-        }
+        const stravaPromise = (this.stravaSettings && token) ?
+              this.stravaSegments.get(token, worldId, positions, stravaConnect.getSettings(req))
+              : Promise.resolve(null);
+
+        return Promise.all([
+          stravaPromise,
+          this.pointsOfInterest.getPoints(worldId, positions, rider.getEvent ? rider.getEvent() : null)
+        ]).then(([strava, points]) => ({ worldId, positions, strava, points }))
       })
     }))
 

@@ -17,11 +17,12 @@ import { COOKIE_WARNING } from './actions/cookie-warning'
 function world(state = { positions: [], strava: { connected: false } }, action) {
   switch (action.type) {
     case RECEIVE_WORLD:
-      const { worldId, positions, strava } = action.data;
+      const { worldId, positions, strava, points } = action.data;
 
       const newState = { worldId };
       if (positions) newState.positions = positions;
       if (strava) newState.strava = strava;
+      if (points) newState.points = points;
 
       return Object.assign({}, state, newState);
     case RECEIVE_POSITIONS:

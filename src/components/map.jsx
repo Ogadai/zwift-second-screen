@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 import Rider from './rider.jsx';
+import PointOfInterest from './pointOfInterest';
 import StravaRoute from './strava-route.jsx';
 import { fetchMapSettings } from '../actions/fetch';
 import { startPolling, stopPolling } from '../actions/polling';
@@ -132,7 +133,7 @@ class Map extends Component {
   }
 
   render() {
-    const { develop, worldId, positions, useMetric, mapSettings, displayActivity, riderFilter } = this.props;
+    const { develop, worldId, positions, pointsOfInterest, useMetric, mapSettings, displayActivity, riderFilter } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
@@ -153,6 +154,29 @@ class Map extends Component {
         <div className="map-route" dangerouslySetInnerHTML={{ __html: this.replaceViewBox(svgFile) }} />
 				: undefined
       }
+
+      {(viewBox) ?
+        <div className="map-points-of-interest">
+          <svg className="full-size" viewBox={viewBox}>
+            <filter id="grayscale">
+              <feColorMatrix type="matrix" values="0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0      0      0      1 0"/>
+            </filter>
+            <g transform={`rotate${mapSettings.rotate}`}>
+              <g transform={`translate${mapSettings.translate}`}>
+
+                { pointsOfInterest
+                  ? <g id="pointsOfInterest" className="points-of-iterest">
+                      {pointsOfInterest.map(poi =>
+                        <PointOfInterest key={poi.name} poi={poi} scale={scale} />
+                      )}
+                    </g>
+                  : undefined }
+              </g>
+            </g>
+          </svg>
+        </div>
+        : undefined}
+
       {(viewBox) ?
         <div className="map-riders"
               onClick={ev => { ev.stopPropagation(); this.selectRider(-1); }}
@@ -349,6 +373,7 @@ const mapStateToProps = (state) => {
   return {
     worldId: state.world.worldId,
     positions: state.world.positions,
+    pointsOfInterest: state.world.points,
     overlay: state.environment.electron || state.environment.openfin,
     mapSettings: state.mapSettings,
     displayActivity: state.ghosts.displayActivity,

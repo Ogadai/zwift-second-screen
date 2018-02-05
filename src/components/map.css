@@ -22,7 +22,7 @@
     height: 100%;
     text-align: center;
 
-    & .map-route, & .map-riders {
+    & .map-route, & .map-riders, & .map-points-of-interest {
         position: absolute;
         top: 0;
         left: 0;

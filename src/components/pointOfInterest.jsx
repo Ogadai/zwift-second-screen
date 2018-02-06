@@ -21,8 +21,9 @@ class PointOfInterest extends Component {
   render() {
     const { poi, scale } = this.props;
     const { name, x, y, image, rotate, visited } = poi;
+    const iconSize = poi.size || 1;
 
-    const scaledSize = SIZE/scale;
+    const scaledSize = iconSize * SIZE/scale;
     const imageSrc = image && images[image] ? images[image] : images.standard;
 
     return <g className={classnames('point-of-interest', { visited })} transform={`translate(${x},${y})`}>

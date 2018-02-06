@@ -8,7 +8,20 @@
         }
 
         &.visited image {
-            filter: url(#grayscale)
+            filter: url(#grayscale);
+            animation: grow-shrink 1s;
         }
     }
+}
+
+@keyframes grow-shrink {
+  to {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(2);
+  }
+  to {
+    transform: scale(1);
+  }
 }

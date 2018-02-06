@@ -4,7 +4,9 @@ import kom from './kom.png';
 import mountain from './mountain.png';
 import start from './start.png';
 import banner from './banner.png';
-import zwiftquest from './zwiftquest.png';
+import zq_blank from './zwiftquest/blank.png';
+import zq_start from './zwiftquest/start.png';
+import zq_waypoint from './zwiftquest/waypoint.png';
 
 const images = {
   standard,
@@ -13,7 +15,9 @@ const images = {
   mountain,
   start,
   banner,
-  zwiftquest
+  zq_blank,
+  zq_start,
+  zq_waypoint
 };
 
 export default images;

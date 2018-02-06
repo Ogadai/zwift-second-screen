@@ -18,7 +18,19 @@ class PointsOfInterest {
           : baseSettings.getPoints;
 
     if (getPoints) {
-      return getPoints();
+      const cacheId = (eventSettings && eventSettings.getPoints)
+          ? `world-${worldId}-event-${event}-points`
+          : `world-${worldId}-points`;
+
+      const cachedPoints = poiCache.get(cacheId);
+      if (cachedPoints) {
+        return Promise.resolve(cachedPoints);
+      } else {
+        return getPoints().then(points => {
+          poiCache.set(cacheId, points);
+          return points;
+        });
+      }
     } else {
       return Promise.resolve([]);
     }

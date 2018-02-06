@@ -90,7 +90,7 @@ class Server {
 
         return Promise.all([
           stravaPromise,
-          this.pointsOfInterest.getPoints(worldId, positions, rider.getEvent ? rider.getEvent() : null)
+          this.pointsOfInterest.getPoints(worldId, positions, rider.eventTag)
         ]).then(([strava, points]) => ({ worldId, positions, strava, points }))
       })
     }))
@@ -284,6 +284,7 @@ class Server {
     const rider = this.riderProvider.getRider(cookie);
     if (rider) {
       rider.setFilter(filter);
+      rider.eventTag = eventFilter ? eventFilter.toLowerCase() : null;
     } else if (filter && this.riderProvider.loginAnonymous) {
       const result = this.riderProvider.loginAnonymous();
 
@@ -293,6 +294,7 @@ class Server {
 
       const newRider = this.riderProvider.getRider(result.cookie);
       newRider.setFilter(filter);
+      newRider.eventTag = eventFilter ? eventFilter.toLowerCase() : null;
     }
   }
 

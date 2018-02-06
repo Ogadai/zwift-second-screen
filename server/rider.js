@@ -58,12 +58,6 @@ class Rider extends EventEmitter {
     return this.filter;
   }
 
-  getEvent() {
-    return (this.filter && this.filter.indexOf(EVENT_PREFIX) === 0)
-      ? this.filter.substring(EVENT_PREFIX.length)
-      : null;
-  }
-
   getCurrentWorld() {
     return this.worldId || this.statusWorldId;
   }

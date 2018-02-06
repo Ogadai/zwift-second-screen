@@ -159,7 +159,7 @@ class Map extends Component {
         <div className="map-points-of-interest">
           <svg className="full-size" viewBox={viewBox}>
             <filter id="grayscale">
-              <feColorMatrix type="matrix" values="0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0.3333 0.3333 0.3333 0 0 0      0      0      1 0"/>
+              <feColorMatrix type="matrix" values="0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0      0      0      1 0"/>
             </filter>
             <g transform={`rotate${mapSettings.rotate}`}>
               <g transform={`translate${mapSettings.translate}`}>

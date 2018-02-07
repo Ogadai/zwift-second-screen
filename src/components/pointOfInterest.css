@@ -11,21 +11,41 @@
             fill: transparent;
         }
 
+        & image {
+            animation: flash-in 0.5s;
+            animation-iteration-count: 3;
+        }
+
         &.visited image {
-            filter: url(#grayscale);
             animation: grow-shrink 1s;
+            filter: url(#grayscale);
         }
     }
 }
 
 @keyframes grow-shrink {
-  to {
+  from {
     transform: scale(1);
+    filter: none;
   }
   50% {
     transform: scale(2);
+    filter: none;
   }
   to {
     transform: scale(1);
+    filter: none;
+  }
+}
+
+@keyframes flash-in {
+  from {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
   }
 }

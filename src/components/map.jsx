@@ -193,26 +193,8 @@ class Map extends Component {
         : undefined}
 
 
-      {(viewBox) ?
-        <div className="map-points-of-interest">
-          <svg className="full-size" viewBox={viewBox}>
-            <filter id="grayscale">
-              <feColorMatrix type="matrix" values="0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0      0      0      1 0"/>
-            </filter>
-            <g transform={`rotate${mapSettings.rotate}`}>
-              <g transform={`translate${mapSettings.translate}`}>
-
-                { pointsOfInterest
-                  ? <g id="pointsOfInterest" className="points-of-iterest">
-                      {pointsOfInterest.map(poi =>
-                        <PointOfInterest key={poi.name} poi={poi} scale={scale} />
-                      )}
-                    </g>
-                  : undefined }
-              </g>
-            </g>
-          </svg>
-        </div>
+      {(viewBox && pointsOfInterest) ?
+        this.renderPointsOfInterest(viewBox, scale)
         : undefined}
 
       {develop ?
@@ -221,6 +203,46 @@ class Map extends Component {
         </div>
       : undefined}
 		</div>
+  }
+
+  renderPointsOfInterest(viewBox, scale) {
+    const { pointsOfInterest, mapSettings } = this.props;
+
+    const displayPOIs = [];
+    pointsOfInterest.forEach((poi, index) => {
+      let include = true;
+
+      const previousIndex = displayPOIs.findIndex(p => p.x === poi.x && p.y === poi.y);
+      if (previousIndex !== -1) {
+        if (displayPOIs.find(p => !p.visited)) {
+          include = false;
+        } else {
+          displayPOIs.splice(previousIndex, 1);
+        }
+      }
+
+      if (include) {
+        displayPOIs.push(Object.assign({ key: index }, poi));
+      }
+    });
+
+    return <div className="map-points-of-interest">
+      <svg className="full-size" viewBox={viewBox}>
+        <filter id="grayscale">
+          <feColorMatrix type="matrix" values="0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0      0      0      1 0"/>
+        </filter>
+        <g transform={`rotate${mapSettings.rotate}`}>
+          <g transform={`translate${mapSettings.translate}`}>
+
+            <g id="pointsOfInterest" className="points-of-iterest">
+              {displayPOIs.map(poi =>
+                <PointOfInterest key={poi.key} poi={poi} scale={scale} />
+              )}
+            </g>
+          </g>
+        </g>
+      </svg>
+    </div>;
   }
 
   clickRider(event, position) {

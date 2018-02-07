@@ -26,12 +26,18 @@ class PointsOfInterest {
       cachedRider.positions.splice(0, 1);
     }
 
-    const riderPoints = points.map(p => {
-      const cachedPoint = cachedRider.points.find(c => (c.x === p.x && c.y === p.y));
+    const riderPoints = [];
+    points.forEach((p, index) => {
+      const cachedPoint = cachedRider.points.find(c => (c.x === p.x && c.y === p.y && c.image === p.image));
       const point = cachedPoint || Object.assign({ visited: false }, p);
 
-      point.visited = point.visited || this.checkVisited(position, cachedRider.positions, point);
-      return point;
+      const previousIndex = riderPoints.findIndex(p => p.x === point.x && p.y === point.y);
+      const shouldCheck = (previousIndex === -1) || !riderPoints.find(p => !p.visited);
+
+      if (shouldCheck && !point.visited) {
+        point.visited = this.checkVisited(position, cachedRider.positions, point);
+      }
+      riderPoints.push(point);
     });
 
     poiCache.set(cacheId, { points: riderPoints, positions: cachedRider.positions });

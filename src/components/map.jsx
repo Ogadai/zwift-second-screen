@@ -156,28 +156,6 @@ class Map extends Component {
       }
 
       {(viewBox) ?
-        <div className="map-points-of-interest">
-          <svg className="full-size" viewBox={viewBox}>
-            <filter id="grayscale">
-              <feColorMatrix type="matrix" values="0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0      0      0      1 0"/>
-            </filter>
-            <g transform={`rotate${mapSettings.rotate}`}>
-              <g transform={`translate${mapSettings.translate}`}>
-
-                { pointsOfInterest
-                  ? <g id="pointsOfInterest" className="points-of-iterest">
-                      {pointsOfInterest.map(poi =>
-                        <PointOfInterest key={poi.name} poi={poi} scale={scale} />
-                      )}
-                    </g>
-                  : undefined }
-              </g>
-            </g>
-          </svg>
-        </div>
-        : undefined}
-
-      {(viewBox) ?
         <div className="map-riders"
               onClick={ev => { ev.stopPropagation(); this.selectRider(-1); }}
         >
@@ -213,6 +191,30 @@ class Map extends Component {
 					</svg>
         </div>
         : undefined}
+
+
+      {(viewBox) ?
+        <div className="map-points-of-interest">
+          <svg className="full-size" viewBox={viewBox}>
+            <filter id="grayscale">
+              <feColorMatrix type="matrix" values="0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0      0      0      1 0"/>
+            </filter>
+            <g transform={`rotate${mapSettings.rotate}`}>
+              <g transform={`translate${mapSettings.translate}`}>
+
+                { pointsOfInterest
+                  ? <g id="pointsOfInterest" className="points-of-iterest">
+                      {pointsOfInterest.map(poi =>
+                        <PointOfInterest key={poi.name} poi={poi} scale={scale} />
+                      )}
+                    </g>
+                  : undefined }
+              </g>
+            </g>
+          </svg>
+        </div>
+        : undefined}
+
       {develop ?
         <div className="map-develop">
           <input className="viewbox" type="text" value={viewBox} onKeyPress={evt => this.viewBoxKeyPress(evt)} />

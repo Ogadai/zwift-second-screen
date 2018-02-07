@@ -1,5 +1,9 @@
 @import 'variables.css';
 
+.map-points-of-interest {
+  pointer-events: none;
+}
+
 .map {
     & .point-of-interest {
         & circle {

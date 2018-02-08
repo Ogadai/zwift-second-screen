@@ -65,5 +65,9 @@
     &.icon-lockscreen {
         background-position: 0 -320px;
     }
+
+    &.icon-info-panel {
+        background-position: 0 -352px;
+    }
 }
 

@@ -21,10 +21,7 @@ class Zoom extends Component {
 
         this.state = {
             scale: props.defaultZoom || 1,
-            center: {
-                x: 0.5,
-                y: 0.5
-            },
+            center: { x: 0.5, y: 0.5 },
             dragging: false,
             touchStart: {},
             touchLast: {},
@@ -36,9 +33,12 @@ class Zoom extends Component {
         let { follow, scale } = this.state;
 
         if (props.defaultZoom && props.defaultZoom !== this.props.defaultZoom) {
-           scale = props.defaultZoom;
-           follow = true;
-           this.setZoom({ scale, follow });
+            const center = (props.defaultZoom && props.defaultZoom !== 1)
+                    ? { x: 0.45, y: 0.25 }
+                    : { x: 0.5, y: 0.5 };
+            scale = props.defaultZoom;
+            follow = true;
+            this.setZoom({ scale, center, follow });
         } else if (follow && scale > 1.1) {
             this.centerOnRider();
         }

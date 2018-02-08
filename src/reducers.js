@@ -9,10 +9,15 @@ import {
   RECEIVE_GHOSTS, ADDING_GHOST, ADDED_GHOST, CHANGED_GHOST,
   REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY, RESET_GHOSTS
 } from './actions/ghosts';
-import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS, SHOW_RIDER_FILTER, SET_RIDER_FILTER, SET_ZOOM_LEVEL } from './actions/summary';
+import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS, SHOW_RIDER_FILTER, SET_RIDER_FILTER, SET_ZOOM_LEVEL, TOGGLE_INFOPANEL } from './actions/summary';
 import { DISCONNECTED_STRAVA, GOT_STRAVA_SETTINGS } from './actions/strava';
 
 import { COOKIE_WARNING } from './actions/cookie-warning'
+
+const screenSize = {
+  width: window.innerWidth,
+  height: window.innerHeight
+};
 
 function world(state = { positions: [], strava: { connected: false } }, action) {
   switch (action.type) {
@@ -104,6 +109,13 @@ function ghosts(state = defaultGhosts, action) {
         ghostId: null,
         displayActivity: null
       });
+    case TOGGLE_INFOPANEL:
+      return Object.assign({}, state, {
+        show: false,
+        activityId: null,
+        ghostId: null,
+        displayActivity: null
+      });
     case TOGGLE_ADDGHOST:
       return Object.assign({}, state, {
         addingGhost: !state.addingGhost,
@@ -182,7 +194,8 @@ const defaultSummary = {
   stravaSettings: {},
   riderFilter: undefined,
   events: [],
-  zoomLevel: 1
+  zoomLevel: 1,
+  showInfoPanel: screenSize.width >= 900
 }
 
 function summary(state = defaultSummary, action) {
@@ -227,7 +240,15 @@ function summary(state = defaultSummary, action) {
       return Object.assign({}, state, {
         zoomLevel: action.level
       });
-    default:
+    case TOGGLE_INFOPANEL:
+      return Object.assign({}, state, {
+        showInfoPanel: !state.showInfoPanel
+      });
+    case TOGGLE_GHOSTS:
+      return Object.assign({}, state, {
+        showInfoPanel: false
+      });
+  default:
       return state;
   }
 }

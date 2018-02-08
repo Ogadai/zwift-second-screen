@@ -34,6 +34,18 @@ class Events {
     return eventsCache.get(this.eventsCacheId());
   }
 
+  setRidingInEvent(event, rider) {
+    ridersCache.set(`rider-${event}-${rider.id}`, rider);
+  }
+
+  getRidersInEvent(event) {
+    const prefix =`rider-${event}-`;
+    const riderKeys = ridersCache.keys()
+        .filter(k => k.indexOf(prefix) === 0);
+
+    return riderKeys.map(k => ridersCache.get(k));
+  }
+
   downloadEvents() {
     const timeNow = Date.now();
     const params = {

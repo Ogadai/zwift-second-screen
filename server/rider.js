@@ -142,7 +142,6 @@ class Rider extends EventEmitter {
   }
 
   requestRidingNow() {
-    // return this.requestRidingEvent();
     return this.filter
       ? this.requestRidingFiltered()
             .then(riders => this.addMeToRiders(riders))
@@ -168,14 +167,33 @@ class Rider extends EventEmitter {
   }
 
   addMeToRiders(riders) {
+    const eventSearch = (this.filter.indexOf(EVENT_PREFIX) === 0)
+        ? this.filter.substring(EVENT_PREFIX.length) : null;
+
+    let mePromise;
     if (this.riderId && !riders.find(r => r.id === this.riderId)) {
-      return this.getProfile().then(profile => {
+      mePromise = this.getProfile().then(profile => {
         profile.me = true;
+
+        if (eventSearch) {
+          this.events.setRidingInEvent(eventSearch, profile);
+        }
+
         return [profile].concat(riders);
       })
     } else {
-      return Promise.resolve(riders);
+      mePromise = Promise.resolve(riders);
     }
+
+    return mePromise.then(riders => {
+      if (eventSearch) {
+        const eventRiders = this.events.getRidersInEvent(eventSearch);
+        return riders.concat(
+            eventRiders.filter(er => er && !riders.find(r => r.id === er.id))
+          );
+      }
+      return riders;
+    });
   }
 
   requestRidingFilterName() {
@@ -197,9 +215,10 @@ class Rider extends EventEmitter {
         ).then(groupedRiders => {
           const allRiders = [].concat.apply([], groupedRiders);
 
-          const meGroup = allRiders.find(r => r.id == this.riderId);
-          if (meGroup) {
-            allRiders.sort((a, b) => Math.abs(a.group - meGroup.group) - Math.abs(b.group - meGroup.group));
+          const meRider = allRiders.find(r => r.id == this.riderId);
+          if (meRider) {
+            this.events.setRidingInEvent(eventSearch, meRider);
+            allRiders.sort((a, b) => Math.abs(a.group - meRider.group) - Math.abs(b.group - meRider.group));
           }
 
           return allRiders;

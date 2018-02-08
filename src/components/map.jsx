@@ -214,7 +214,7 @@ class Map extends Component {
 
       const previousIndex = displayPOIs.findIndex(p => p.x === poi.x && p.y === poi.y);
       if (previousIndex !== -1) {
-        if (displayPOIs.find(p => !p.visited)) {
+        if (displayPOIs.find(p => !p.role && !p.visited)) {
           include = false;
         } else {
           displayPOIs.splice(previousIndex, 1);

@@ -93,3 +93,11 @@ export function setZoomLevel(level) {
     level
   };
 }
+
+export const TOGGLE_INFOPANEL = "TOGGLE_INFOPANEL";
+
+export function toggleInfoPanel() {
+  return {
+    type: TOGGLE_INFOPANEL
+  };
+}

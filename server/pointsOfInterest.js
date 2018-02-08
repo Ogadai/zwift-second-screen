@@ -2,6 +2,25 @@ const NodeCache = require('node-cache')
 
 const poiCache = new NodeCache({ stdTTL: 30 * 60, checkPeriod: 120, useClones: false });
 
+// TODO: Remove
+let counter = 0;
+const flags = [false, false, false, false, false];
+setTimeout(() => {
+setInterval(() => {
+  if (counter < flags.length) {
+    flags[counter] = true;
+  }
+
+  if (counter === 0 || counter === 2) {
+//    flags[0] = false;
+    flags[4] = true;
+  } else if (counter === 1 || counter === 3) {
+    flags[4] = false;
+  }
+  counter++;
+}, 5000);
+}, 10000);
+
 class PointsOfInterest {
   constructor(worldSettings) {
     this.worldSettings = worldSettings;
@@ -13,7 +32,10 @@ class PointsOfInterest {
   }
 
   customiseForRider(worldId, points, positions) {
-    const position = positions && positions.find(p => p.me);
+//    const position = positions && positions.find(p => p.me);
+// TODO: Remove
+const position = { id: 101, x: 0, y: 0 };
+console.log(flags.join(','));
     if (!position) {
       return points;
     }
@@ -31,11 +53,13 @@ class PointsOfInterest {
       const cachedPoint = cachedRider.points.find(c => (c.x === p.x && c.y === p.y && c.image === p.image));
       const point = cachedPoint || Object.assign({ visited: false }, p);
 
-      const previousIndex = riderPoints.findIndex(p => p.x === point.x && p.y === point.y);
-      const shouldCheck = (previousIndex === -1) || !riderPoints.find(p => !p.visited);
+      const shouldCheck = (point.role !== 'finish')
+          || (!riderPoints.find(p => !p.role && !p.visited));
 
       if (shouldCheck && !point.visited) {
-        point.visited = this.checkVisited(position, cachedRider.positions, point);
+//        point.visited = this.checkVisited(position, cachedRider.positions, point);
+// TODO: Remove
+point.visited = flags[index];
       }
       riderPoints.push(point);
     });

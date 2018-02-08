@@ -1,0 +1,41 @@
+@import '../variables.css';
+
+.info-zwift-quest {
+  margin: 40px 0 0 0;
+  padding: 10px;
+  list-style-type: none;
+
+  & li {
+    margin: 10px 0;
+    padding: 3px 0 8px 50px;
+    font-weight: bold;
+    position: relative;
+  }
+
+  & .waypoint-image {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50px;
+
+    &.visited {
+      animation: grow-shrink 1s;
+      filter: grayscale(1);
+    }
+  }
+}
+
+@keyframes grow-shrink {
+  from {
+    transform: scale(1);
+    filter: grayscale(0);
+  }
+  50% {
+    transform: scale(2);
+    filter: grayscale(0.5);
+  }
+  to {
+    transform: scale(1);
+    filter: grayscale(1);
+  }
+}

@@ -6,6 +6,7 @@ import CookieWarning from './cookie-warning';
 import Summary from './summary';
 import Map from './map';
 import Ghosts from './ghosts';
+import InfoPanel from './infoPanel';
 import StravaSegments from './strava-segments';
 import Analytics from './analytics';
 import Zoom from './zoom';
@@ -68,6 +69,7 @@ class App extends Component {
             </Zoom>
           : <Map develop={develop} /> }
           <Summary />
+          <InfoPanel />
 					<Ghosts />
           <StravaSegments />
 				</div>

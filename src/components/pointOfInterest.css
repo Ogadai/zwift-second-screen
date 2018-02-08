@@ -13,7 +13,7 @@
 
         & image {
             animation: flash-in 0.5s;
-            animation-iteration-count: 3;
+            animation-iteration-count: 5;
         }
 
         &.visited image {

@@ -30,10 +30,10 @@ class PointsOfInterest {
 
   getPoints(worldId, positions, event) {
     return this.getEventPoints(worldId, event)
-        .then(points => this.customiseForRider(worldId, points, positions));
+        .then(points => this.customiseForRider(worldId, points, positions, event));
   }
 
-  customiseForRider(worldId, points, positions) {
+  customiseForRider(worldId, points, positions, event) {
     const position = positions && positions.find(p => p.me);
 // TODO: Remove
 // const position = { id: 101, x: 0, y: 0 };
@@ -54,9 +54,14 @@ class PointsOfInterest {
           || (!riderPoints.find(p => !p.role && !p.visited));
 
       if (shouldCheck && !point.visited) {
-        point.visited = this.checkVisited(position, cachedRider.positions, point);
+        const pointVisited = this.checkVisited(position, cachedRider.positions, point);
+        point.visited = pointVisited && pointVisited.visited;
 // TODO: Remove
 // point.visited = flags[index];
+
+        if (point.visited) {
+          this.pointVisited(worldId, event, p, position, pointVisited.time);
+        }
       }
       riderPoints.push(point);
     });
@@ -71,51 +76,80 @@ class PointsOfInterest {
   }
 
   checkVisited(position, recentPositions, point) {
-    let visited = !!recentPositions.find(recent => this.checkCrossedPoint(point, position, recent));
+    let result = recentPositions
+        .map(recent => this.checkCrossedPoint(point, recent, position))
+        .find(v => v && v.visited);
 
-    if (!visited && recentPositions.length >= 2) {
+    if (!result && recentPositions.length >= 2) {
       // Check whether user turned around and points don't quite overlap
-      visited = (
-           (distance(point, position) > distance(point, recentPositions[recentPositions.length - 1]))
-        && (distance(point, position) < distance(recentPositions[0], recentPositions[recentPositions.length - 1]))
-      );
+      const lastPosition = recentPositions[recentPositions.length - 1];
+      const dPosition = distance(point, position)
+      const dLastPosition = distance(point, lastPosition);
+
+      const visited = (dPosition > dLastPosition)
+                   && (dPosition < distance(recentPositions[0], lastPosition));
+
+      let time;
+      if (visited) {
+        const timeGapMS = position.requestTime.getTime() - lastPosition.requestTime.getTime();
+        time = new Date(lastPosition.requestTime.getTime()) + (dLastPosition / (dPosition + dLastPosition)) * timeGapMS;
+      }
+
+      result = {
+        visited,
+        time
+      };
     }
 
-    return visited;
+    return result;
   }
 
   checkCrossedPoint(point, p1, p2) {
     const gap = distance(p1, p2);
-    return (distance(point, p2) < gap && distance(p1, point) < gap);
+    const dp2 = distance(point, p2);
+    const dp1 = distance(p1, point);
+
+    const visited = (dp2 < gap && dp1 < gap);
+
+    let time;
+    if (visited) {
+      const timeGapMS = p2.requestTime.getTime() - p1.requestTime.getTime();
+      time = new Date(p1.requestTime.getTime() + (dp1 / gap) * timeGapMS);
+    }
+
+    return {
+      visited,
+      time
+    };
   }
 
   getEventPoints(worldId, event) {
+    const pointsProvider = this.getProvider(worldId, event);
+
+    if (pointsProvider) {
+      return pointsProvider.get();
+    } else {
+      return Promise.resolve([]);
+    }
+  }
+
+  pointVisited(worldId, event, point, rider, time) {
+    const pointsProvider = this.getProvider(worldId, event);
+
+    if (pointsProvider && pointsProvider.visited) {
+      pointsProvider.visited(point, rider, time);
+    }
+  }
+
+  getProvider(worldId, event) {
     const baseSettings = this.worldSettings && this.worldSettings[worldId];
     const eventSettings = event && this.worldSettings && this.worldSettings.events && this.worldSettings.events[event]
           ? this.worldSettings.events[event][worldId]
           : undefined;
 
-    const getPoints = (eventSettings && eventSettings.getPoints)
-          ? eventSettings.getPoints
-          : baseSettings.getPoints;
-
-    if (getPoints) {
-      const cacheId = (eventSettings && eventSettings.getPoints)
-          ? `world-${worldId}-event-${event}-points`
-          : `world-${worldId}-points`;
-
-      const cachedPoints = poiCache.get(cacheId);
-      if (cachedPoints) {
-        return Promise.resolve(cachedPoints);
-      } else {
-        return getPoints().then(points => {
-          poiCache.set(cacheId, points);
-          return points;
-        });
-      }
-    } else {
-      return Promise.resolve([]);
-    }
+    return (eventSettings && eventSettings.points)
+          ? eventSettings.points
+          : baseSettings.points;
   }
 }
 module.exports = PointsOfInterest;

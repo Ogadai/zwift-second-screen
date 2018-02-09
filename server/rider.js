@@ -324,7 +324,8 @@ class Rider extends EventEmitter {
             contryAlpha3: rider.countryAlpha3,
             countryCode: rider.countryCode,
             weight: rider.weight,
-            colour: this.colourFromGroup(rider.group)
+            colour: this.colourFromGroup(rider.group),
+            requestTime: status.requestTime
           };
         } else {
           return null;

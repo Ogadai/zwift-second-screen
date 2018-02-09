@@ -261,6 +261,10 @@ class Server {
       this.setupQueryCookie(req, res, 'zwiftquest');
       indexRoute(req, res);
     })
+    this.app.get('/goldrush', (req, res) => {
+      this.setupQueryCookie(req, res, 'goldrush');
+      indexRoute(req, res);
+    })
 
     if (this.siteSettings && this.siteSettings.static) {
       const { route, path } = this.siteSettings.static

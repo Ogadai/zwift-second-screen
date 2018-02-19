@@ -50,8 +50,8 @@ class App extends Component {
 
   componentDidMount() {
     const { match, setEventName } = this.props;
-    const event = match && match.params && (match.params.event !== 'dev')
-        ? match.params.event : undefined;
+    const event = match && match.params && match.params.event && (match.params.event !== 'dev')
+        ? match.params.event.toLowerCase().trim() : undefined;
     setEventName(event);
   }
 

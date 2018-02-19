@@ -7,6 +7,7 @@ import s from './infoScores.css';
 class InfoScores extends Component {
   static get propTypes() {
     return {
+      profile: PropTypes.object,
       scores: PropTypes.array
     }
   }
@@ -30,8 +31,9 @@ class InfoScores extends Component {
   }
 
   renderScore(entry, index) {
+    const { profile } = this.props;
     const { position, score, rider } = entry;
-    return <li className={classnames({ me: rider.me })} key={`rider-${rider.id}`} style={{ top: index * 30 }}>
+    return <li className={classnames({ me: rider.id === profile.id })} key={`rider-${rider.id}`} style={{ top: index * 30 }}>
       <span className="info-scores-position">{position}</span>
       <span className="info-scores-name">{this.getName(rider)}</span>
       <span className="info-scores-score">{score}</span>

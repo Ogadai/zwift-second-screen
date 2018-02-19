@@ -13,6 +13,7 @@ import s from './infoPanel.css';
 class InfoPanel extends Component {
   static get propTypes() {
     return {
+      profile: PropTypes.object,
       infoPanel: PropTypes.object,
       showPanel: PropTypes.bool,
       onTogglePanel: PropTypes.func.isRequired
@@ -20,7 +21,7 @@ class InfoPanel extends Component {
   }
 
   render() {
-    const { infoPanel, showPanel, onTogglePanel } = this.props;
+    const { profile, infoPanel, showPanel, onTogglePanel } = this.props;
 
     return <div className={classnames("info-panel", { expanded: showPanel })}>
       <div className="display-area">
@@ -29,7 +30,7 @@ class InfoPanel extends Component {
         </button>
         <div className="display-content">
           { infoPanel.details && <InfoDetail details={infoPanel.details} />}
-          { infoPanel.scores && <InfoScores scores={infoPanel.scores} />}
+          { infoPanel.scores && <InfoScores scores={infoPanel.scores} profile={profile} />}
           { infoPanel.showWaypoints && <InfoWayPoints /> }
         </div>
       </div>
@@ -43,6 +44,7 @@ class InfoPanel extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    profile: state.profile,
     infoPanel: state.world.infoPanel,
     showPanel: state.summary.showInfoPanel
   }

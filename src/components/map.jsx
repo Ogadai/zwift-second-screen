@@ -223,7 +223,7 @@ class Map extends Component {
       }
 
       if (include) {
-        displayPOIs.push(Object.assign({ key: index }, poi));
+        displayPOIs.push(Object.assign({ key: poi.id || index }, poi));
       }
     });
 

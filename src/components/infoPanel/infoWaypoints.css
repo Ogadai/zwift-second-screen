@@ -1,8 +1,8 @@
 @import '../variables.css';
 
-.info-zwift-quest {
-  margin: 40px 0 0 0;
-  padding: 10px;
+.info-waypoints {
+  margin: 0;
+  padding: 0 10px;
   list-style-type: none;
 
   & li {

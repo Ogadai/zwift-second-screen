@@ -4,9 +4,9 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import images from '../../images/images';
 
-import s from './infoZwiftQuest.css';
+import s from './infoWaypoints.css';
 
-class InfoZwiftQuest extends Component {
+class InfoWayPoints extends Component {
   static get propTypes() {
     return {
       waypoints: PropTypes.array
@@ -16,7 +16,7 @@ class InfoZwiftQuest extends Component {
   render() {
     const { waypoints } = this.props;
 
-    return <ul className="info-zwift-quest">
+    return <ul className="info-waypoints">
       {waypoints && waypoints.map((point, index) => this.renderWaypoint(point, index))}
     </ul>
   }
@@ -47,4 +47,4 @@ const mapDispatchToProps = (dispatch) => {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-)(InfoZwiftQuest);
+)(InfoWayPoints);

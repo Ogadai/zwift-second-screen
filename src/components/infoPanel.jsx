@@ -3,7 +3,9 @@ import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
-import InfoZwiftQuest from './infoPanel/infoZwiftQuest';
+import InfoDetail from './infoPanel/infoDetail';
+import InfoWayPoints from './infoPanel/infoWaypoints';
+import InfoScores from './infoPanel/infoScores';
 import { toggleInfoPanel } from '../actions/summary';
 
 import s from './infoPanel.css';
@@ -11,23 +13,24 @@ import s from './infoPanel.css';
 class InfoPanel extends Component {
   static get propTypes() {
     return {
+      infoPanel: PropTypes.object,
       showPanel: PropTypes.bool,
       onTogglePanel: PropTypes.func.isRequired
     }
   }
 
   render() {
-    const { showPanel, onTogglePanel } = this.props;
+    const { infoPanel, showPanel, onTogglePanel } = this.props;
 
-    const showInfo = window.location.href.indexOf('/zwiftquest') !== -1;
-
-    return showInfo && <div className={classnames("info-panel", { expanded: showPanel })}>
+    return <div className={classnames("info-panel", { expanded: showPanel })}>
       <div className="display-area">
         <button className="minimize-button" onClick={onTogglePanel}>
           <span className="zwiftgps-icon icon-minimize">&nbsp;</span>
         </button>
         <div className="display-content">
-          <InfoZwiftQuest />
+          { infoPanel.details && <InfoDetail details={infoPanel.details} />}
+          { infoPanel.scores && <InfoScores scores={infoPanel.scores} />}
+          { infoPanel.showWaypoints && <InfoWayPoints /> }
         </div>
       </div>
 
@@ -40,6 +43,7 @@ class InfoPanel extends Component {
 
 const mapStateToProps = (state) => {
   return {
+    infoPanel: state.world.infoPanel,
     showPanel: state.summary.showInfoPanel
   }
 }

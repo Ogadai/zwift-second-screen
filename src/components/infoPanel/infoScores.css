@@ -1,0 +1,47 @@
+@import '../variables.css';
+
+.info-scores {
+  margin: 5px 0 0 0;
+  list-style-type: none;
+  position: relative;
+
+  & li {
+    margin: 0;
+    padding: 3px 0 8px 0;
+    font-weight: bold;
+    position: absolute;
+    left: 10px;
+    right: 10px;
+
+    transition: top 400ms ease-in-out;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+
+    &.me {
+      color: var(--activity-color);
+    }
+  }
+
+  & .info-scores-position {
+    flex: 0 0 auto;
+    width: 25px;
+  }
+
+  & .info-scores-name {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  & .info-scores-score {
+    flex: 0 0 auto;
+    width: 30px;
+    text-align: right;
+  }
+}
+
+.info-scores-empty {
+  margin: 30px 10px 10px 10px;
+  text-align: center;
+}

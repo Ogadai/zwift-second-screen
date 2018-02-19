@@ -93,7 +93,10 @@ class Server {
         return Promise.all([
           stravaPromise,
           this.pointsOfInterest.getPoints(worldId, positions, event)
-        ]).then(([strava, points]) => ({ worldId, positions, strava, points }))
+        ]).then(([strava, points]) => ({
+          worldId, positions, strava, points,
+          infoPanel: this.pointsOfInterest.getInfoPanel(worldId, event)
+         }))
       })
     }))
 

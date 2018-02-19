@@ -33,6 +33,15 @@ class PointsOfInterest {
         .then(points => this.customiseForRider(worldId, points, positions, event));
   }
 
+  getInfoPanel(worldId, event) {
+    const pointsProvider = this.getProvider(worldId, event);
+
+    if (pointsProvider && pointsProvider.infoPanel) {
+      return pointsProvider.infoPanel();
+    }
+    return undefined;
+  }
+
   customiseForRider(worldId, points, positions, event) {
     const position = positions && positions.find(p => p.me);
 // TODO: Remove
@@ -46,7 +55,8 @@ class PointsOfInterest {
     const cachedRider = poiCache.get(cacheId) || { points: [], positions: [] };
 
     const riderPoints = [];
-    points.forEach((p, index) => {
+    const cloneList = [].concat(points);
+    cloneList.forEach((p, index) => {
       const cachedPoint = cachedRider.points.find(c => (c.x === p.x && c.y === p.y && c.image === p.image));
       const point = cachedPoint || Object.assign({ visited: false }, p);
 

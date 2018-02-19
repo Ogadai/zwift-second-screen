@@ -79,6 +79,8 @@ class Server {
     this.app.get('/riders', this.processRider(rider => rider.getRiders ? rider.getRiders() : Promise.resolve([])))
 
     this.app.get('/world', this.processRider((rider, req) => {
+      const event = req.query.event || undefined;
+
       return Promise.all([
         this.worldPromise(rider),
         rider.getPositions()
@@ -90,7 +92,7 @@ class Server {
 
         return Promise.all([
           stravaPromise,
-          this.pointsOfInterest.getPoints(worldId, positions, rider.eventTag)
+          this.pointsOfInterest.getPoints(worldId, positions, event)
         ]).then(([strava, points]) => ({ worldId, positions, strava, points }))
       })
     }))
@@ -204,8 +206,7 @@ class Server {
 
     this.app.get('/mapSettings', this.processRider((rider, req) => {
       const filter = rider.getFilter ? rider.getFilter() : undefined;
-      const event = (filter && filter.indexOf(EVENT_PREFIX) === 0)
-            ? filter.substring(EVENT_PREFIX.length) : undefined;
+      const event = req.query.event || undefined;
 
       const worldId = req.query.world || undefined;
       const overlay = req.query.overlay === 'true';
@@ -254,15 +255,10 @@ class Server {
 
     this.app.get('/', (req, res) => {
       const eventFilter = req.query.event;
-      this.setupQueryCookie(req, res, eventFilter);
       indexRoute(req, res);
     })
     this.app.get('/zwiftquest', (req, res) => {
-      this.setupQueryCookie(req, res, 'zwiftquest');
-      indexRoute(req, res);
-    })
-    this.app.get('/goldrush', (req, res) => {
-      this.setupQueryCookie(req, res, 'goldrush');
+      this.allowAnonymous(req, res);
       indexRoute(req, res);
     })
 
@@ -279,26 +275,15 @@ class Server {
     this.app.use(indexRoute);
   }
 
-  setupQueryCookie(req, res, eventFilter) {
-    if (!this.riderProvider.canFilterRiders) return;
-
-    const filter = eventFilter ? `event:${eventFilter.toLowerCase()}` : null;
-
+  allowAnonymous(req, res) {
     const cookie = req.cookies.zssToken;
     const rider = this.riderProvider.getRider(cookie);
-    if (rider) {
-      rider.setFilter(filter);
-      rider.eventTag = eventFilter ? eventFilter.toLowerCase() : null;
-    } else if (filter && this.riderProvider.loginAnonymous) {
+    if (!rider && this.riderProvider.loginAnonymous) {
       const result = this.riderProvider.loginAnonymous();
 
       const expires = new Date()
       expires.setFullYear(expires.getFullYear() + 1);
       res.cookie('zssToken', result.cookie, { path: '/', httpOnly: true, expires });
-
-      const newRider = this.riderProvider.getRider(result.cookie);
-      newRider.setFilter(filter);
-      newRider.eventTag = eventFilter ? eventFilter.toLowerCase() : null;
     }
   }
 

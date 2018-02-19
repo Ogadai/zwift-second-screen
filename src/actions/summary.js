@@ -85,6 +85,19 @@ export function setRiderFilter(filter) {
   }
 }
 
+export const SET_EVENT_NAME = "SET_EVENT_NAME";
+
+export function setEventName(event) {
+  return dispatch => {
+    dispatch({
+      type: SET_EVENT_NAME,
+      event
+    });
+
+    dispatch(setRiderFilter(event ? `event:${event}` : ''));
+  }
+}
+
 export const SET_ZOOM_LEVEL = "SET_ZOOM_LEVEL";
 
 export function setZoomLevel(level) {

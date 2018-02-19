@@ -1,5 +1,6 @@
 ﻿import axios from 'axios';
-import React, { Component, PropTypes } from 'react';
+import React, { Component} from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -47,8 +48,8 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    const { develop, overlay, worldId, onFetchSettings, onStartPolling } = this.props;
-    onFetchSettings(worldId, overlay);
+    const { develop, overlay, worldId, eventName, onFetchSettings, onStartPolling } = this.props;
+    onFetchSettings(worldId, overlay, eventName);
 
     onStartPolling();
 
@@ -56,10 +57,10 @@ class Map extends Component {
   }
 
   componentWillReceiveProps(props) {
-    const { develop, overlay, worldId, onFetchSettings } = this.props;
+    const { develop, overlay, worldId, eventName, onFetchSettings } = this.props;
 
-    if (props.worldId !== worldId) {
-      onFetchSettings(props.worldId, overlay);
+    if (props.worldId !== worldId || props.eventName !== eventName) {
+      onFetchSettings(props.worldId, overlay, props.eventName);
       if (develop) this.loadDevelop(props.worldId);
     }
 
@@ -403,13 +404,14 @@ const mapStateToProps = (state) => {
     displayActivity: state.ghosts.displayActivity,
     riderFilter: state.summary.riderFilter,
     zoomLevel: state.summary.zoomLevel,
+    eventName: state.summary.eventName,
     useMetric: !state.profile || state.profile.useMetric
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onFetchSettings: (worldId, overlay) => dispatch(fetchMapSettings(worldId, overlay)),
+    onFetchSettings: (worldId, overlay, eventName) => dispatch(fetchMapSettings(worldId, overlay, eventName)),
     onStartPolling: () => dispatch(startPolling()),
     onStopPolling: () => dispatch(stopPolling())
   }

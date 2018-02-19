@@ -24,7 +24,10 @@ function receiveLoginType(data) {
 }
 
 export function redirectToLogin() {
-  return push('/login');
+  return (dispatch, getState) => {
+    const eventName = getState().summary.eventName;
+    dispatch(push(eventName ? `/login/${eventName}` : '/login'));
+  }
 }
 
 export const RECEIVE_LOGINFAILURE = "RECEIVE_LOGINFAILURE";
@@ -36,13 +39,17 @@ function receiveLoginFailure(data) {
   };
 }
 
-export function postLogin(username, password) {
+function loggedIn(event) {
+  return push(event ? `/${event}` : '/');
+}
+
+export function postLogin(username, password, event) {
   return dispatch => {
     axios.post('/login', { username, password })
       .then(response => {
         setLoginDetails({ username });
         // Successful login
-        dispatch(push('/'));
+        dispatch(loggedIn(event));
       })
       .catch(error => {
         // Failed to login
@@ -51,13 +58,13 @@ export function postLogin(username, password) {
   }
 }
 
-export function postLoginById(id) {
+export function postLoginById(id, event) {
   return dispatch => {
     axios.post('/login', { id })
       .then(response => {
         setLoginDetails({ id });
         // Successful login
-        dispatch(push('/'));
+        dispatch(loggedIn(event));
       })
       .catch(error => {
         // Failed to login

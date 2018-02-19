@@ -3,16 +3,21 @@ import { render } from 'react-dom';
 import { AppContainer } from 'react-hot-loader';
 import { createStore, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import { browserHistory } from 'react-router';
-import { routerMiddleware, syncHistoryWithStore } from 'react-router-redux'
+import createHistory from 'history/createBrowserHistory';
+import { routerMiddleware } from 'react-router-redux'
 import thunkMiddleware from 'redux-thunk';
 import reducers from './reducers';
 import Root from './root.jsx';
 
-const store = createStore(reducers,
-  applyMiddleware(thunkMiddleware, routerMiddleware(browserHistory))
+const history = createHistory();
+
+const store = createStore(
+  reducers,
+  applyMiddleware(
+    thunkMiddleware,
+    routerMiddleware(history)
+  )
 );
-const history = syncHistoryWithStore(browserHistory, store)
 
 render(
   <AppContainer>
@@ -20,3 +25,4 @@ render(
   </AppContainer>,
   document.querySelector("#app")
 );
+document.ontouchmove = function(e){ e.preventDefault(); }

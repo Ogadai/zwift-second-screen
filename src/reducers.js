@@ -9,7 +9,7 @@ import {
   RECEIVE_GHOSTS, ADDING_GHOST, ADDED_GHOST, CHANGED_GHOST,
   REQUESTING_REGROUP, RECEIVE_REGROUP, RECEIVE_ACTIVITY, RESET_GHOSTS
 } from './actions/ghosts';
-import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS, SHOW_RIDER_FILTER, SET_RIDER_FILTER, SET_ZOOM_LEVEL, TOGGLE_INFOPANEL } from './actions/summary';
+import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS, SHOW_RIDER_FILTER, SET_RIDER_FILTER, SET_ZOOM_LEVEL, TOGGLE_INFOPANEL, SET_EVENT_NAME } from './actions/summary';
 import { DISCONNECTED_STRAVA, GOT_STRAVA_SETTINGS } from './actions/strava';
 
 import { COOKIE_WARNING } from './actions/cookie-warning'
@@ -195,7 +195,8 @@ const defaultSummary = {
   riderFilter: undefined,
   events: [],
   zoomLevel: 1,
-  showInfoPanel: screenSize.width >= 900
+  showInfoPanel: screenSize.width >= 900,
+  eventName: undefined
 }
 
 function summary(state = defaultSummary, action) {
@@ -248,7 +249,11 @@ function summary(state = defaultSummary, action) {
       return Object.assign({}, state, {
         showInfoPanel: false
       });
-  default:
+    case SET_EVENT_NAME:
+      return Object.assign({}, state, {
+        eventName: action.event
+      });
+    default:
       return state;
   }
 }

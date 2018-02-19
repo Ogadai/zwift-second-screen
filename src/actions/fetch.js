@@ -44,7 +44,12 @@ export function receiveWorld(data) {
 }
 
 export function fetchWorld() {
-  return dispatchRequest('/world/', receiveWorld);
+  return (dispatch, getState) => {
+    const eventName = getState().summary.eventName;
+    const params = eventName ? `?event=${eventName}` : '';
+
+    return dispatch(dispatchRequest(`/world/${params}`, receiveWorld));
+  }
 }
 
 export const RECEIVE_RIDERFILTER = "RECEIVE_RIDERFILTER";
@@ -79,10 +84,11 @@ function receiveMapSettings(data) {
   };
 }
 
-export function fetchMapSettings(worldId, overlay) {
+export function fetchMapSettings(worldId, overlay, eventName) {
   const params = [];
   if (worldId) params.push(`world=${worldId}`);
   if (overlay) params.push('overlay=true');
+  if (eventName) params.push(`event=${eventName}`);
 
   const queryParams = params.length ? `?${params.join('&')}` : '';
   return dispatchRequest(`/mapSettings/${queryParams}`, receiveMapSettings);

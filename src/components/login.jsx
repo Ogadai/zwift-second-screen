@@ -1,4 +1,5 @@
-﻿import React, { Component, PropTypes } from 'react';
+﻿import React, { Component} from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -13,6 +14,12 @@ import s from './login.css';
 class Login extends Component {
   static get propTypes() {
     return {
+      match: PropTypes.shape({
+        params: PropTypes.shape({
+          type: PropTypes.string,
+          id: PropTypes.string
+        }).isRequired
+      }).isRequired,
       overlay: PropTypes.bool,
 			user: PropTypes.object,
       error: PropTypes.object,
@@ -132,15 +139,17 @@ class Login extends Component {
   onSubmitForm(evt) {
     evt.preventDefault();
 
-    const { user, onSubmit, onSubmitId } = this.props;
+    const { user, match, onSubmit, onSubmitId } = this.props;
     const { username, password, id } = this.state;
 
     const loginType = user ? user.type : '';
 
+    const event = match && match.params &&  match.params.event;
+
     if (loginType === 'user') {
-      onSubmit(username, password);
+      onSubmit(username, password, event);
     } else {
-      onSubmitId(id);
+      onSubmitId(id, event);
     }
   }
 }
@@ -157,8 +166,8 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onRequestLoginType: () => dispatch(requestLoginType()),
-    onSubmit: (username, password) => dispatch(postLogin(username, password)),
-    onSubmitId: id => dispatch(postLoginById(id)),
+    onSubmit: (username, password, event) => dispatch(postLogin(username, password, event)),
+    onSubmitId: (id, event) => dispatch(postLoginById(id, event)),
     onFetchHost: () => dispatch(fetchHost()),
     onRunHost: () => dispatch(runHost()),
     onCloseApp: closeApp

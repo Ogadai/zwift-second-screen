@@ -1,4 +1,5 @@
-﻿import React, { Component, PropTypes } from 'react';
+﻿import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 
@@ -12,7 +13,7 @@ import Analytics from './analytics';
 import Zoom from './zoom';
 
 import { closeApp } from '../actions/host';
-import { setZoomLevel } from '../actions/summary';
+import { setZoomLevel, setEventName } from '../actions/summary';
 
 import s from './app.css';
 
@@ -25,8 +26,13 @@ const mapZoomLevels = {
 class App extends Component {
   static get propTypes() {
     return {
+      match: PropTypes.shape({
+        params: PropTypes.shape({
+          type: PropTypes.string,
+          id: PropTypes.string
+        }).isRequired
+      }).isRequired,
 			worldId: PropTypes.number,
-      develop: PropTypes.bool,
       overlay: PropTypes.bool,
       openfin: PropTypes.bool,
       onCloseApp: PropTypes.func
@@ -41,6 +47,13 @@ class App extends Component {
     };
   }
 
+  componentDidMount() {
+    const { match, setEventName } = this.props;
+    const event = match && match.params && (match.params.event !== 'dev')
+        ? match.params.event : undefined;
+    setEventName(event);
+  }
+
   componentWillUnmount() {
     if (this.mouseMoveTimeout) {
       clearTimeout(this.mouseMoveTimeout);
@@ -48,8 +61,10 @@ class App extends Component {
   }
 
   render() {
-    const { worldId, develop, overlay, openfin, onCloseApp, onSetZoomLevel } = this.props;
+    const { worldId, match, overlay, openfin, onCloseApp, onSetZoomLevel } = this.props;
     const { hovering } = this.state;
+
+    const develop = match && match.params && (match.params.event === 'dev');
 
     return (
       <div className={classnames("zwift-app", { overlay, openfin, hovering })}>
@@ -98,7 +113,6 @@ class App extends Component {
 const mapStateToProps = (state, ownProps) => {
   return {
     worldId: state.world.worldId,
-    develop: ownProps.params.filter === 'dev',
     overlay: state.environment.electron || state.environment.openfin,
     openfin: state.environment.openfin
   }
@@ -107,7 +121,8 @@ const mapStateToProps = (state, ownProps) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     onCloseApp: closeApp,
-    onSetZoomLevel: level => dispatch(setZoomLevel(level))
+    onSetZoomLevel: level => dispatch(setZoomLevel(level)),
+    setEventName: event => dispatch(setEventName(event))
   }
 }
 

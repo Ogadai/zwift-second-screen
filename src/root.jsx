@@ -1,6 +1,8 @@
-﻿import React, { PropTypes } from 'react';
+﻿import React from 'react';
+import PropTypes from 'prop-types';
 import { Provider } from 'react-redux';
-import { Router, Route } from 'react-router';
+import { Route, Switch } from 'react-router-dom';
+import { ConnectedRouter } from 'react-router-redux';
 
 import App from './components/app.jsx';
 import Login from './components/login.jsx';
@@ -9,12 +11,14 @@ import EditGhosts from './components/edit-ghosts.jsx';
 
 const Root = ({ store, history }) => {
   return <Provider store={ store }>
-    <Router history={history}>
-      <Route path="/Login(/:filter)" component={Login} />
-      <Route path="/Host(/:filter)" component={Host} />
-      <Route path="/EditGhosts(/:filter)" component={EditGhosts} />
-      <Route path="/(:filter)" component={App} />
-    </Router>
+    <ConnectedRouter history={history}>
+      <Switch>
+        <Route path="/Login/:event?" component={Login} />
+        <Route path="/Host" component={Host} />
+        <Route path="/EditGhosts" component={EditGhosts} />
+        <Route path="/:event?" component={App} />
+      </Switch>
+    </ConnectedRouter>
   </Provider>
 };
 

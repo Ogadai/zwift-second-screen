@@ -1,4 +1,5 @@
-﻿import React, { Component, PropTypes } from 'react';
+﻿import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import moment from 'moment';
@@ -78,7 +79,7 @@ class Summary extends Component {
   componentDidMount() {
     const { onFetch, onRequestLoginType, onFetchRiderFilter } = this.props;
     onFetch();
-    onFetchRiderFilter();
+//    onFetchRiderFilter();
     onRequestLoginType();
     this.fetchInterval = setInterval(onFetch, 10000);
   }
@@ -88,7 +89,7 @@ class Summary extends Component {
   }
 
   render() {
-    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events,
+    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventName,
       showingStravaSettings, stravaConnected, onShowStravaSettings,
       showingRiderFilter, onShowRiderFilter, onSetRiderFilter,
       onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
@@ -168,7 +169,7 @@ class Summary extends Component {
 
             { (user && user.canLogout)
               ? <li>
-                  <a className="logout" href="/login">
+                  <a className="logout" href={eventName ? `/login/${eventName}` : '/login'}>
                     <span className="zwiftgps-icon icon-logout">&nbsp;</span>
                     <span>{profile.anonymous ? 'Login' : 'Logout'}</span>
                   </a>
@@ -435,6 +436,7 @@ const mapStateToProps = (state) => {
     stravaSettings: state.summary.stravaSettings,
     showingRiderFilter: state.summary.showRiderFilter,
     riderFilter: state.summary.riderFilter,
+    eventName: state.summary.eventName,
     events: state.summary.events
   }
 }

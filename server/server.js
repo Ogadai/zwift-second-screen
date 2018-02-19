@@ -69,8 +69,12 @@ class Server {
 
       this.app.get('/login/:id', (req, res) => {
         const { id } = req.params
-        console.log(`login: ${id}`)
-        this.processLogin(res, this.riderProvider.loginWithId(id), true)
+        if (isNaN(id)) {
+          indexRoute(req, res);
+        } else {
+          console.log(`login: ${id}`)
+          this.processLogin(res, this.riderProvider.loginWithId(id), true)
+        }
       })
     }
 
@@ -257,7 +261,6 @@ class Server {
     };
 
     this.app.get('/', (req, res) => {
-      const eventFilter = req.query.event;
       indexRoute(req, res);
     })
     this.app.get('/zwiftquest', (req, res) => {

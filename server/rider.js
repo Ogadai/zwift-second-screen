@@ -187,10 +187,10 @@ class Rider extends EventEmitter {
 
     return mePromise.then(riders => {
       if (eventSearch) {
-        const eventRiders = this.events.getRidersInEvent(eventSearch);
-        return riders.concat(
-            eventRiders.filter(er => er && !riders.find(r => r.id === er.id))
-          );
+        const eventRiders = this.events.getRidersInEvent(eventSearch)
+            .filter(er => er && !riders.find(r => r.id === er.id))
+            .map(er => Object.assign({}, er, { me: false }));
+        return riders.concat(eventRiders);
       }
       return riders;
     });

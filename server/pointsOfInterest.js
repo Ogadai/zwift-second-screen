@@ -50,6 +50,7 @@ class PointsOfInterest {
     if (!position) {
       return points;
     }
+    this.registerPlayer(worldId, event, position);
 
     const cacheId = `world-${worldId}-rider-${position.id}`;
     const cachedRider = poiCache.get(cacheId) || { points: [], positions: [] };
@@ -148,6 +149,14 @@ class PointsOfInterest {
 
     if (pointsProvider && pointsProvider.visited) {
       pointsProvider.visited(point, rider, time);
+    }
+  }
+
+  registerPlayer(worldId, event, rider) {
+    const pointsProvider = this.getProvider(worldId, event);
+
+    if (pointsProvider && pointsProvider.registerPlayer) {
+      pointsProvider.registerPlayer(rider);
     }
   }
 

@@ -11,6 +11,7 @@ import zq_finish from './zwiftquest/finish.png';
 import zq_waypoint from './zwiftquest/waypoint.png';
 import goldrush_1 from './goldrush/1.png';
 import goldrush_3 from './goldrush/3.png';
+import goldrush_chest from './goldrush/chest.png';
 
 const images = {
   standard,
@@ -25,7 +26,8 @@ const images = {
   zq_finish,
   zq_waypoint,
   goldrush_1,
-  goldrush_3
+  goldrush_3,
+  goldrush_chest
 };
 
 export default images;

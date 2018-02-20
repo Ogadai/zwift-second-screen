@@ -6,6 +6,7 @@ import classnames from 'classnames';
 import InfoDetail from './infoPanel/infoDetail';
 import InfoWayPoints from './infoPanel/infoWaypoints';
 import InfoScores from './infoPanel/infoScores';
+import InfoMessages from './infoPanel/infoMessages';
 import { toggleInfoPanel } from '../actions/summary';
 
 import s from './infoPanel.css';
@@ -23,22 +24,27 @@ class InfoPanel extends Component {
   render() {
     const { profile, infoPanel, showPanel, onTogglePanel } = this.props;
 
-    return <div className={classnames("info-panel", { expanded: showPanel })}>
-      <div className="display-area">
-        <button className="minimize-button" onClick={onTogglePanel}>
-          <span className="zwiftgps-icon icon-minimize">&nbsp;</span>
-        </button>
-        <div className="display-content">
-          { infoPanel.details && <InfoDetail details={infoPanel.details} />}
-          { infoPanel.scores && <InfoScores scores={infoPanel.scores} profile={profile} />}
-          { infoPanel.showWaypoints && <InfoWayPoints /> }
+    return <div>
+      <div className={classnames("info-panel", { expanded: showPanel })}>
+        <div className="display-area">
+          <button className="minimize-button" onClick={onTogglePanel}>
+            <span className="zwiftgps-icon icon-minimize">&nbsp;</span>
+          </button>
+          <div className="display-content">
+            { infoPanel.details && <InfoDetail details={infoPanel.details} />}
+            { infoPanel.scores && <InfoScores scores={infoPanel.scores} profile={profile} />}
+            { infoPanel.showWaypoints && <InfoWayPoints /> }
+          </div>
         </div>
-      </div>
 
-      <button className="app-button info-panel-button" onClick={onTogglePanel}>
-        <span className="zwiftgps-icon icon-info-panel">&nbsp;</span>
-      </button>
-    </div>
+        <button className="app-button info-panel-button" onClick={onTogglePanel}>
+          <span className="zwiftgps-icon icon-info-panel">&nbsp;</span>
+        </button>
+      </div>
+      {infoPanel.messages && infoPanel.messages.list && infoPanel.messages.list.length > 0
+          ? <InfoMessages messages={infoPanel.messages} />
+          : undefined }
+    </div>;
   }
 }
 

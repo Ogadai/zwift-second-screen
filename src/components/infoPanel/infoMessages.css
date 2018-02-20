@@ -1,0 +1,66 @@
+@import '../variables.css';
+
+.info-messages {
+  position: absolute;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+
+  margin: 0;
+  padding: 0;
+  list-style: none;
+
+  display: flex;
+  flex-direction: column;
+
+  &.banner {
+    justify-content: center;
+    font-size: 1.5em;
+  }
+
+  &.list {
+    justify-content: flex-end;
+
+    & .info-messages-content {
+      max-width: 70%;
+      animation: grow-in 500ms;
+      overflow-y: hidden;
+    }
+  }
+
+  & .info-messages-content {
+    margin: 0 auto;
+    width: 350px;
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: 0 10px 5px 10px;
+    color: var(--activity-color);
+    text-shadow: 0 0 6px black;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  & .info-messages-name {
+    flex: 1 1 auto;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  & .info-messages-text {
+    flex: 0 0 auto;
+    white-space: nowrap;
+    margin-left: 10px;
+  }
+}
+
+@keyframes grow-in {
+  from {
+    height: 0;
+  }
+  to {
+    height: 25px;
+  }
+}

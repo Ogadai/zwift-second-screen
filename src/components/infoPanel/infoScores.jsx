@@ -2,6 +2,7 @@ import React, { Component} from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
+import getName from './getName';
 import s from './infoScores.css';
 
 class InfoScores extends Component {
@@ -35,18 +36,9 @@ class InfoScores extends Component {
     const { position, score, rider } = entry;
     return <li className={classnames({ me: rider.id === profile.id })} key={`rider-${rider.id}`} style={{ top: index * 30 }}>
       <span className="info-scores-position">{position}</span>
-      <span className="info-scores-name">{this.getName(rider)}</span>
+      <span className="info-scores-name">{getName(rider)}</span>
       <span className="info-scores-score">{score}</span>
     </li>;
-  }
-
-  getName(rider) {
-    const { firstName, lastName } = rider;
-    const displayFirstName = (firstName && lastName.length > 3)
-          ? firstName.substring(0, 1)
-          : (firstName || '');
-
-    return `${displayFirstName} ${lastName}`.trim();
   }
 }
 

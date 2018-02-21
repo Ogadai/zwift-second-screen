@@ -6,7 +6,7 @@ import moment from 'moment';
 
 import { fetchProfile, fetchRiderFilterIfNeeded, fetchEvents } from '../actions/fetch';
 import { requestLoginType } from '../actions/login';
-import { setMenuState, showWorldSelector, setWorld, showStravaSettings, showRiderFilter, setRiderFilter } from '../actions/summary';
+import { setMenuState, showWorldSelector, setWorld, showStravaSettings, showRiderFilter, setRiderFilter, showGameSelector } from '../actions/summary';
 import { connectStrava, disconnectStrava, saveStravaSettings } from '../actions/strava';
 import { toggleFullScreen } from './full-screen';
 
@@ -37,6 +37,7 @@ class Summary extends Component {
       stravaConnected: PropTypes.bool,
       stravaSettings: PropTypes.any.isRequired,
       showingRiderFilter: PropTypes.bool,
+      showingGameSelector: PropTypes.bool,
       riderFilter: PropTypes.string,
       events: PropTypes.array,
       onSetMenuState: PropTypes.func.isRequired,
@@ -49,7 +50,8 @@ class Summary extends Component {
       onSaveStravaSettings: PropTypes.func.isRequired,
       onFetchRiderFilter: PropTypes.func.isRequired,
       onShowRiderFilter: PropTypes.func.isRequired,
-      onSetRiderFilter: PropTypes.func.isRequired
+      onSetRiderFilter: PropTypes.func.isRequired,
+      onShowGameSelector: PropTypes.func.isRequired
     };
   }
 
@@ -90,8 +92,8 @@ class Summary extends Component {
 
   render() {
     const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventName,
-      showingStravaSettings, stravaConnected, onShowStravaSettings,
-      showingRiderFilter, onShowRiderFilter, onSetRiderFilter,
+      showingGameSelector, showingStravaSettings, stravaConnected, onShowStravaSettings,
+      showingRiderFilter, onShowRiderFilter, onSetRiderFilter, onShowGameSelector,
       onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
     const { stravaAgeValid, stravaDateValid, stravaSettings, filterType, riderFilter } = this.state;
     const { credit } = mapSettings;
@@ -160,6 +162,15 @@ class Summary extends Component {
 
             { (user && user.canLogout)
               ? <li>
+                  <a className="gameSelector newFeature" href="#" onClick={e => this.showGameSelector(e)}>
+                    <span className="zwiftgps-icon icon-gameselector">&nbsp;</span>
+                    <span>Games</span>
+                  </a>
+                </li>
+              : undefined }
+
+            { (user && user.canLogout)
+              ? <li>
                   <a className="feedback" href="http://zwiftblog.com/zwiftgps/" target="_blank">
                       <span className="zwiftgps-icon icon-feedback">&nbsp;</span>
                       <span>Feedback</span>
@@ -170,7 +181,7 @@ class Summary extends Component {
             { (user && user.canLogout)
               ? <li>
                   <a className="logout" href={eventName ? `/login/${eventName}` : '/login'}>
-                    <span className="zwiftgps-icon icon-logout">&nbsp;</span>
+                    <span className={classnames('zwiftgps-icon', profile.anonymous ? 'icon-login' : 'icon-logout')}>&nbsp;</span>
                     <span>{profile.anonymous ? 'Login' : 'Logout'}</span>
                   </a>
                 </li>
@@ -317,6 +328,34 @@ class Summary extends Component {
           </div>
         : undefined }
 
+
+        {showingGameSelector ?
+          <div>
+            <div className="popup-overlay"
+                  onMouseDown={() => onShowGameSelector(false)}
+                  onTouchStart={() => onShowGameSelector(false)}
+                >
+            </div>
+            <div className="popup-content game-selector">
+            <h2>ZwiftGPS Games</h2>
+              <ul>
+                <li onClick={() => this.onSelectGame('')}>
+                  <span className="game-image game-zwiftgps"></span>
+                  <span className="game-name">ZwiftGPS</span>
+                </li>
+                <li onClick={() => this.onSelectGame('zwiftquest')}>
+                  <span className="game-image game-zwiftquest"></span>
+                  <span className="game-name">ZwiftQuest</span>
+                </li>
+                <li onClick={() => this.onSelectGame('goldrush')}>
+                  <span className="game-image game-goldrush"></span>
+                  <span className="game-name">GoldRush</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        : undefined }
+
         {credit ?
           <div className="map-attribute">
             {credit.prompt || 'Map by'} <a href={credit.href} target="_blank">{credit.name}</a>
@@ -422,6 +461,18 @@ class Summary extends Component {
     onShowRiderFilter(true);
     onGetEvents();
   }
+
+  showGameSelector(event) {
+    const { onShowGameSelector } = this.props;
+    event.preventDefault();
+    onShowGameSelector(true);
+  }
+
+  onSelectGame(game) {
+    const { onShowGameSelector } = this.props;
+    onShowGameSelector(false);
+    window.location = `/${game}`;
+  }
 }
 
 const mapStateToProps = (state) => {
@@ -435,6 +486,7 @@ const mapStateToProps = (state) => {
     stravaConnected: state.world.strava ? state.world.strava.connected : false,
     stravaSettings: state.summary.stravaSettings,
     showingRiderFilter: state.summary.showRiderFilter,
+    showingGameSelector: state.summary.showGameSelector,
     riderFilter: state.summary.riderFilter,
     eventName: state.summary.eventName,
     events: state.summary.events
@@ -454,6 +506,7 @@ const mapDispatchToProps = (dispatch) => {
     onSaveStravaSettings: (settings) => dispatch(saveStravaettings(settings)),
     onFetchRiderFilter: () => dispatch(fetchRiderFilterIfNeeded()),
     onShowRiderFilter: show => dispatch(showRiderFilter(show)),
+    onShowGameSelector: show => dispatch(showGameSelector(show)),
     onSetRiderFilter: filter => dispatch(setRiderFilter(filter)),
     onGetEvents: () => dispatch(fetchEvents())
   }

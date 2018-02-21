@@ -114,3 +114,12 @@ export function toggleInfoPanel() {
     type: TOGGLE_INFOPANEL
   };
 }
+
+export const SHOW_GAME_SELECTOR = "SHOW_GAME_SELECTOR";
+
+export function showGameSelector(showSelector) {
+  return {
+    type: SHOW_GAME_SELECTOR,
+    visible: showSelector
+  };
+}

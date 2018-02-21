@@ -81,6 +81,12 @@
                 &:hover, &:active {
                     background-color: var(--shaded-background);
                 }
+
+                &.newFeature {
+                    background-image: url(/img/newfeature.png);
+                    background-repeat: no-repeat;
+                    background-position: 180px 10px;
+                }
             }
         }
     }
@@ -248,6 +254,63 @@
         & .eventfilter {
             width: 250px;
             max-width: 80%;
+        }
+    }
+
+
+    & .game-selector {
+        box-sizing: border-box;
+        width: 440px;
+        top: 30px;
+        max-width: 80%;
+        padding: 0 25px 25px 25px;
+        text-align: center;
+
+        & h2 {
+            margin: 20px 0 10px 0;
+        }
+
+        & ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+
+        & li {
+            display: inline-block;
+            width: 80px;
+            height: 80px;
+            margin: 10px;
+            background-color: var(--button-background);
+            border-radius: 25px;
+            padding: 10px;
+            cursor: pointer;
+
+            & .game-image {
+                display: inline-block;
+                width: 60px;
+                height: 60px;
+                border-radius: 10px;
+                background: url(/img/games.png);
+
+                &.game-zwiftgps {
+                    background-position: 0 0;
+                }
+
+                &.game-zwiftquest {
+                    background-position: 0 -60px;
+                }
+
+                &.game-goldrush {
+                    background-position: 0 -120px;
+                }
+            }
+
+            & .game-name {
+                font-size: 0.9em;
+                color: white;
+                font-weight: bold;
+            }
         }
     }
 }

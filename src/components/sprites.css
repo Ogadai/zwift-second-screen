@@ -10,6 +10,10 @@
         background-position: 0 0;
     }
 
+    &.icon-login {
+        background-position: 0 -416px;
+    }
+
     &.icon-strava {
         background-position: -32px 0;
     }
@@ -68,6 +72,10 @@
 
     &.icon-info-panel {
         background-position: 0 -352px;
+    }
+
+    &.icon-gameselector {
+        background-position: 0 -384px;
     }
 }
 

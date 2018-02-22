@@ -87,6 +87,10 @@ class PointsOfInterest {
   }
 
   checkVisited(position, recentPositions, point) {
+    if (distance(point, position) > 15000) {
+      return { visited: false };
+    }
+
     let result = recentPositions
         .map(recent => this.checkCrossedPoint(point, recent, position))
         .find(v => v && v.visited);

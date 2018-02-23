@@ -1,8 +1,11 @@
-﻿const EventEmitter = require('events');
+﻿const NodeCache = require('node-cache')
+const EventEmitter = require('events');
 const Ghosts = require('./ghosts');
 const AllRiders = require('./allRiders');
 const Events = require('./events');
 const Profile = require('./profile');
+
+const userCache = new NodeCache({ stdTTL: 30, checkPeriod: 10, useClones: false });
 
 const MAX_RIDERS = 40;
 
@@ -14,6 +17,7 @@ const GROUP_COLOURS = [
 ];
 
 const EVENT_PREFIX = "event:";
+const ALL_PREFIX = "all:";
 
 class Rider extends EventEmitter {
   constructor(account, riderId, riderStatusFn) {
@@ -92,7 +96,11 @@ class Rider extends EventEmitter {
         useMetric: true
       });
     } else {
-      return this.profile.getProfile(this.riderId);
+      return this.profile.getProfile(this.riderId)
+          .then(profile => {
+            userCache.set(`rider-${this.riderId}`, profile);
+            return profile;
+          });
     }
   }
 
@@ -161,6 +169,9 @@ class Rider extends EventEmitter {
     if (this.filter.indexOf(EVENT_PREFIX) === 0) {
       const eventSearch = this.filter.substring(EVENT_PREFIX.length);
       return this.requestRidingEvent(eventSearch);
+    } else if (this.filter.indexOf(ALL_PREFIX) === 0) {
+      const allSearch = this.filter.substring(ALL_PREFIX.length);
+      return this.requestAll(allSearch);
     } else {
       return this.requestRidingFilterName();
     }
@@ -252,6 +263,15 @@ class Rider extends EventEmitter {
         group: label
       }
       )}));
+  }
+
+  requestAll(allSearch) {
+    if (allSearch == 'users') {
+      const allUsers = userCache.keys()
+          .map(key => userCache.get(key));
+      return Promise.resolve(allUsers);
+    }
+    return Promise.resolve([]);
   }
 
   filterWorldRider(rider) {

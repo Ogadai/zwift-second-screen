@@ -13,6 +13,7 @@ import { SET_MENU_STATE, SHOW_WORLD_SELECTOR, SHOW_STRAVA_SETTINGS, SHOW_RIDER_F
 import { DISCONNECTED_STRAVA, GOT_STRAVA_SETTINGS } from './actions/strava';
 
 import { COOKIE_WARNING } from './actions/cookie-warning'
+import { getCookie, setCookie } from './cookie';
 
 const screenSize = {
   width: window.innerWidth,
@@ -198,7 +199,8 @@ const defaultSummary = {
   events: [],
   zoomLevel: 1,
   showInfoPanel: screenSize.width >= 900,
-  eventName: undefined
+  eventName: undefined,
+  whatsNew: getCookie('whats-new', { games: false })
 }
 
 function summary(state = defaultSummary, action) {
@@ -220,9 +222,14 @@ function summary(state = defaultSummary, action) {
         showRiderFilter: action.visible
       });
     case SHOW_GAME_SELECTOR:
+    {
+      const whatsNew = Object.assign({}, state.whatsNew, { games: true });
+      setCookie('whats-new', whatsNew);
       return Object.assign({}, state, {
-        showGameSelector: action.visible
+        showGameSelector: action.visible,
+        whatsNew
       });
+    }
     case RECEIVE_RIDERFILTER:
       return Object.assign({}, state, {
         riderFilter: action.filter

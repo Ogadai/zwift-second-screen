@@ -8,6 +8,22 @@
         z-index: 250;
     }
 
+    & .menu-button-new {
+        position: absolute;
+        width: 32px;
+        height: 32px;
+        top: 48px;
+        left: 44px;
+        z-index: 300;
+        pointer-events: none;
+        transform: rotate(-30deg);
+    }
+
+    & .newFeature {
+        background-image: url(/img/newfeature.png);
+        background-repeat: no-repeat;
+    }
+
     & .menu-overlay, & .popup-overlay {
         position: absolute;
         left: 0;
@@ -83,8 +99,6 @@
                 }
 
                 &.newFeature {
-                    background-image: url(/img/newfeature.png);
-                    background-repeat: no-repeat;
                     background-position: 180px 10px;
                 }
             }

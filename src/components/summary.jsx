@@ -40,6 +40,7 @@ class Summary extends Component {
       showingGameSelector: PropTypes.bool,
       riderFilter: PropTypes.string,
       events: PropTypes.array,
+      whatsNew: PropTypes.object,
       onSetMenuState: PropTypes.func.isRequired,
       onShowWorldSelector: PropTypes.func.isRequired,
       onSetWorld: PropTypes.func.isRequired,
@@ -91,7 +92,7 @@ class Summary extends Component {
   }
 
   render() {
-    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventName,
+    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventName, whatsNew,
       showingGameSelector, showingStravaSettings, stravaConnected, onShowStravaSettings,
       showingRiderFilter, onShowRiderFilter, onSetRiderFilter, onShowGameSelector,
       onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
@@ -99,11 +100,16 @@ class Summary extends Component {
     const { credit } = mapSettings;
     const disabled = !profile.riding;
 
+    const newFeature = !!Object.keys(whatsNew).find(k => !whatsNew[k]);
+
     return (
       <div className="summary">
-        <button className="app-button menu-button" onClick={() => { onSetMenuState(!showingMenu); }}>
+        <button
+              className={classnames('app-button', 'menu-button')}
+              onClick={() => { onSetMenuState(!showingMenu); }}>
           <span className="zwiftgps-icon icon-menu">&nbsp;</span>
         </button>
+        {newFeature && <div className="menu-button-new newFeature">&nbsp;</div>}
 
         <div className={classnames("menu-overlay", { hide: !showingMenu })}
               onMouseDown={() => onSetMenuState(false)}
@@ -162,7 +168,7 @@ class Summary extends Component {
 
             { (user && user.canLogout)
               ? <li>
-                  <a className="gameSelector newFeature" href="#" onClick={e => this.showGameSelector(e)}>
+                  <a className={classnames('gameSelector', { newFeature: !whatsNew.games })} href="#" onClick={e => this.showGameSelector(e)}>
                     <span className="zwiftgps-icon icon-gameselector">&nbsp;</span>
                     <span>Games</span>
                   </a>
@@ -489,7 +495,8 @@ const mapStateToProps = (state) => {
     showingGameSelector: state.summary.showGameSelector,
     riderFilter: state.summary.riderFilter,
     eventName: state.summary.eventName,
-    events: state.summary.events
+    events: state.summary.events,
+    whatsNew: state.summary.whatsNew
   }
 }
 

@@ -94,6 +94,8 @@ class Server {
               this.stravaSegments.get(token, worldId, positions, stravaConnect.getSettings(req))
               : Promise.resolve(null);
 
+        this.pointsOfInterest.initialiseRiderProvider(worldId, event, this.riderProvider);
+
         return Promise.all([
           stravaPromise,
           this.pointsOfInterest.getPoints(worldId, positions, event)

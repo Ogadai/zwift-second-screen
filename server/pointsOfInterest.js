@@ -28,6 +28,13 @@ class PointsOfInterest {
     this.worldSettings = worldSettings;
   }
 
+  initialiseRiderProvider(worldId, event, riderProvider) {
+    const pointsProvider = this.getProvider(worldId, event);
+    if (pointsProvider.initialiseRiderProvider) {
+      pointsProvider.initialiseRiderProvider(riderProvider);
+    }
+  }
+
   getPoints(worldId, positions, event) {
     return this.getEventPoints(worldId, event)
         .then(points => this.customiseForRider(worldId, points, positions, event));
@@ -65,7 +72,7 @@ class PointsOfInterest {
           || (!riderPoints.find(p => !p.role && !p.visited));
 
       if (shouldCheck && !point.visited) {
-        const pointVisited = this.checkVisited(position, cachedRider.positions, point);
+        const pointVisited = checkVisited(position, cachedRider.positions, point);
         point.visited = pointVisited && pointVisited.visited;
 // TODO: Remove
 // point.visited = flags[index];
@@ -84,58 +91,6 @@ class PointsOfInterest {
 
     poiCache.set(cacheId, { points: riderPoints, positions: cachedRider.positions });
     return riderPoints;
-  }
-
-  checkVisited(position, recentPositions, point) {
-    if (distance(point, position) > 15000) {
-      return { visited: false };
-    }
-
-    let result = recentPositions
-        .map(recent => this.checkCrossedPoint(point, recent, position))
-        .find(v => v && v.visited);
-
-    if (!result && recentPositions.length >= 2) {
-      // Check whether user turned around and points don't quite overlap
-      const lastPosition = recentPositions[recentPositions.length - 1];
-      const dPosition = distance(point, position)
-      const dLastPosition = distance(point, lastPosition);
-
-      const visited = (dPosition > dLastPosition)
-                   && (dPosition < distance(recentPositions[0], lastPosition));
-
-      let time;
-      if (visited) {
-        const timeGapMS = position.requestTime.getTime() - lastPosition.requestTime.getTime();
-        time = new Date(lastPosition.requestTime.getTime()) + (dLastPosition / (dPosition + dLastPosition)) * timeGapMS;
-      }
-
-      result = {
-        visited,
-        time
-      };
-    }
-
-    return result;
-  }
-
-  checkCrossedPoint(point, p1, p2) {
-    const gap = distance(p1, p2);
-    const dp2 = distance(point, p2);
-    const dp1 = distance(p1, point);
-
-    const visited = (dp2 < gap && dp1 < gap);
-
-    let time;
-    if (visited) {
-      const timeGapMS = p2.requestTime.getTime() - p1.requestTime.getTime();
-      time = new Date(p1.requestTime.getTime() + (dp1 / gap) * timeGapMS);
-    }
-
-    return {
-      visited,
-      time
-    };
   }
 
   getEventPoints(worldId, event) {
@@ -175,4 +130,57 @@ class PointsOfInterest {
           : baseSettings.points;
   }
 }
+
+function checkVisited(position, recentPositions, point) {
+  if (distance(point, position) > 15000) {
+    return { visited: false };
+  }
+
+  let result = recentPositions
+      .map(recent => checkCrossedPoint(point, recent, position))
+      .find(v => v && v.visited);
+
+  if (!result && recentPositions.length >= 2) {
+    // Check whether user turned around and points don't quite overlap
+    const lastPosition = recentPositions[recentPositions.length - 1];
+    const dPosition = distance(point, position)
+    const dLastPosition = distance(point, lastPosition);
+
+    const visited = (dPosition > dLastPosition)
+                 && (dPosition < distance(recentPositions[0], lastPosition));
+
+    let time;
+    if (visited) {
+      const timeGapMS = position.requestTime.getTime() - lastPosition.requestTime.getTime();
+      time = new Date(lastPosition.requestTime.getTime()) + (dLastPosition / (dPosition + dLastPosition)) * timeGapMS;
+    }
+
+    result = {
+      visited,
+      time
+    };
+  }
+
+  return result;
+}
+
+function checkCrossedPoint(point, p1, p2) {
+  const gap = distance(p1, p2);
+  const dp2 = distance(point, p2);
+  const dp1 = distance(p1, point);
+
+  const visited = (dp2 < gap && dp1 < gap);
+
+  let time;
+  if (visited) {
+    const timeGapMS = p2.requestTime.getTime() - p1.requestTime.getTime();
+    time = new Date(p1.requestTime.getTime() + (dp1 / gap) * timeGapMS);
+  }
+
+  return {
+    visited,
+    time
+  };
+}
+PointsOfInterest.checkVisited = checkVisited;
 module.exports = PointsOfInterest;

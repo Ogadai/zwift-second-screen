@@ -20,6 +20,22 @@ class Events {
     }
   }
 
+  findMatchingEvent(eventSearch) {
+    return this.getEvents().then(events => {
+      const eventId = parseInt(eventSearch);
+      const eventMatch = eventSearch.toLowerCase();
+
+      for(let n = events.length -1; n >= 0; n--) {
+        const event = events[n];
+        if ( (event.id === eventId)
+          || (event.name.toLowerCase().indexOf(eventMatch) !== -1)) {
+          return event;
+        }
+      }
+      return null;
+    });
+  }
+
   getRiders(subGroupId) {
     const cached = this.ridersFromCache(subGroupId);
 

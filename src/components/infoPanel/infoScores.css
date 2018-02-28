@@ -4,6 +4,8 @@
   margin: 5px 0 0 0;
   list-style-type: none;
   position: relative;
+  flex: 1 1 auto;
+  overflow-y: auto;
 
   & li {
     margin: 0;
@@ -20,6 +22,10 @@
 
     &.me {
       color: var(--activity-color);
+    }
+
+    & span {
+      line-height: 20px;
     }
   }
 

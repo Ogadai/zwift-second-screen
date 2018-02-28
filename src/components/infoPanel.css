@@ -31,8 +31,8 @@
 
     & .display-content {
       flex: 1 1 auto;
-      overflow-x: auto;
-      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
     }
 
     & .info-panel-button {
@@ -54,7 +54,7 @@
 
     &.expanded {
         width: 250px;
-        height: 370px;
+        height: 400px;
         max-height: 70%;
         border: 1px solid var(--ghosts-border);
         background-color: var(--ghosts-background);

@@ -28,7 +28,7 @@ class InfoMessages extends Component {
     const { id, rider, text } = message;
     return <li key={`msg-${id || index}`}>
       <div className="info-messages-content">
-        <span className="info-messages-name">{getName(rider)}</span>
+        {rider && <span className="info-messages-name">{getName(rider)}</span>}
         <span className="info-messages-text">{text}</span>
       </div>
     </li>;

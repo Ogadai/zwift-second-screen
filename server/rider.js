@@ -196,15 +196,17 @@ class Rider extends EventEmitter {
       mePromise = Promise.resolve(riders);
     }
 
-    return mePromise.then(riders => {
-      if (eventSearch) {
+    if (eventSearch && riders.length === 0) {
+      // Add people tracking the same event if no riders in Zwift event
+      return mePromise.then(riders => {
         const eventRiders = this.events.getRidersInEvent(eventSearch)
             .filter(er => er && !riders.find(r => r.id === er.id))
             .map(er => Object.assign({}, er, { me: false }));
         return riders.concat(eventRiders);
-      }
-      return riders;
-    });
+      });
+    } else {
+      return mePromise;
+    }
   }
 
   requestRidingFilterName() {
@@ -217,9 +219,7 @@ class Rider extends EventEmitter {
   }
 
   requestRidingEvent(eventSearch) {
-    return this.events.getEvents().then(events => {
-      const event = this.findMatchingEvent(events, eventSearch);
-
+    return this.events.findMatchingEvent(eventSearch).then(event => {
       if (event) {
         return Promise.all(
           event.eventSubgroups.map(g => this.getSubgroupRiders(g.id, g.label))
@@ -239,20 +239,6 @@ class Rider extends EventEmitter {
         return [];
       }
     });
-  }
-
-  findMatchingEvent(events, eventSearch) {
-    const eventId = parseInt(eventSearch);
-    const eventMatch = eventSearch.toLowerCase();
-
-    for(let n = events.length -1; n >= 0; n--) {
-      const event = events[n];
-      if ( (event.id === eventId)
-        || (event.name.toLowerCase().indexOf(eventMatch) !== -1)) {
-        return event;
-      }
-    }
-    return null;
   }
 
   getSubgroupRiders(subGroupId, label) {

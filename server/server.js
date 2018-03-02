@@ -354,7 +354,7 @@ class Server {
 			if (rider) {
         callbackFn(rider, req)
           .then(respondJson(res))
-          .catch(responseError(res));
+          .catch(responseError(res, req.url));
 			} else {
 				res.status(401);
 				sendJson(res, { status: 401, statusText: 'Unauthorised' });
@@ -374,15 +374,22 @@ class Server {
 }
 module.exports = Server;
 
-function responseError(res) {
+function responseError(res, url = 'unknown') {
   return function (err) {
-    console.log(err)
+    const message = errorMessage(err);
+    console.log(`Error at url "${url}": message`);
     if (err.response) {
-      res.status(err.response.status).send(`${err.response.status} - ${err.response.statusText}`);
+      res.status(err.response.status).send(message);
     } else {
-      res.status(500).send(JSON.stringify(err));
+      res.status(500).send(message);
     }
   }
+}
+
+function errorMessage(ex) {
+  return (ex && ex.response && ex.response.status)
+      ? `- ${ex.response.status} (${ex.response.statusText})`
+      : ex.message;
 }
 
 function respondJson(res) {

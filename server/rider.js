@@ -123,10 +123,16 @@ class Rider extends EventEmitter {
 
   getActivities(worldId, riderId) {
     const matchWorld = parseInt(worldId);
-    return this.account.getProfile(riderId).activities(0, 30)
-      .then(activities => {
-				return activities.filter(a => a.worldId === matchWorld);
+
+    return new Promise(resolve => {
+      this.profile.getProfile(riderId).activities(0, 30)
+        .then(activities => {
+          resolve(activities.filter(a => a.worldId === matchWorld));
+      }).catch(ex => {
+        console.log(`Failed to get activities for ${riderId}${errorMessage(ex)}`);
+        resolve(null);
       });
+    });
   }
 
   getRidingNow() {
@@ -282,15 +288,21 @@ class Rider extends EventEmitter {
   }
 
   getPositions() {
-		// id, firstName, lastName
-    return this.getRidingNow().then(riders => {
-      const promises = riders
-          .slice(0, MAX_RIDERS)
-          .map(r => this.riderPromise(r));
+    new Promise(resolve => {
+      // id, firstName, lastName
+      this.getRidingNow().then(riders => {
+        const promises = riders
+            .slice(0, MAX_RIDERS)
+            .map(r => this.riderPromise(r));
 
-      return Promise.all(promises)
-        .then(positions => this.filterByWorld(positions))
-        .then(positions => this.addGhosts(positions.filter(p => p !== null)));
+        Promise.all(promises)
+          .then(positions => this.filterByWorld(positions))
+          .then(positions => this.addGhosts(positions.filter(p => p !== null)))
+          .then(positions => resolve(positions));
+      }).catch(ex => {
+        console.log(`Failed to get positions for ${this.riderId}${errorMessage(ex)}`);
+        resolve(null);
+      });
     });
   }
 
@@ -379,5 +391,7 @@ class Rider extends EventEmitter {
 module.exports = Rider;
 
 function errorMessage(ex) {
-    return (ex && ex.response && ex.response.status) ? `- ${ex.response.status} (${ex.response.statusText})` : '';
+  return (ex && ex.response && ex.response.status)
+      ? `- ${ex.response.status} (${ex.response.statusText})`
+      : ex.message;
 }

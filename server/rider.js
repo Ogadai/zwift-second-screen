@@ -288,7 +288,7 @@ class Rider extends EventEmitter {
   }
 
   getPositions() {
-    new Promise(resolve => {
+    return new Promise(resolve => {
       // id, firstName, lastName
       this.getRidingNow().then(riders => {
         const promises = riders

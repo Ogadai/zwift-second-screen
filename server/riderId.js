@@ -17,10 +17,10 @@ class RiderId {
     this.events = new Events(this.account);
   }
 
-  getRider(cookie) {
+  getRider(cookie, event) {
     const riderId = this.getRiderIdFromCookie(cookie);
     if (riderId) {
-      return this.getOrCreateRider(riderId);
+      return this.getOrCreateRider(riderId, event);
     }
     return this.getAnonymous(cookie);
   }
@@ -81,7 +81,7 @@ class RiderId {
     return cachedRider;
   }
 
-  getOrCreateRider(riderId) {
+  getOrCreateRider(riderId, event) {
     const cachedRider = sessionCache.get(riderId);
     if (cachedRider) {
       sessionCache.ttl(riderId, sessionTimeout);
@@ -89,6 +89,10 @@ class RiderId {
     }
 
     const newRider = new Rider(this.account, riderId, id => this.riderStatusFn(id));
+    if (event) {
+      newRider.filter = `event:${event}`;
+    }
+
     sessionCache.set(riderId, newRider);
     return newRider;
   }

@@ -350,7 +350,8 @@ class Server {
 	processRider(callbackFn) {
     return (req, res) => {
 		  const cookie = req.cookies.zssToken;
-      const rider = this.riderProvider.getRider(cookie);
+      const event = req.query.event || undefined;
+      const rider = this.riderProvider.getRider(cookie, event);
 			if (rider) {
         callbackFn(rider, req)
           .then(respondJson(res))

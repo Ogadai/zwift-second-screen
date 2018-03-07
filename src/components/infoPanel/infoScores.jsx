@@ -16,8 +16,10 @@ class InfoScores extends Component {
   render() {
     const { scores } = this.props;
     const rendered = [];
+    const includesMe = scores.find(entry => entry.rider.me);
+
     scores.forEach((entry, index) => {
-      if (index < 10 || entry.rider.me) {
+      if (index < 10 || !includesMe || entry.rider.me) {
         rendered.push(Object.assign({ position: index + 1 }, entry));
       }
     });

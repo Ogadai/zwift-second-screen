@@ -98,7 +98,9 @@ class Rider extends EventEmitter {
     } else {
       return this.profile.getProfile(this.riderId)
           .then(profile => {
-            userCache.set(`rider-${this.riderId}`, profile);
+            if (profile) {
+              userCache.set(`rider-${this.riderId}`, profile);
+            }
             return profile;
           });
     }
@@ -110,6 +112,8 @@ class Rider extends EventEmitter {
     }
 
     return this.getProfile().then(profile => {
+      if (!profile) return [];
+
       profile.me = true;
       return this.getFriends(profile.id).then(friends => {
         return [profile].concat(friends.map(this.friendMap));
@@ -190,6 +194,8 @@ class Rider extends EventEmitter {
     let mePromise;
     if (this.riderId && !riders.find(r => r.id === this.riderId)) {
       mePromise = this.getProfile().then(profile => {
+        if (!profile) return riders;
+
         profile.me = true;
 
         if (eventSearch) {

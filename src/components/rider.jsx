@@ -20,6 +20,7 @@ const colours = [
 ];
 
 const blankSpace = ' []()-_:.';
+const UPDATE_MS = 250;
 
 class Rider extends Component {
   static get propTypes() {
@@ -31,12 +32,51 @@ class Rider extends Component {
       onClick: PropTypes.func.isRequired,
       riderFilter: PropTypes.string,
       scale: PropTypes.number,
-      useMetric: PropTypes.bool
+      useMetric: PropTypes.bool,
+      interval: PropTypes.number
     };
   }
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      position: props.position
+    };
+    this.interval = null;
+  }
+
+  componentWillReceiveProps(props) {
+    const thisPosition = props.position;
+    const lastPosition = this.props.position;
+    const interval = Math.max(props.interval, 5000);
+
+    if (thisPosition.x === lastPosition.x && thisPosition.y === lastPosition.y) {
+      return;
+    }
+
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
+
+    this.setState({
+      position: lastPosition
+    });
+
+    let fraction = 0;
+    this.interval = setInterval(() => {
+      fraction = Math.min(fraction + (UPDATE_MS / interval), 1);
+      const position = Object.assign({}, thisPosition, {
+        x: lastPosition.x + fraction * (thisPosition.x - lastPosition.x),
+        y: lastPosition.y + fraction * (thisPosition.y - lastPosition.y)
+      });
+      this.setState({ position });
+    }, UPDATE_MS);
+  }
+
   render() {
-    const { position, selected, labelRotate, scale, useMetric, onClick } = this.props;
+    const { selected, labelRotate, scale, useMetric, onClick } = this.props;
+    const { position } = this.state;
 
     return <g className={this.getRiderClass()}
 				transform={`translate(${position.x},${position.y})`}>
@@ -62,7 +102,7 @@ class Rider extends Component {
   }
 
   renderTrail() {
-    const { position } = this.props;
+    const { position } = this.state;
     const { x, y, trail } = position;
 
     const points = trail.map(p => `${p.x - x},${p.y - y}`).join(' ');
@@ -76,7 +116,7 @@ class Rider extends Component {
     const props = {
       x: 10000,
       y: 3000,
-      style: { transform: `scale(${1/scale})` }
+      transform: `scale(${1/scale})`
     };
 
     return <g className="rider-name">

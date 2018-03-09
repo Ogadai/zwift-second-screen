@@ -96,12 +96,16 @@ class Server {
 
         this.pointsOfInterest.initialiseRiderProvider(worldId, event, this.riderProvider);
 
+        const interval = (this.riderProvider.count > 30) ? 10000
+            : (this.riderProvider.count > 10 ? 5000 : 2500);
+
         return Promise.all([
           stravaPromise,
           this.pointsOfInterest.getPoints(worldId, positions, event)
         ]).then(([strava, points]) => ({
           worldId, positions, strava, points,
-          infoPanel: this.pointsOfInterest.getInfoPanel(worldId, event)
+          infoPanel: this.pointsOfInterest.getInfoPanel(worldId, event),
+          interval
          }))
       })
     }))

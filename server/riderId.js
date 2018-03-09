@@ -40,6 +40,10 @@ class RiderId {
     return true;
   }
 
+  get count() {
+    return sessionCache.keys().length;
+  }
+
   getEvents() {
     return this.events.getEvents();
   }

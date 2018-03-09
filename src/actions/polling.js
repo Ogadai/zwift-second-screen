@@ -29,7 +29,7 @@ class PollingClient {
     this.dispatch = dispatch;
 
     this.ws = null;
-    this.interval = null;
+    this.timeout = null;
   }
 
   init() {
@@ -42,9 +42,9 @@ class PollingClient {
       this.ws = null;
     }
 
-    if (this.interval) {
-      clearInterval(this.interval);
-      this.interval = null;
+    if (this.timeout) {
+      clearTimeout(this.timeout);
+      this.timeout = null;
     }
   }
 
@@ -73,8 +73,7 @@ class PollingClient {
     if (this.ws) this.ws.close();
     this.ws = null;
 
-    this.interval = setInterval(() => this.onInterval(), POLLING_INTERVAL);
-    this.onInterval();
+    this.dispatch(this.fetchWorldAndPoll());
   }
 
   onMessage(message) {
@@ -91,7 +90,15 @@ class PollingClient {
     }
   }
 
-  onInterval() {
-    this.dispatch(fetchWorld());
+  fetchWorldAndPoll() {
+    return (dispatch, getState) => {
+      const state = getState();
+      const interval = Math.max(state.world.interval, POLLING_INTERVAL);
+
+      dispatch(fetchWorld());
+      this.timeout = setTimeout(() => {
+        dispatch(this.fetchWorldAndPoll());
+      }, interval);
+    }
   }
 }

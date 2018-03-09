@@ -37,13 +37,16 @@ class RiderLabel extends Component {
 
   renderData(label, value, offset) {
     const { scale } = this.props;
-    const style = {
+    const transform = `scale(${1/scale})`;
+
+    const props = {
+      textAnchor: "middle",
       transform: `scale(${1/scale})`
     };
 
     return <g>
-      <text className="label" x={offset} y={12000} textAnchor="middle" style={style}>{label}</text>
-      <text className="value" x={offset} y={25000} textAnchor="middle" style={style}>{value}</text>
+      <text className="label" x={offset} y={12000} {...props}>{label}</text>
+      <text className="value" x={offset} y={25000} {...props}>{value}</text>
     </g>
   }
 }

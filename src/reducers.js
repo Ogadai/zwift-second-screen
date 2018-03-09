@@ -20,15 +20,16 @@ const screenSize = {
   height: window.innerHeight
 };
 
-function world(state = { positions: [], strava: { connected: false }, infoPanel: undefined }, action) {
+function world(state = { positions: [], strava: { connected: false }, infoPanel: undefined, interval: 0 }, action) {
   switch (action.type) {
     case RECEIVE_WORLD:
-      const { worldId, positions, strava, points, infoPanel } = action.data;
+      const { worldId, positions, strava, points, infoPanel, interval } = action.data;
 
       const newState = { worldId };
       if (positions) newState.positions = positions;
       if (strava) newState.strava = strava;
       if (points) newState.points = points;
+      if (interval) newState.interval = interval;
       newState.infoPanel = infoPanel;
 
       return Object.assign({}, state, newState);

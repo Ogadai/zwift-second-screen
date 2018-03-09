@@ -134,7 +134,8 @@ class Map extends Component {
   }
 
   render() {
-    const { develop, worldId, positions, pointsOfInterest, useMetric, mapSettings, displayActivity, riderFilter } = this.props;
+    const { develop, worldId, positions, pointsOfInterest, useMetric,
+        mapSettings, displayActivity, riderFilter, interval } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
@@ -168,8 +169,8 @@ class Map extends Component {
 
                 { positions
 								  ? <g id="riders" className="riders" ref={input => this.riders = input}>
-									    { this.sortRiders(positions).map((p, i) =>
-                        <Rider key={`rider-${i}`}
+									    { this.sortRiders(positions).map(p =>
+                        <Rider key={`rider-${p.id}`}
                           position={p}
                           labelRotate={labelRotate}
                           selected={p.id === this.state.selected}
@@ -177,6 +178,7 @@ class Map extends Component {
                           riderFilter={riderFilter}
                           scale={scale}
                           useMetric={useMetric}
+                          interval={interval}
                         />)
                       }
 								    </g>
@@ -399,6 +401,7 @@ const mapStateToProps = (state) => {
     worldId: state.world.worldId,
     positions: state.world.positions,
     pointsOfInterest: state.world.points,
+    interval: state.world.interval,
     overlay: state.environment.electron || state.environment.openfin,
     mapSettings: state.mapSettings,
     displayActivity: state.ghosts.displayActivity,

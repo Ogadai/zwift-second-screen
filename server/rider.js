@@ -266,7 +266,8 @@ class Rider extends EventEmitter {
   requestAll(allSearch) {
     if (allSearch == 'users') {
       const allUsers = userCache.keys()
-          .map(key => userCache.get(key));
+          .map(key => userCache.get(key))
+          .filter(user => user && user.id);
       return Promise.resolve(allUsers);
     }
     return Promise.resolve([]);
@@ -306,7 +307,7 @@ class Rider extends EventEmitter {
           .then(positions => this.addGhosts(positions.filter(p => p !== null)))
           .then(positions => resolve(positions));
       }).catch(ex => {
-        console.log(`Failed to get positions for ${this.riderId}${errorMessage(ex)}`);
+        console.log(`Failed to get positions for ${this.riderId} - ${errorMessage(ex)}`);
         resolve(null);
       });
     });

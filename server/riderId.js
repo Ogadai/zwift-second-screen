@@ -20,6 +20,9 @@ class RiderId {
   getRider(cookie, event) {
     const riderId = this.getRiderIdFromCookie(cookie);
     if (riderId) {
+      if (isNaN(riderId)) {
+        return null;
+      }
       return this.getOrCreateRider(riderId, event);
     }
     return this.getAnonymous(cookie);

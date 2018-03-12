@@ -312,7 +312,7 @@ class Rider extends EventEmitter {
           .then(positions => this.addGhosts(positions.filter(p => p !== null)))
           .then(positions => resolve(positions));
       }).catch(ex => {
-        console.log(`Failed to get positions for ${this.riderId} - ${errorMessage(ex)}`);
+        console.log(`Failed to get positions for ${this.riderId}${errorMessage(ex)}`);
         resolve(null);
       });
     });
@@ -415,5 +415,5 @@ module.exports = Rider;
 function errorMessage(ex) {
   return (ex && ex.response && ex.response.status)
       ? `- ${ex.response.status} (${ex.response.statusText})`
-      : ex.message;
+      : ` - ${ex.message}`;
 }

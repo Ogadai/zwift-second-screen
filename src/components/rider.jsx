@@ -30,6 +30,7 @@ class Rider extends Component {
       labelRotate: PropTypes.number,
       selected: PropTypes.bool,
       onClick: PropTypes.func.isRequired,
+      onRideOn: PropTypes.func,
       riderFilter: PropTypes.string,
       scale: PropTypes.number,
       useMetric: PropTypes.bool,
@@ -41,7 +42,8 @@ class Rider extends Component {
     super(props);
 
     this.state = {
-      position: props.position
+      position: props.position,
+      sentRideOn: false
     };
     this.interval = null;
   }
@@ -81,8 +83,8 @@ class Rider extends Component {
   }
 
   render() {
-    const { selected, labelRotate, scale, useMetric, onClick } = this.props;
-    const { position } = this.state;
+    const { selected, labelRotate, scale, useMetric, onClick, onRideOn } = this.props;
+    const { position, sentRideOn } = this.state;
 
     return <g className={this.getRiderClass()}
 				transform={`translate(${position.x},${position.y})`}>
@@ -92,9 +94,23 @@ class Rider extends Component {
       <g transform={`rotate(${labelRotate})`} onClick={onClick}>
         <circle cx="0" cy="0" r={ 6000 / scale } style={{ strokeWidth: 2000 / scale }} />
         {this.renderName()}
-        { selected ? <RiderLabel position={position}  scale={scale} useMetric={useMetric} /> : undefined }
+        { selected ? <RiderLabel position={position}  scale={scale} useMetric={useMetric}
+            onRideOn={onRideOn ? () => this.sendRideOn() : null} sentRideOn={sentRideOn} /> : undefined }
       </g>
     </g>
+  }
+
+  sendRideOn() {
+    const { onRideOn } = this.props;
+    const { position, sentRideOn } = this.state;
+
+    if (onRideOn && !sentRideOn) {
+      onRideOn(position.id);
+
+      this.setState({
+        sentRideOn: true
+      });
+    }
   }
 
   getRiderClass() {

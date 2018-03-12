@@ -95,14 +95,19 @@ class Rider extends EventEmitter {
         anonymous: true,
         useMetric: true
       });
+    } else if (this.getProfileRequest) {
+      return this.getProfileRequest;
     } else {
-      return this.profile.getProfile(this.riderId)
+      this.getProfileRequest = this.profile.getProfile(this.riderId)
           .then(profile => {
             if (profile) {
               userCache.set(`rider-${this.riderId}`, profile);
             }
+
+            this.getProfileRequest = null;
             return profile;
           });
+      return this.getProfileRequest;
     }
   }
 
@@ -392,6 +397,16 @@ class Rider extends EventEmitter {
             console.log(`Failed to get status for ${id}${errorMessage(ex)}`);
             resolve(null);
           });
+    });
+  }
+
+  sendRideOn(targetId) {
+    return this.profile.getProfile(targetId).then(profile => {
+      if (profile) {
+        console.log(`Sending RideOn from ${this.riderId} to ${targetId} for activity ${profile.currentActivityId}`);
+        return this.account.getProfile(this.riderId)
+            .giveRideOn(targetId, profile.currentActivityId);
+      }
     });
   }
 }

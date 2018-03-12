@@ -8,6 +8,18 @@
         opacity: 0.8;
     }
 
+    & .rideOn {
+        fill: var(--button-background);
+
+        &.disabled {
+            fill: var(--button-background-disabled);
+        }
+    }
+
+    & .rideOn-thumb {
+        pointer-events: none;
+    }
+
     & .label {
         font-size: 7000px;
         font-weight: 400;

@@ -7,7 +7,7 @@ import classnames from 'classnames';
 import Rider from './rider.jsx';
 import PointOfInterest from './pointOfInterest';
 import StravaRoute from './strava-route.jsx';
-import { fetchMapSettings } from '../actions/fetch';
+import { fetchMapSettings, sendRideOn } from '../actions/fetch';
 import { startPolling, stopPolling } from '../actions/polling';
 
 import s from './map.css';
@@ -135,7 +135,7 @@ class Map extends Component {
 
   render() {
     const { develop, worldId, positions, pointsOfInterest, useMetric,
-        mapSettings, displayActivity, riderFilter, interval } = this.props;
+        mapSettings, displayActivity, riderFilter, interval, sendRideOn } = this.props;
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
@@ -179,6 +179,7 @@ class Map extends Component {
                           scale={scale}
                           useMetric={useMetric}
                           interval={interval}
+                          onRideOn={sendRideOn}
                         />)
                       }
 								    </g>
@@ -416,7 +417,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onFetchSettings: (worldId, overlay, eventName) => dispatch(fetchMapSettings(worldId, overlay, eventName)),
     onStartPolling: () => dispatch(startPolling()),
-    onStopPolling: () => dispatch(stopPolling())
+    onStopPolling: () => dispatch(stopPolling()),
+    sendRideOn: (riderId) => dispatch(sendRideOn(riderId))
   }
 }
 

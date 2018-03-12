@@ -127,6 +127,14 @@ class Server {
       return Promise.resolve({});
     }))
 
+    this.app.post('/rideon/:riderId', this.processRider((rider, req) => {
+      const { riderId } = req.params;
+      if (rider.sendRideOn) {
+        return rider.sendRideOn(riderId);
+      }
+      return Promise.resolve({});
+    }))
+
     this.app.get('/strava-effort/:segmentId', this.processRider((rider, req) => {
       const { segmentId } = req.params;
       const token = stravaConnect.getToken(req);
@@ -382,7 +390,7 @@ module.exports = Server;
 function responseError(res, url = 'unknown') {
   return function (err) {
     const message = errorMessage(err);
-    console.log(`Error at url "${url}": message`);
+    console.log(`Error at url "${url}": ${message}`);
     if (err.response) {
       res.status(err.response.status).send(message);
     } else {

@@ -168,3 +168,9 @@ export function receiveEvents(data) {
 export function fetchEvents() {
   return dispatchRequest('/events/', receiveEvents);
 }
+
+export function sendRideOn(riderId) {
+  return dispatch => {
+    axios.post(`/rideon/${riderId}`);
+  }
+}

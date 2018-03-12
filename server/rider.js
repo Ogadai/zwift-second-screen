@@ -129,7 +129,7 @@ class Rider extends EventEmitter {
     const matchWorld = parseInt(worldId);
 
     return new Promise(resolve => {
-      this.profile.getProfile(riderId).activities(0, 30)
+      this.account.getProfile(riderId).activities(0, 30)
         .then(activities => {
           resolve(activities.filter(a => a.worldId === matchWorld));
       }).catch(ex => {

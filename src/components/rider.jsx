@@ -20,7 +20,7 @@ const colours = [
 ];
 
 const blankSpace = ' []()-_:.';
-const UPDATE_MS = 250;
+const UPDATE_MS = 100;
 
 class Rider extends Component {
   static get propTypes() {
@@ -72,6 +72,12 @@ class Rider extends Component {
       });
       this.setState({ position });
     }, UPDATE_MS);
+  }
+
+  componentWillUnmount() {
+    if (this.interval) {
+      clearInterval(this.interval);
+    }
   }
 
   render() {

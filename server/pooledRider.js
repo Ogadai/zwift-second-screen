@@ -1,4 +1,7 @@
 let i = 1;
+
+const DELAY_MS = 4000;
+
 class PooledRider {
     constructor(account, riderId) {
         this.account = account;
@@ -21,14 +24,20 @@ class PooledRider {
 
     status() {
         this.lastTime = new Date();
+        let statusPromise;
 
         if (this.promise) {
-            return this.promise;
+            statusPromise = this.promise;
         }
         else if (this.last || this.skip > 0) {
-            return new Promise(resolve => resolve(this.last));
+            statusPromise = new Promise(resolve => resolve(this.last));
+        } else {
+            statusPromise = this.refresh();
         }
-        return this.refresh();
+
+        return statusPromise.then(status => {
+            return status ? this.delayPosition(status) : null;
+        });
     }
 
     refresh() {
@@ -40,7 +49,7 @@ class PooledRider {
             this.skip--;
             return Promise.resolve(this.last);
         }
-    
+
         this.promise = new Promise(resolve => {
             this.account.getWorld(1).riderStatus(this.riderId)
                 .then(status => {
@@ -98,6 +107,29 @@ class PooledRider {
 
     get isStale() {
         return (new Date() - this.lastTime) > 10000;
+    }
+
+    delayPosition(position) {
+        // DELAY_MS
+        const delayTime = DELAY_MS - (new Date() - this.last.requestTime);
+        if (!this.previous || delayTime < 0) return position;
+
+        const gapTime = this.last.requestTime - this.previous.requestTime;
+        const factor = delayTime / gapTime;
+        const value = (prop) => {
+            const last = position[prop],
+                  diff = last - this.previous[prop];
+            return last && diff ? last - diff * factor : last;
+        }
+
+        return Object.assign({}, position, {
+          distance: value('distance'),
+          time: value('time'),
+          climbing: value('climbing'),
+          x: value('x'),
+          y: value('y'),
+          altitude: value('altitude'),
+        });
     }
 
     // projectPosition() {

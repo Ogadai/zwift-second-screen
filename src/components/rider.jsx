@@ -51,11 +51,14 @@ class Rider extends Component {
   componentWillReceiveProps(props) {
     const thisPosition = props.position;
     const lastPosition = this.props.position;
-    const interval = Math.max(props.interval, 5000);
+    const interval = Math.min(props.interval, 5000);
 
     if (thisPosition.x === lastPosition.x && thisPosition.y === lastPosition.y) {
       return;
     }
+    // this.setState({
+    //   position: thisPosition
+    // });
 
     if (this.interval) {
       clearInterval(this.interval);

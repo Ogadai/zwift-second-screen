@@ -1,3 +1,6 @@
+const routePredictor = require('./routePredictor');
+const pollInterval = require('./pollInterval');
+
 let i = 1;
 
 const DELAY_MS = 4000;
@@ -36,7 +39,14 @@ class PooledRider {
         }
 
         return statusPromise.then(status => {
-            return status ? this.delayPosition(status) : null;
+            if (status && this.previous && (this.previous.x !== status.x || this.previous.y !== status.y)) {
+                const age = new Date() - status.requestTime;
+                const predicted = routePredictor(status.world).predict(this.previous, status, [ age + pollInterval.get() ]);
+                if (predicted && predicted.length > 0 && predicted[0] && (predicted[0].x || predicted[0].y)) {
+                    status.next = predicted[0];
+                }
+            }
+            return status;
         });
     }
 

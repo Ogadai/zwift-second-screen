@@ -84,7 +84,7 @@ class Summary extends Component {
     onFetch();
 //    onFetchRiderFilter();
     onRequestLoginType();
-    this.fetchInterval = setInterval(onFetch, 10000);
+    this.fetchInterval = setInterval(onFetch, 30000);
   }
 
   componentWillUnmount() {

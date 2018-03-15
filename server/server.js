@@ -9,6 +9,7 @@ const Map = require('./map');
 const PointsOfInterest = require('./pointsOfInterest');
 const insertSiteSettings = require('./siteSettings');
 const StravaSegments = require('./strava-segments');
+const pollInterval = require('./pollInterval');
 
 const EVENT_PREFIX = "event:";
 
@@ -85,6 +86,10 @@ class Server {
     this.app.get('/world', this.processRider((rider, req) => {
       const event = req.query.event || undefined;
 
+      const interval = (this.riderProvider.count > 30) ? 10000
+          : (this.riderProvider.count > 10 ? 5000 : 2500);
+      pollInterval.set(interval);
+
       return Promise.all([
         this.worldPromise(rider),
         rider.getPositions()
@@ -95,9 +100,6 @@ class Server {
               : Promise.resolve(null);
 
         this.pointsOfInterest.initialiseRiderProvider(worldId, event, this.riderProvider);
-
-        const interval = (this.riderProvider.count > 30) ? 10000
-            : (this.riderProvider.count > 10 ? 5000 : 2500);
 
         return Promise.all([
           stravaPromise,

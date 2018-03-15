@@ -22,6 +22,8 @@ const colours = [
 const blankSpace = ' []()-_:.';
 const UPDATE_MS = 100;
 
+const distance = (p1, p2) => Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
+
 class Rider extends Component {
   static get propTypes() {
     return {
@@ -49,34 +51,40 @@ class Rider extends Component {
   }
 
   componentWillReceiveProps(props) {
-    const thisPosition = props.position;
-    const lastPosition = this.props.position;
-    const interval = Math.min(props.interval, 5000);
+    const thisPosition = props.position.next || props.position;
+    const lastPosition = this.props.position.next || this.props.position;
+    const interval = Math.max(props.interval, 2500);
 
     if (thisPosition.x === lastPosition.x && thisPosition.y === lastPosition.y) {
       return;
     }
-    // this.setState({
-    //   position: thisPosition
-    // });
 
     if (this.interval) {
       clearInterval(this.interval);
     }
 
-    this.setState({
-      position: lastPosition
-    });
-
-    let fraction = 0;
-    this.interval = setInterval(() => {
-      fraction = Math.min(fraction + (UPDATE_MS / interval), 1);
-      const position = Object.assign({}, thisPosition, {
-        x: lastPosition.x + fraction * (thisPosition.x - lastPosition.x),
-        y: lastPosition.y + fraction * (thisPosition.y - lastPosition.y)
+    if (distance(lastPosition, thisPosition) > 20000) {
+      this.setState({
+        position: thisPosition
       });
-      this.setState({ position });
-    }, UPDATE_MS);
+    } else {
+      this.setState({
+        position: Object.assign({}, props.position, {
+          x: lastPosition.x,
+          y: lastPosition.y
+        })
+      });
+
+      let fraction = 0;
+      this.interval = setInterval(() => {
+        fraction = Math.min(fraction + (UPDATE_MS / interval), 1);
+        const position = Object.assign({}, props.position, {
+          x: lastPosition.x + fraction * (thisPosition.x - lastPosition.x),
+          y: lastPosition.y + fraction * (thisPosition.y - lastPosition.y)
+        });
+        this.setState({ position });
+      }, UPDATE_MS);
+    }
   }
 
   componentWillUnmount() {
@@ -89,17 +97,23 @@ class Rider extends Component {
     const { selected, labelRotate, scale, useMetric, onClick, onRideOn } = this.props;
     const { position, sentRideOn } = this.state;
 
-    return <g className={this.getRiderClass()}
-				transform={`translate(${position.x},${position.y})`}>
-      { position.trail
-        ? this.renderTrail()
-        : undefined }
-      <g transform={`rotate(${labelRotate})`} onClick={onClick}>
-        <circle cx="0" cy="0" r={ 6000 / scale } style={{ strokeWidth: 2000 / scale }} />
-        {this.renderName()}
-        { selected ? <RiderLabel position={position}  scale={scale} useMetric={useMetric}
-            onRideOn={onRideOn ? () => this.sendRideOn() : null} sentRideOn={sentRideOn} /> : undefined }
+    return <g>
+      <g className={this.getRiderClass()}
+          transform={`translate(${position.x},${position.y})`}>
+        { position.trail
+          ? this.renderTrail()
+          : undefined }
+        <g transform={`rotate(${labelRotate})`} onClick={onClick}>
+          <circle cx="0" cy="0" r={ 6000 / scale } style={{ strokeWidth: 2000 / scale }} />
+          {this.renderName()}
+          { selected ? <RiderLabel position={position}  scale={scale} useMetric={useMetric}
+              onRideOn={onRideOn ? () => this.sendRideOn() : null} sentRideOn={sentRideOn} /> : undefined }
+        </g>
       </g>
+      {/* { position.next && <g className={this.getRiderClass()}
+          transform={`translate(${position.next.x},${position.next.y})`}>
+          <circle cx="0" cy="0" r={ 6000 / scale } style={{ strokeWidth: 2000 / scale }} />
+      </g> } */}
     </g>
   }
 

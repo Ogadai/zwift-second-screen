@@ -40,7 +40,7 @@ class PooledRider {
 
         return statusPromise.then(status => {
             if (status && this.previous && (this.previous.x !== status.x || this.previous.y !== status.y)) {
-                const age = new Date() - status.requestTime;
+                const age = Math.min(new Date() - status.requestTime, 10000);
                 const predicted = routePredictor(status.world).predict(this.previous, status, [ age + pollInterval.get() ]);
                 if (predicted && predicted.length > 0 && predicted[0] && (predicted[0].x || predicted[0].y)) {
                     status.next = predicted[0];

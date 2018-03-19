@@ -65,7 +65,10 @@ class Rider extends Component {
 
     if (distance(lastPosition, thisPosition) > 20000) {
       this.setState({
-        position: thisPosition
+        position: Object.assign({}, props.position, {
+          x: thisPosition.x,
+          y: thisPosition.y
+        })
       });
     } else {
       this.setState({

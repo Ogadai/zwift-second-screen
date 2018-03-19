@@ -59,16 +59,18 @@ class RoutePredictor {
 
           return forecastTimes.map(time => {
             const factor = speedFactor * time / timeSpan;
+            const direction = latestPos.linePosition > previousPos.linePosition ? 1 : -1;
             const linePosition = Math.max(0,
-                latestPos.linePosition + factor * distance(previous, latest)
+              latestPos.linePosition + factor * direction * distance(previous, latest)
             );
 //console.log(`line previous: ${Math.round(previousPos.linePosition)}, latest: ${Math.round(latestPos.linePosition)}, forecast: ${Math.round(linePosition)} (gaps ${Math.round(latestPos.linePosition - previousPos.linePosition)} to ${Math.round(linePosition - latestPos.linePosition)})`);
             const pos = this.getPositionOnRoad(latestPos.road, linePosition);
 
+            const fstr = t => Math.round(t*100)/100;
             const tstr = t => Math.round(t/100)/10;
             const sstr = s => Math.round(s/100000)/10;
 //if (distance(latest, pos) > distance(previous, latest) * 3) {
-//  console.log(`speed ${sstr(previous.speed)} to ${sstr(latest.speed)}, previous gap for ${tstr(latest.requestTime - previous.requestTime)}: ${Math.round(distance(previous, latest))}, after ${tstr(time)} gap is: ${Math.round(distance(latest, pos))}`);
+//  console.log(`speed ${sstr(previous.speed)} to ${sstr(latest.speed)}, previous gap for ${tstr(latest.requestTime - previous.requestTime)}: ${Math.round(distance(previous, latest))}, after ${tstr(time)} gap is: ${Math.round(distance(latest, pos))} (factor: ${fstr(factor)}, pos: ${Math.round(linePosition)})`);
 //}
             return distance(latest, pos) < 10000 ? pos : null;
           });

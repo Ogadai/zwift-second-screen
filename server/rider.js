@@ -197,7 +197,7 @@ class Rider extends EventEmitter {
         ? this.filter.substring(EVENT_PREFIX.length) : null;
 
     let mePromise;
-    if (this.riderId && !riders.find(r => r.id === this.riderId)) {
+    if (this.riderId && !riders.find(r => r.id == this.riderId)) {
       mePromise = this.getProfile().then(profile => {
         if (!profile) return riders;
 

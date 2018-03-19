@@ -63,7 +63,7 @@ class Rider extends Component {
       clearInterval(this.interval);
     }
 
-    if (distance(lastPosition, thisPosition) > 20000) {
+    if (!props.position.next || distance(lastPosition, thisPosition) > 20000) {
       this.setState({
         position: Object.assign({}, props.position, {
           x: thisPosition.x,

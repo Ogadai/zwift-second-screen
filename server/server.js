@@ -86,8 +86,8 @@ class Server {
     this.app.get('/world', this.processRider((rider, req) => {
       const event = req.query.event || undefined;
 
-      const interval = (this.riderProvider.count > 30) ? 10000
-          : (this.riderProvider.count > 10 ? 5000 : 2500);
+      const interval = (this.riderProvider.count > 50) ? 10000
+          : (this.riderProvider.count > 25 ? 5000 : 2500);
       pollInterval.set(interval);
 
       return Promise.all([

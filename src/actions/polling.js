@@ -33,7 +33,7 @@ class PollingClient {
   }
 
   init() {
-    this.tryStartWebSocket();
+    this.startInterval();
   }
 
   close() {

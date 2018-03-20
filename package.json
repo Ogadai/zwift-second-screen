@@ -6,7 +6,7 @@
   "scripts": {
     "build": "webpack --config webpack.production.config.js --progress --profile --colors",
     "postbuild": "sw-precache --root=public",
-    "prepublish": "npm run build&npm run precache",
+    "prepublish": "npm run build",
     "lint": "eslint --ext js --ext jsx src || exit 0",
     "dev-server": "nodemon index.js",
     "dev-client": "webpack-dev-server",

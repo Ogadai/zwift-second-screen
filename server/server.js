@@ -3,6 +3,7 @@ const expressWs = require('express-ws');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const forceSSL = require('express-force-ssl');
 const stravaConnect = require('strava-live-segments/connect');
 
 const Map = require('./map');
@@ -12,6 +13,7 @@ const StravaSegments = require('./strava-segments');
 const pollInterval = require('./pollInterval');
 
 const EVENT_PREFIX = "event:";
+const useForceSSL = (process.env.ForceSSL && process.env.ForceSSL.toLowerCase() == 'true');
 
 class Server {
   constructor(riderProvider, settings) {
@@ -38,6 +40,9 @@ class Server {
 
     this.app.use(bodyParser.json())
     this.app.use(cookieParser())
+    if (useForceSSL) {
+      this.app.use(forceSSL)
+    }
 
     if (this.stravaSettings) {
       const { clientId, clientSecret } = this.stravaSettings

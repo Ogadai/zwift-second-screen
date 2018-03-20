@@ -40,6 +40,9 @@ class Server {
 
     this.app.use(bodyParser.json())
     this.app.use(cookieParser())
+    if (useForceSSL) {
+      this.app.use(forceSSL)
+    }
 
     if (this.stravaSettings) {
       const { clientId, clientSecret } = this.stravaSettings
@@ -278,18 +281,10 @@ class Server {
       res.type('txt').send('Not found');
     };
 
-    const getWithSSL = (path, callback) => {
-      if (useForceSSL) {
-        this.app.get(path, forceSSL, callback);
-      } else {
-        this.app.get(path, callback);
-      }
-    }
-
-    getWithSSL('/', (req, res) => {
+    this.app.get('/', (req, res) => {
       indexRoute(req, res);
     })
-    getWithSSL('/zwiftquest', (req, res) => {
+    this.app.get('/zwiftquest', (req, res) => {
       this.allowAnonymous(req, res);
       indexRoute(req, res);
     })

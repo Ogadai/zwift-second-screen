@@ -9,7 +9,8 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 
 module.exports = {
 	entry: [
-		'./src/index.jsx'
+		'./src/index.jsx',
+		'./src/register-service-worker.js'
 	],
 	output: {
 		publicPath: '/',

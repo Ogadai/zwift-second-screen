@@ -8,7 +8,7 @@ const Events = require('./events');
 const COOKIE_PREFIX = 'rider-';
 const ANON_PREFIX = 'anon-';
 const sessionTimeout = 30 * 60;
-const sessionCache = new NodeCache({ stdTTL: sessionTimeout, checkPeriod: 120, useClones: false });
+const sessionCache = new NodeCache({ stdTTL: sessionTimeout, checkperiod: 120, useClones: false });
 
 class RiderId {
   constructor(username, password) {
@@ -41,7 +41,7 @@ class RiderId {
   }
 
   get count() {
-    return sessionCache.keys().length;
+    return Rider.userCount();
   }
 
   getEvents() {

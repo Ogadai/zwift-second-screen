@@ -1,6 +1,6 @@
 const NodeCache = require('node-cache')
 
-const poiCache = new NodeCache({ stdTTL: 30 * 60, checkPeriod: 120, useClones: false });
+const poiCache = new NodeCache({ stdTTL: 30 * 60, checkperiod: 120, useClones: false });
 
 const distance = (p1, p2) => Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
 

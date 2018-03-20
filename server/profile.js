@@ -1,5 +1,5 @@
 const NodeCache = require('node-cache')
-const cache = new NodeCache({ stdTTL: 30 * 60, checkPeriod: 120, useClones: false });
+const cache = new NodeCache({ stdTTL: 30 * 60, checkperiod: 120, useClones: false });
 
 class Profile {
   constructor(account) {

@@ -1,6 +1,6 @@
 const NodeCache = require('node-cache')
-const eventsCache = new NodeCache({ stdTTL: 10 * 60, checkPeriod: 120, useClones: false });
-const ridersCache = new NodeCache({ stdTTL: 2 * 60, checkPeriod: 30, useClones: false });
+const eventsCache = new NodeCache({ stdTTL: 10 * 60, checkperiod: 120, useClones: false });
+const ridersCache = new NodeCache({ stdTTL: 2 * 60, checkperiod: 30, useClones: false });
 
 const BEFORE_MINUTES = 180;
 const AFTER_MINUTES = 20;

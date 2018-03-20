@@ -6,7 +6,7 @@ const Rider = require('./rider');
 const RiderPool = require('./riderPool');
 
 const sessionTimeout = 30 * 60;
-const sessionCache = new NodeCache({ stdTTL: sessionTimeout, checkPeriod: 120, useClones: false });
+const sessionCache = new NodeCache({ stdTTL: sessionTimeout, checkperiod: 120, useClones: false });
 
 class Login {
   getRider(cookie) {

@@ -5,7 +5,7 @@ const AllRiders = require('./allRiders');
 const Events = require('./events');
 const Profile = require('./profile');
 
-const userCache = new NodeCache({ stdTTL: 30, checkPeriod: 10, useClones: false });
+const userCache = new NodeCache({ stdTTL: 30, checkperiod: 10, useClones: false });
 
 const MAX_RIDERS = 40;
 
@@ -24,7 +24,7 @@ class Rider extends EventEmitter {
     super();
 
     this.account = account;
-    this.allRiders = new AllRiders(account);
+    this.allRiders = new AllRiders(account, Rider.userCount);
     this.events = new Events(account);
     this.profile = new Profile(account);
     this.riderId = riderId;
@@ -100,7 +100,7 @@ class Rider extends EventEmitter {
     } else {
       this.getProfileRequest = this.profile.getProfile(this.riderId)
           .then(profile => {
-            if (profile) {
+            if (profile && profile.riding) {
               userCache.set(`rider-${this.riderId}`, profile);
             }
 
@@ -199,7 +199,7 @@ class Rider extends EventEmitter {
     let mePromise;
     if (this.riderId && !riders.find(r => r.id == this.riderId)) {
       mePromise = this.getProfile().then(profile => {
-        if (!profile) return riders;
+        if (!profile || !profile.riding) return riders;
 
         profile.me = true;
 
@@ -410,6 +410,10 @@ class Rider extends EventEmitter {
       }
     });
   }
+}
+Rider.userCount = () => {
+  const tmp = userCache.keys();
+  return userCache.keys().length;
 }
 module.exports = Rider;
 

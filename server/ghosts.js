@@ -1,7 +1,7 @@
 ﻿const Ghost = require('./ghost')
 const NodeCache = require('node-cache')
 
-const activityCache = new NodeCache({ stdTTL: 30 * 60, checkPeriod: 120, useClones: false });
+const activityCache = new NodeCache({ stdTTL: 30 * 60, checkperiod: 120, useClones: false });
 
 class Ghosts {
   constructor(account, riderId) {
@@ -43,7 +43,7 @@ class Ghosts {
   getPositions() {
     // Remove finished ghosts
     this.ghostRiders = this.ghostRiders.filter(g => !g.isFinished());
-    
+
     return this.ghostRiders.map(g => g.getPosition());
   }
 

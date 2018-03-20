@@ -4,8 +4,9 @@ let completedPromise = null;
 let checkTime = null;
 
 class AllRiders {
-  constructor(account) {
+  constructor(account, userCountFn) {
     this.account = account;
+    this.userCountFn = userCountFn;
   }
 
   get() {
@@ -23,7 +24,7 @@ class AllRiders {
   download() {
     return this.account.getWorld(1).riders()
         .then(response => {
-            console.log(`${response.friendsInWorld.length} active riders in world`);
+            console.log(`${response.friendsInWorld.length} active riders in world, ${this.userCountFn ? this.userCountFn() : 0} users`);
             return response.friendsInWorld;
         });
   }

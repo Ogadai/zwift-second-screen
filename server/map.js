@@ -23,7 +23,7 @@ const defaultCredit = {
   href: 'http://zwifthacks.com'
 }
 
-const mapCache = new NodeCache({ stdTTL: 30 * 60, checkPeriod: 120, useClones: false });
+const mapCache = new NodeCache({ stdTTL: 30 * 60, checkperiod: 120, useClones: false });
 
 class Map {
   constructor(worldSettings) {

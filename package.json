@@ -28,7 +28,6 @@
     "body-parser": "^1.16.0",
     "cookie-parser": "^1.4.3",
     "express": "^4.14.1",
-    "express-force-ssl": "^0.3.2",
     "express-ws": "^2.0.0",
     "guid": "0.0.12",
     "moment": "^2.17.1",

@@ -3,7 +3,6 @@ const expressWs = require('express-ws');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require('path');
-const forceSSL = require('express-force-ssl');
 const stravaConnect = require('strava-live-segments/connect');
 
 const Map = require('./map');
@@ -15,11 +14,14 @@ const pollInterval = require('./pollInterval');
 const EVENT_PREFIX = "event:";
 
 const useForceSSL = (process.env.ForceSSL && process.env.ForceSSL.toLowerCase() == 'true');
-const doForceSSL = useForceSSL ? forceSSL
-    : (req, res, next) => {
-      console.log(`${req.url} - protocol: ${req.protocol}, secure: ${req.secure}, header: ${req.get('X-Forwarded-Proto')}`);
-      next();
-    };
+const doForceSSL = useForceSSL
+    ? (req, res, next) => {
+      if (req.secure || (req.get('X-Forwarded-Proto') !== 'http')) {
+        next();
+      } else {
+        res.redirect(301, 'https://' + req.hostname + req.originalUrl);
+      }
+    } : (req, res, next) => next();
 
 class Server {
   constructor(riderProvider, settings) {

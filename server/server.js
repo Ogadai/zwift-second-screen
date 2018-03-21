@@ -13,7 +13,10 @@ const StravaSegments = require('./strava-segments');
 const pollInterval = require('./pollInterval');
 
 const EVENT_PREFIX = "event:";
+
 const useForceSSL = (process.env.ForceSSL && process.env.ForceSSL.toLowerCase() == 'true');
+const doForceSSL = useForceSSL ? forceSSL
+    : (req, res, next) => next();
 
 class Server {
   constructor(riderProvider, settings) {
@@ -40,9 +43,6 @@ class Server {
 
     this.app.use(bodyParser.json())
     this.app.use(cookieParser())
-    if (useForceSSL) {
-      this.app.use(forceSSL)
-    }
 
     if (this.stravaSettings) {
       const { clientId, clientSecret } = this.stravaSettings
@@ -281,10 +281,10 @@ class Server {
       res.type('txt').send('Not found');
     };
 
-    this.app.get('/', (req, res) => {
+    this.app.get('/', doForceSSL, (req, res) => {
       indexRoute(req, res);
     })
-    this.app.get('/zwiftquest', (req, res) => {
+    this.app.get('/zwiftquest', doForceSSL, (req, res) => {
       this.allowAnonymous(req, res);
       indexRoute(req, res);
     })
@@ -298,7 +298,8 @@ class Server {
 		// Static hosting for web client
     this.app.use(express.static(`${__dirname}/../public`))
 
-		// Handle 404s (React app routing)
+    // Handle 404s (React app routing)
+    this.app.use(doForceSSL);
     this.app.use(indexRoute);
   }
 

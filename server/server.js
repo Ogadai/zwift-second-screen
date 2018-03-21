@@ -16,7 +16,10 @@ const EVENT_PREFIX = "event:";
 
 const useForceSSL = (process.env.ForceSSL && process.env.ForceSSL.toLowerCase() == 'true');
 const doForceSSL = useForceSSL ? forceSSL
-    : (req, res, next) => next();
+    : (req, res, next) => {
+      console.log(`${req.url} - protocol: ${req.protocol}, secure: ${req.secure}`);
+      next();
+    };
 
 class Server {
   constructor(riderProvider, settings) {

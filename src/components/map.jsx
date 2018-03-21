@@ -139,6 +139,7 @@ class Map extends Component {
     const { svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
+    if (!viewBox) return <div className="map"></div>;
 
     const mapUrl = mapSettings.map ? this.filePath(mapSettings.map) : this.svgPath(worldId);
     const labelRotate = this.getLabelRotate();
@@ -157,47 +158,44 @@ class Map extends Component {
 				: undefined
       }
 
-      {(viewBox) ?
-        <div className="map-riders"
-              onClick={ev => { ev.stopPropagation(); this.selectRider(-1); }}
-        >
-          <svg className="full-size" viewBox={viewBox}>
-            {this.renderDefs()}
+      <div className="map-riders"
+            onClick={ev => { ev.stopPropagation(); this.selectRider(-1); }}
+      >
+        <svg className="full-size" viewBox={viewBox}>
+          {this.renderDefs()}
 
-            <g transform={`rotate${mapSettings.rotate}`}>
-              <g transform={`translate${mapSettings.translate}`}>
+          <g transform={`rotate${mapSettings.rotate}`}>
+            <g transform={`translate${mapSettings.translate}`}>
 
-                { positions
-								  ? <g id="riders" className="riders" ref={input => this.riders = input}>
-									    { this.sortRiders(positions).map(p =>
-                        <Rider key={`rider-${p.id}`}
-                          position={p}
-                          labelRotate={labelRotate}
-                          selected={p.id === this.state.selected}
-                          onClick={ev => this.clickRider(ev, p) }
-                          riderFilter={riderFilter}
-                          scale={scale}
-                          useMetric={useMetric}
-                          interval={interval}
-                          onRideOn={sendRideOn}
-                        />)
-                      }
-								    </g>
-                  : undefined }
+              { positions
+                ? <g id="riders" className="riders" ref={input => this.riders = input}>
+                    { this.sortRiders(positions).map(p =>
+                      <Rider key={`rider-${p.id}`}
+                        position={p}
+                        labelRotate={labelRotate}
+                        selected={p.id === this.state.selected}
+                        onClick={ev => this.clickRider(ev, p) }
+                        riderFilter={riderFilter}
+                        scale={scale}
+                        useMetric={useMetric}
+                        interval={interval}
+                        onRideOn={sendRideOn}
+                      />)
+                    }
+                  </g>
+                : undefined }
 
-                { (displayActivity && displayActivity.positions)
-                  ? this.renderActivity(displayActivity)
-                  : undefined }
+              { (displayActivity && displayActivity.positions)
+                ? this.renderActivity(displayActivity)
+                : undefined }
 
-                <StravaRoute develop={develop} scale={scale} />
-							</g>
-						</g>
-					</svg>
-        </div>
-        : undefined}
+              <StravaRoute develop={develop} scale={scale} />
+            </g>
+          </g>
+        </svg>
+      </div>
 
-
-      {(viewBox && pointsOfInterest) ?
+      {pointsOfInterest ?
         this.renderPointsOfInterest(viewBox, scale)
         : undefined}
 

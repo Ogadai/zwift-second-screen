@@ -51,6 +51,7 @@ module.exports = {
 		}),
     new CopyWebpackPlugin([
       { from: 'img', to: 'img' },
+      { from: 'maps', to: 'maps' },
       { from: 'favicon.ico', to: 'favicon.ico' },
       { from: 'app.json', to: 'app.json' },
       { from: 'launcher-icon-*.png' },

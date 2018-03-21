@@ -17,7 +17,7 @@ const EVENT_PREFIX = "event:";
 const useForceSSL = (process.env.ForceSSL && process.env.ForceSSL.toLowerCase() == 'true');
 const doForceSSL = useForceSSL ? forceSSL
     : (req, res, next) => {
-      console.log(`${req.url} - protocol: ${req.protocol}, secure: ${req.secure}, header: ${req.header['x-forwarded-proto']}`);
+      console.log(`${req.url} - protocol: ${req.protocol}, secure: ${req.secure}, header: ${req.header['X-Forwarded-Proto']}`);
       next();
     };
 

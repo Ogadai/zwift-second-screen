@@ -40,6 +40,7 @@ class Summary extends Component {
       showingGameSelector: PropTypes.bool,
       riderFilter: PropTypes.string,
       events: PropTypes.array,
+      eventName: PropTypes.string,
       whatsNew: PropTypes.object,
       onSetMenuState: PropTypes.func.isRequired,
       onShowWorldSelector: PropTypes.func.isRequired,
@@ -139,7 +140,7 @@ class Summary extends Component {
               </a>
             </li>
 
-            { (user && user.canFilterRiders)
+            { (user && user.canFilterRiders && !eventName)
               ? <li>
                   <a className="riderFilter" href="#" onClick={e => this.showRiderFilter(e)}>
                     <span className="zwiftgps-icon icon-riderfilter">&nbsp;</span>

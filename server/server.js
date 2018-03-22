@@ -100,6 +100,10 @@ class Server {
           : (this.riderProvider.count > 20 ? 5000 : 2500);
       pollInterval.set(interval);
 
+      if (event) {
+        rider.setFilter(`event:${event}`);
+      }
+
       return Promise.all([
         this.worldPromise(rider),
         rider.getPositions()

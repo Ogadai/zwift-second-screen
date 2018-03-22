@@ -100,7 +100,7 @@ class Rider extends EventEmitter {
     } else {
       this.getProfileRequest = this.profile.getProfile(this.riderId)
           .then(profile => {
-            if (profile && profile.riding) {
+            if (profile) {
               userCache.set(`rider-${this.riderId}`, profile);
             }
 
@@ -158,7 +158,7 @@ class Rider extends EventEmitter {
   }
 
   getCachedRiders() {
-    if (this.ridingNow && (new Date() - this.ridingNowDate < 30000)) {
+    if (this.ridingNow && (new Date() - this.ridingNowDate < 10000)) {
       return this.ridingNow;
     }
     return null;
@@ -199,7 +199,7 @@ class Rider extends EventEmitter {
     let mePromise;
     if (this.riderId && !riders.find(r => r.id == this.riderId)) {
       mePromise = this.getProfile().then(profile => {
-        if (!profile || !profile.riding) return riders;
+        if (!profile) return riders;
 
         profile.me = true;
 

@@ -34,6 +34,7 @@ class App extends Component {
       }).isRequired,
       worldId: PropTypes.number,
       showInfo: PropTypes.bool,
+      eventName: PropTypes.string,
       overlay: PropTypes.bool,
       openfin: PropTypes.bool,
       onCloseApp: PropTypes.func
@@ -62,7 +63,7 @@ class App extends Component {
   }
 
   render() {
-    const { worldId, showInfo, match, overlay, openfin, onCloseApp, onSetZoomLevel } = this.props;
+    const { worldId, showInfo, eventName, match, overlay, openfin, onCloseApp, onSetZoomLevel } = this.props;
     const { hovering } = this.state;
 
     const develop = match && match.params && (match.params.event === 'dev');
@@ -86,7 +87,7 @@ class App extends Component {
           : <Map develop={develop} /> }
           <Summary />
           {showInfo && <InfoPanel />}
-					<Ghosts />
+					{!eventName && <Ghosts />}
           <StravaSegments />
 				</div>
         <Analytics />
@@ -115,6 +116,7 @@ const mapStateToProps = (state, ownProps) => {
   return {
     worldId: state.world.worldId,
     showInfo: !!state.world.infoPanel,
+    eventName: state.summary.eventName,
     overlay: state.environment.electron || state.environment.openfin,
     openfin: state.environment.openfin
   }

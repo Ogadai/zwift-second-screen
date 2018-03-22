@@ -12,7 +12,9 @@
     "dev-client": "webpack-dev-server",
     "dev": "concurrently --kill-others \"npm run dev-server\" \"npm run dev-client\"",
     "start": "node index.js",
-    "electron": "electron ."
+    "electron": "electron .",
+    "test:server": "jest --watch --config=server/test/config.json",
+    "test:ci": "npm run test:server -- --watch=false"
   },
   "repository": {
     "type": "git",
@@ -39,6 +41,7 @@
   "devDependencies": {
     "axios": "^0.15.3",
     "babel-core": "6.21.0",
+    "babel-jest": "^22.4.3",
     "babel-loader": "6.2.9",
     "babel-plugin-transform-class-properties": "^6.19.0",
     "babel-plugin-transform-decorators-legacy": "^1.3.4",
@@ -55,6 +58,7 @@
     "file-loader": "0.9.0",
     "history": "^4.7.2",
     "html-webpack-plugin": "^2.26.0",
+    "jest": "^22.4.3",
     "nodemon": "^1.11.0",
     "open": "0.0.5",
     "postcss-cssnext": "^2.9.0",

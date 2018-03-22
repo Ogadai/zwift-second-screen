@@ -26,6 +26,7 @@ class PooledRider {
     }
 
     status() {
+        // TODO: Get current status from cache instead of property
         this.lastTime = new Date();
         let statusPromise;
 
@@ -52,6 +53,11 @@ class PooledRider {
     }
 
     refresh() {
+        // TODO: Check Cache to see if it is really due for refresh
+        // TODO: If so, add to queue for status lookup
+        // TODO: Queue processors ensure only one thread picks task
+        // TODO: Immediately resolve with current status or null
+
         if (!this.staticPromise) {
             this.getStatic();
         }

@@ -111,7 +111,7 @@ class Rider extends EventEmitter {
     }
   }
 
-  getRiders() {
+  getMeAndFriends() {
     if (!this.riderId) {
       return Promise.resolve([]);
     }
@@ -174,7 +174,7 @@ class Rider extends EventEmitter {
   requestRidingFriends() {
     return Promise.all([
       this.allRiders.get(),
-      this.getRiders()
+      this.getMeAndFriends()
     ]).then(([worldRiders, riders]) =>
       riders.filter(r => worldRiders.filter(wr => wr.playerId === r.id).length > 0)
     );
@@ -203,7 +203,7 @@ class Rider extends EventEmitter {
 
         profile.me = true;
 
-        if (eventSearch) {
+        if (eventSearch && isNaN(eventSearch)) {
           this.events.setRidingInEvent(eventSearch, profile);
         }
 
@@ -213,7 +213,7 @@ class Rider extends EventEmitter {
       mePromise = Promise.resolve(riders);
     }
 
-    if (eventSearch && riders.length === 0) {
+    if (eventSearch && isNaN(eventSearch) && riders.length === 0) {
       // Add people tracking the same event if no riders in Zwift event
       return mePromise.then(riders => {
         const eventRiders = this.events.getRidersInEvent(eventSearch)
@@ -245,8 +245,13 @@ class Rider extends EventEmitter {
 
           const meRider = allRiders.find(r => r.id == this.riderId);
           if (meRider) {
-            this.events.setRidingInEvent(eventSearch, meRider);
-            allRiders.sort((a, b) => Math.abs(a.group - meRider.group) - Math.abs(b.group - meRider.group));
+            if (isNaN(eventSearch)) {
+              this.events.setRidingInEvent(eventSearch, meRider);
+            }
+            allRiders.sort((a, b) =>
+              (a.me || b.me) ? (a.me ? -1 : 1)
+              : Math.abs(a.group - meRider.group) - Math.abs(b.group - meRider.group)
+            );
           }
 
           return allRiders;
@@ -262,9 +267,9 @@ class Rider extends EventEmitter {
     return this.events.getRiders(subGroupId)
       .then(riders => riders.map(r => {
         return Object.assign({}, r, {
-        me: r.id == this.riderId,
-        group: label
-      }
+          me: r.id == this.riderId,
+          group: label
+        }
       )}));
   }
 
@@ -415,6 +420,7 @@ Rider.userCount = () => {
   const tmp = userCache.keys();
   return userCache.keys().length;
 }
+Rider.cache = userCache;
 module.exports = Rider;
 
 function errorMessage(ex) {

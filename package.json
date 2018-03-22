@@ -76,6 +76,7 @@
     "react-slider": "^0.7.0",
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
+    "request": "^2.85.0",
     "style-loader": "0.13.1",
     "sw-precache": "^5.2.1",
     "url-loader": "0.5.7",

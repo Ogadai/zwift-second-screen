@@ -100,24 +100,18 @@ class Rider extends Component {
     const { selected, labelRotate, scale, useMetric, onClick, onRideOn } = this.props;
     const { position, sentRideOn } = this.state;
 
-    return <g>
-      <g className={this.getRiderClass()}
+    return <g className={this.getRiderClass()}
           transform={`translate(${position.x},${position.y})`}>
         { position.trail
           ? this.renderTrail()
           : undefined }
-        <g transform={`rotate(${labelRotate})`} onClick={onClick}>
+        <g className="rider-icon" transform={`rotate(${labelRotate})`} onClick={onClick}>
           <circle cx="0" cy="0" r={ 6000 / scale } style={{ strokeWidth: 2000 / scale }} />
           {this.renderName()}
           { selected ? <RiderLabel position={position}  scale={scale} useMetric={useMetric}
               onRideOn={onRideOn ? () => this.sendRideOn() : null} sentRideOn={sentRideOn} /> : undefined }
         </g>
-      </g>
-      {/* { position.next && <g className={this.getRiderClass()}
-          transform={`translate(${position.next.x},${position.next.y})`}>
-          <circle cx="0" cy="0" r={ 6000 / scale } style={{ strokeWidth: 2000 / scale }} />
-      </g> } */}
-    </g>
+      </g>;
   }
 
   sendRideOn() {

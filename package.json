@@ -13,8 +13,9 @@
     "dev": "concurrently --kill-others \"npm run dev-server\" \"npm run dev-client\"",
     "start": "node index.js",
     "electron": "electron .",
-    "test:server": "jest --watch --config=server/test/config.json",
-    "test:ci": "npm run test:server -- --watch=false"
+    "test:ui": "jest --watch --config=src/jest.json",
+    "test:server": "jest --watch --config=server/jest.json",
+    "test:ci": "npm run test:ui -- --watch=false&&npm run test:server -- --watch=false"
   },
   "repository": {
     "type": "git",
@@ -55,6 +56,8 @@
     "copy-webpack-plugin": "^4.0.1",
     "css-loader": "0.26.1",
     "electron": "^1.4.15",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "extract-text-webpack-plugin": "^1.0.1",
     "file-loader": "0.9.0",
     "history": "^4.7.2",

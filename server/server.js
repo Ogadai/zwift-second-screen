@@ -94,6 +94,7 @@ class Server {
     this.app.get('/riders', this.processRider(rider => rider.getRiders ? rider.getRiders() : Promise.resolve([])))
 
     this.app.get('/world', this.processRider((rider, req) => {
+      const startTime = process.hrtime();
       const event = req.query.event || undefined;
 
       const interval = (this.riderProvider.count > 40) ? 10000
@@ -118,11 +119,20 @@ class Server {
         return Promise.all([
           stravaPromise,
           this.pointsOfInterest.getPoints(worldId, positions, event)
-        ]).then(([strava, points]) => ({
-          worldId, positions, strava, points,
-          infoPanel: this.pointsOfInterest.getInfoPanel(worldId, event),
-          interval
-         }))
+        ]).then(([strava, points]) => {
+            const endTime = process.hrtime(startTime);
+            const duration = endTime[0] * 1000 + endTime[1] / 1000000;
+
+            if (duration > 100) {
+              console.log(`/world: ${Math.round(duration * 10)/10}ms for ${positions.length} positions`);
+            }
+
+            return {
+              worldId, positions, strava, points,
+              infoPanel: this.pointsOfInterest.getInfoPanel(worldId, event),
+              interval
+            };
+          })
       })
     }))
 

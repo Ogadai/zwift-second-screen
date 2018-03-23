@@ -1,32 +1,24 @@
+const KeepFreshRequest = require('./keepFreshRequest');
+let keepFreshRequest = null;
 
-let promise = null;
-let completedPromise = null;
-let checkTime = null;
+function download(account) {
+  return account.getWorld(1).riders()
+      .then(response => {
+        console.log(`${response.friendsInWorld.length} riders in world`);
+          return response.friendsInWorld;
+      });
+}
 
 class AllRiders {
-  constructor(account, userCountFn) {
+  constructor(account) {
     this.account = account;
-    this.userCountFn = userCountFn;
+    if (!keepFreshRequest) {
+      keepFreshRequest = new KeepFreshRequest(() => download(account));
+    }
   }
 
   get() {
-    if (!checkTime || (new Date() - checkTime > 30000)) {
-      checkTime = new Date();
-      promise = this.download().then(result => {
-        completedPromise = promise;
-        return result;
-      });
-    }
-
-    return completedPromise ? completedPromise : promise;
-  }
-
-  download() {
-    return this.account.getWorld(1).riders()
-        .then(response => {
-            console.log(`${response.friendsInWorld.length} active riders in world, ${this.userCountFn ? this.userCountFn() : 0} users`);
-            return response.friendsInWorld;
-        });
+    return keepFreshRequest.get();
   }
 }
 module.exports = AllRiders;

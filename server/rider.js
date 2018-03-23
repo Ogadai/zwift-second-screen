@@ -6,6 +6,7 @@ const Events = require('./events');
 const Profile = require('./profile');
 
 const userCache = new NodeCache({ stdTTL: 30, checkperiod: 10, useClones: false });
+const riderCache = new NodeCache({ stdTTL: 10 * 60, checkperiod: 10, useClones: false });
 
 const MAX_RIDERS = 40;
 
@@ -24,15 +25,29 @@ class Rider extends EventEmitter {
     super();
 
     this.account = account;
-    this.allRiders = new AllRiders(account, Rider.userCount);
+    this.allRiders = new AllRiders(account);
     this.events = new Events(account);
     this.profile = new Profile(account);
     this.riderId = riderId;
-    this.ghosts = new Ghosts(account, riderId);
+    this.ghosts = Ghosts.forRider(account, riderId);
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
-    this.worldId = undefined;
-    this.statusWorldId = undefined;
-    this.filter = undefined;
+
+    this.cacheKey = `rider-${riderId}`;
+
+    this.state = riderCache.get(this.cacheKey);
+    if (this.state) {
+      riderCache.ttl(this.cacheKey);
+    } else {
+      this.state = {
+        worldId: undefined,
+        statusWorldId: undefined,
+        filter: undefined
+      };
+    }
+  }
+
+  store() {
+    riderCache.set(this.cacheKey, this.state);
   }
 
   setRiderId(riderId, riderStatusFn) {
@@ -41,29 +56,30 @@ class Rider extends EventEmitter {
   }
 
   setWorld(worldId) {
-    if (this.worldId !== worldId) {
-      this.worldId = worldId;
-      this.emit('world', this.worldId);
+    if (this.state.worldId !== worldId) {
+      this.state.worldId = worldId;
+      this.store();
+      this.emit('world', this.state.worldId);
     }
   }
 
   getWorld() {
-    return this.worldId;
+    return this.state.worldId;
   }
 
   setFilter(filter) {
-    if (this.filter !== filter) {
-      this.filter = filter;
-      this.ridingNow = null;
+    if (this.state.filter !== filter) {
+      this.state.filter = filter;
+      this.store();
     }
   }
 
   getFilter() {
-    return this.filter;
+    return this.state.filter;
   }
 
   getCurrentWorld() {
-    return this.worldId || this.statusWorldId;
+    return this.state.worldId || this.state.statusWorldId;
   }
 
   pollPositions() {
@@ -111,7 +127,7 @@ class Rider extends EventEmitter {
     }
   }
 
-  getMeAndFriends() {
+  requestRidingFriends() {
     if (!this.riderId) {
       return Promise.resolve([]);
     }
@@ -144,57 +160,34 @@ class Rider extends EventEmitter {
     });
   }
 
-  getRidingNow() {
-    const cached = this.getCachedRiders();
-    if (cached) {
-      return Promise.resolve(cached);
-    } else {
-      return this.requestRidingNow().then(riders => {
-        this.ridingNow = riders;
-        this.ridingNowDate = new Date();
-        return riders;
-      });
-    }
-  }
-
-  getCachedRiders() {
-    if (this.ridingNow && (new Date() - this.ridingNowDate < 10000)) {
-      return this.ridingNow;
-    }
-    return null;
-  }
-
   requestRidingNow() {
-    return this.filter
+    return this.state.filter
       ? this.requestRidingFiltered()
             .then(riders => this.addMeToRiders(riders))
       : this.requestRidingFriends();
   }
 
-  requestRidingFriends() {
-    return Promise.all([
-      this.allRiders.get(),
-      this.getMeAndFriends()
-    ]).then(([worldRiders, riders]) =>
-      riders.filter(r => worldRiders.filter(wr => wr.playerId === r.id).length > 0)
-    );
-  }
-
   requestRidingFiltered() {
-    if (this.filter.indexOf(EVENT_PREFIX) === 0) {
-      const eventSearch = this.filter.substring(EVENT_PREFIX.length);
+    if (this.state.filter.indexOf(EVENT_PREFIX) === 0) {
+      const eventSearch = this.state.filter.substring(EVENT_PREFIX.length);
       return this.requestRidingEvent(eventSearch);
-    } else if (this.filter.indexOf(ALL_PREFIX) === 0) {
-      const allSearch = this.filter.substring(ALL_PREFIX.length);
+    } else if (this.state.filter.indexOf(ALL_PREFIX) === 0) {
+      const allSearch = this.state.filter.substring(ALL_PREFIX.length);
       return this.requestAll(allSearch);
     } else {
       return this.requestRidingFilterName();
     }
   }
 
+  filterByCurrentlyRiding(riders) {
+    return this.allRiders.get().then(worldRiders =>
+      riders.filter(r => worldRiders.filter(wr => wr.playerId === r.id).length > 0)
+    );
+  }
+
   addMeToRiders(riders) {
-    const eventSearch = (this.filter.indexOf(EVENT_PREFIX) === 0)
-        ? this.filter.substring(EVENT_PREFIX.length) : null;
+    const eventSearch = (this.state.filter.indexOf(EVENT_PREFIX) === 0)
+        ? this.state.filter.substring(EVENT_PREFIX.length) : null;
 
     let mePromise;
     if (this.riderId && !riders.find(r => r.id == this.riderId)) {
@@ -285,7 +278,7 @@ class Rider extends EventEmitter {
 
   filterWorldRider(rider) {
     const fullName = `${rider.firstName ? rider.firstName : ''} ${rider.lastName ? rider.lastName: ''}`;
-    return fullName.toLowerCase().indexOf(this.filter) !== -1;
+    return fullName.toLowerCase().indexOf(this.state.filter) !== -1;
   }
 
   mapWorldRider(rider) {
@@ -307,19 +300,21 @@ class Rider extends EventEmitter {
   getPositions() {
     return new Promise(resolve => {
       // id, firstName, lastName
-      this.getRidingNow().then(riders => {
-        const promises = riders
-            .slice(0, MAX_RIDERS)
-            .map(r => this.riderPromise(r));
+      this.requestRidingNow()
+        .then(riders => this.filterByCurrentlyRiding(riders))
+        .then(riders => {
+          const promises = riders
+              .slice(0, MAX_RIDERS)
+              .map(r => this.riderPromise(r));
 
-        Promise.all(promises)
-          .then(positions => this.filterByWorld(positions))
-          .then(positions => this.addGhosts(positions.filter(p => p !== null)))
-          .then(positions => resolve(positions));
-      }).catch(ex => {
-        console.log(`Failed to get positions for ${this.riderId}${errorMessage(ex)}`);
-        resolve(null);
-      });
+          Promise.all(promises)
+            .then(positions => this.filterByWorld(positions))
+            .then(positions => this.addGhosts(positions.filter(p => p !== null)))
+            .then(positions => resolve(positions));
+        }).catch(ex => {
+          console.log(`Failed to get positions for ${this.riderId}${errorMessage(ex)}`);
+          resolve(null);
+        });
     });
   }
 
@@ -374,7 +369,7 @@ class Rider extends EventEmitter {
   }
 
   filterByWorld(positions) {
-    const worldId = this.worldId || this.getWorldFromPositions(positions);
+    const worldId = this.state.worldId || this.getWorldFromPositions(positions);
     if (worldId) {
       return positions.filter(p => p && p.world === worldId)
     } else {
@@ -384,8 +379,13 @@ class Rider extends EventEmitter {
 
   getWorldFromPositions(positions) {
     const mePosition = positions.find(p => p && p.me);
-    this.statusWorldId = mePosition ? mePosition.world : undefined;
-    return this.statusWorldId;
+    const statusWorldId = mePosition ? mePosition.world : undefined;
+
+    if (this.state.statusWorldId !== statusWorldId) {
+      this.state.statusWorldId = statusWorldId;
+      this.store();
+    }
+    return this.state.statusWorldId;
   }
 
   addGhosts(positions) {
@@ -417,10 +417,10 @@ class Rider extends EventEmitter {
   }
 }
 Rider.userCount = () => {
-  const tmp = userCache.keys();
   return userCache.keys().length;
 }
-Rider.cache = userCache;
+Rider.userCache = userCache;
+Rider.riderCache = riderCache;
 module.exports = Rider;
 
 function errorMessage(ex) {

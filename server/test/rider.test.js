@@ -15,6 +15,13 @@ const meProfile = {
   id: riderId,
   me: true
 };
+const riding = [
+  { playerId: riderId },
+  { playerId: 20102 },
+  { playerId: 30103 },
+  { playerId: 40104 },
+  { playerId: 50105 }
+];
 
 const testStatusFn = id => ({ id, x: id + 10, y: id + 20 });
 
@@ -26,7 +33,7 @@ const expectPositions = (positions, ids) => {
 beforeEach(() => {
   mockAccount = {};
   mockAllRiders = {
-    get: sinon.stub()
+    get: sinon.stub().returns(Promise.resolve(riding))
   };
   mockEvents = {
     findMatchingEvent: sinon.stub(),
@@ -44,7 +51,8 @@ beforeEach(() => {
   };
   stubStatusFn = sinon.spy(id => Promise.resolve(testStatusFn(id)));
 
-  Rider.cache.flushAll();
+  Rider.userCache.flushAll();
+  Rider.riderCache.flushAll();
 
   testRider = new Rider(mockAccount, riderId, stubStatusFn);
   testRider.allRiders = mockAllRiders;
@@ -56,6 +64,24 @@ beforeEach(() => {
   testRider.ridingNow = null;
 });
 
+describe('state', () => {
+  test('restores filter for same rider id', () => {
+    testRider.setFilter('test');
+
+    const newRider = new Rider(mockAccount, riderId, stubStatusFn);
+
+    expect(newRider.getFilter()).toEqual('test');
+  });
+
+  test('doesn\'t restore filter for different rider id', () => {
+    testRider.setFilter('test');
+
+    const newRider = new Rider(mockAccount, 20102, stubStatusFn);
+
+    expect(newRider.getFilter()).toBe(undefined);
+  });
+});
+
 describe('getPositions', () => {
   describe('without filter', () => {
     const friends = [
@@ -63,15 +89,10 @@ describe('getPositions', () => {
       { followeeProfile: { id: 30103 } },
       { followeeProfile: { id: 40104 } }
     ];
-    const riding = [
-      { playerId: riderId },
-      { playerId: 20102 },
-      { playerId: 40104 }
-    ];
 
     beforeEach(() => {
       mockProfile.getFollowees.returns(Promise.resolve(friends));
-      mockAllRiders.get.returns(Promise.resolve(riding));
+      mockAllRiders.get.returns(Promise.resolve([riding[0], riding[1], riding[3]]));
     });
 
     test('gets me and friends who are riding', async () => {
@@ -80,7 +101,7 @@ describe('getPositions', () => {
       expectPositions(positions, [riderId, 20102, 40104]);
     });
 
-    test('inculdes any current ghosts', async () =>
+    test('includes any current ghosts', async () =>
     {
       const ghosts = [
         { id: 60106, x: 61, y: 62 },
@@ -94,24 +115,11 @@ describe('getPositions', () => {
     });
 
     test('don\'t include me if not riding', async () => {
-      mockAllRiders.get.returns(Promise.resolve([riding[1], riding[2]]));
+      mockAllRiders.get.returns(Promise.resolve([riding[1], riding[3]]));
 
       const positions = await testRider.getPositions();
 
       expectPositions(positions, [20102, 40104]);
-    });
-
-    test('gets cached player list after first time', async () => {
-      const positions1 = await testRider.getPositions();
-      expect(stubStatusFn.callCount).toBe(3);
-
-      const positions2 = await testRider.getPositions();
-
-      expectPositions(positions2, [riderId, 20102, 40104]);
-
-      expect(mockProfile.getProfile.callCount).toBe(1);
-      expect(mockProfile.getFollowees.callCount).toBe(1);
-      expect(stubStatusFn.callCount).toBe(6);
     });
   });
 
@@ -311,7 +319,6 @@ describe('getPositions', () => {
       };
 
       mockProfile.getFollowees.returns(Promise.resolve([]));
-      mockAllRiders.get.returns(Promise.resolve([]));
 
       const otherPositions = await otherRider.getPositions();
 

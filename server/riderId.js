@@ -100,7 +100,7 @@ class RiderId {
       newRider.filter = `event:${event}`;
     }
 
-    sessionCache.set(riderId, newRider);
+//    sessionCache.set(riderId, newRider);
     return newRider;
   }
 

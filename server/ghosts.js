@@ -2,6 +2,20 @@
 const NodeCache = require('node-cache')
 
 const activityCache = new NodeCache({ stdTTL: 30 * 60, checkperiod: 120, useClones: false });
+const ghostsCache = new NodeCache({ stdTTL: 10 * 60, checkperiod: 120, useClones: false });
+
+function forRider(account, riderId) {
+  const cacheId = `ghosts-${riderId}`;
+  const cached = ghostsCache.get(cacheId);
+  if (cached) {
+    ghostsCache.ttl(cacheId);
+    return cached;
+  }
+
+  const ghosts = new Ghosts(account, riderId);
+  ghostsCache.set(cacheId, ghosts);
+  return ghosts;
+}
 
 class Ghosts {
   constructor(account, riderId) {
@@ -78,4 +92,5 @@ class Ghosts {
     return `activity-${activityId}`;
   }
 }
+Ghosts.forRider = forRider;
 module.exports = Ghosts;

@@ -30,13 +30,10 @@ class PooledRider {
         this.lastTime = new Date();
         let statusPromise;
 
-        if (this.promise) {
-            statusPromise = this.promise;
-        }
-        else if (this.last || this.skip > 0) {
+        if (this.last || this.skip > 0) {
             statusPromise = new Promise(resolve => resolve(this.last));
         } else {
-            statusPromise = this.refresh();
+            statusPromise = Promise.resolve(null);
         }
 
         return statusPromise;
@@ -72,7 +69,7 @@ class PooledRider {
                 .then(status => {
                     this.promise = null;
                     if (this.last && status.time === this.last.time) {
-                        console.log(`Same time for ${this.riderId}`)
+//                        console.log(`Same time for ${this.riderId}`)
                         resolve(this.last);
                         return;
                     }

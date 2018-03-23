@@ -402,13 +402,7 @@ class Rider extends EventEmitter {
   }
 
   sendRideOn(targetId) {
-    return this.profile.getProfile(targetId).then(profile => {
-      if (profile) {
-        console.log(`Sending RideOn from ${this.riderId} to ${targetId} for activity ${profile.currentActivityId}`);
-        return this.account.getProfile(this.riderId)
-            .giveRideOn(targetId, profile.currentActivityId);
-      }
-    });
+    return Promise.resolve();
   }
 }
 Rider.userCount = () => {

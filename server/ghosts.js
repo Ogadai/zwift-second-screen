@@ -2,13 +2,14 @@
 const NodeCache = require('node-cache')
 
 const activityCache = new NodeCache({ stdTTL: 30 * 60, checkperiod: 120, useClones: false });
-const ghostsCache = new NodeCache({ stdTTL: 10 * 60, checkperiod: 120, useClones: false });
+const ghostsTTL = 10 * 60;
+const ghostsCache = new NodeCache({ stdTTL: ghostsTTL, checkperiod: 120, useClones: false });
 
 function forRider(account, riderId) {
   const cacheId = `ghosts-${riderId}`;
   const cached = ghostsCache.get(cacheId);
   if (cached) {
-    ghostsCache.ttl(cacheId);
+    ghostsCache.ttl(cacheId, ghostsTTL);
     return cached;
   }
 

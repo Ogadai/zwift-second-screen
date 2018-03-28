@@ -29,7 +29,7 @@ class Rider extends EventEmitter {
     this.events = new Events(account);
     this.profile = new Profile(account);
     this.riderId = riderId;
-    this.ghosts = Ghosts.forRider(account, riderId);
+    this.ghosts = null;
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
 
     this.cacheKey = `rider-${riderId}`;
@@ -93,6 +93,9 @@ class Rider extends EventEmitter {
   }
 
   getGhosts() {
+    if (!this.ghosts) {
+      this.ghosts = Ghosts.forRider(this.account, this.riderId);
+    }
     return this.ghosts;
   }
 
@@ -125,6 +128,11 @@ class Rider extends EventEmitter {
           });
       return this.getProfileRequest;
     }
+  }
+
+  getRiders() {
+    // Called to get a list of riders that we can add as ghosts
+    return this.requestRidingFriends();
   }
 
   requestRidingFriends() {
@@ -389,7 +397,7 @@ class Rider extends EventEmitter {
   }
 
   addGhosts(positions) {
-    const ghostPositions = this.ghosts.getPositions();
+    const ghostPositions = this.getGhosts().getPositions();
     return positions.concat(ghostPositions);
   }
 

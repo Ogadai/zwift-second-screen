@@ -18,7 +18,7 @@ import { setZoomLevel, setEventName } from '../actions/summary';
 import s from './app.css';
 
 const mapZoomLevels = {
-  1: 2.5,
+  1: 3.5,
   2: 1,
   3: 1
 };

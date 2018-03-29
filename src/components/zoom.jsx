@@ -5,8 +5,8 @@ import classnames from 'classnames';
 import s from './zoom.css';
 
 const MIN_ZOOM = 1;
-const MAX_ZOOM = 4;
-const WHEEL_RATE = 0.1;
+const MAX_ZOOM = 6;
+const WHEEL_RATE = 0.2;
 
 class Zoom extends Component {
   static get propTypes() {
@@ -35,7 +35,7 @@ class Zoom extends Component {
 
         if (props.defaultZoom && props.defaultZoom !== this.props.defaultZoom) {
             const center = (props.defaultZoom && props.defaultZoom !== 1)
-                    ? { x: 0.45, y: 0.25 }
+                    ? { x: 0.63, y: 0.18 }
                     : { x: 0.5, y: 0.5 };
             scale = props.defaultZoom;
             follow = true;

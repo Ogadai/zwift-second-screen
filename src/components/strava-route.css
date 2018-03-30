@@ -24,18 +24,15 @@
         & polyline {
             fill: none;
             stroke-linejoin: round;
-            opacity: 0.5;
 
             &.route-line {
                 stroke-width: 1500;
                 stroke: #3E3E3E;
-                stroke: red;
             }
 
             &.route-glow {
-                visibility: hidden;
-                stroke-width: 00;
-                stroke: #D7A073;
+                stroke-width: 3000;
+                stroke: #aaa;
             }
         }
     }

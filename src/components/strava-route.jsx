@@ -56,10 +56,11 @@ class StravaRoute extends Component {
   }
 
   render() {
-    const { segments } = this.props;
+    const { segments, efforts } = this.props;
 
     return <g className="strava-route">
         { this.getSegments(segments).map(s => this.renderSegment(s)) }
+        { efforts.routes && efforts.routes.map(r => this.renderRoute(r))}
     </g>
   }
 
@@ -85,6 +86,13 @@ class StravaRoute extends Component {
       </g>
   }
 
+  renderRoute(route) {
+    const points = route.positions.map(p => `${p.x},${p.y}`).join(' ');
+    return <g className="route" key={`route-${route.id}`}>
+      <polyline className="route-glow" points={points} />
+      <polyline className="route-line" points={points} />
+    </g>;
+  }
 }
 
 const mapStateToProps = (state) => {

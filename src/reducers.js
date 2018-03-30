@@ -1,7 +1,8 @@
-﻿import { combineReducers } from 'redux'
-import { routerReducer } from 'react-router-redux'
+﻿import { combineReducers } from 'redux';
+import { routerReducer } from 'react-router-redux';
 
-import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_STRAVA, RECEIVE_MAPSETTINGS, RECEIVE_RIDERS, RECEIVE_STRAVA_EFFORT, RECEIVE_RIDERFILTER, RECEIVE_EVENTS } from './actions/fetch';
+import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_STRAVA, RECEIVE_MAPSETTINGS,
+    RECEIVE_RIDERS, RECEIVE_STRAVA_EFFORT, RECEIVE_RIDERFILTER, RECEIVE_EVENTS, RECEIVE_STRAVASEGMENTS } from './actions/fetch';
 import { RECEIVE_LOGINTYPE, RECEIVE_LOGINFAILURE } from './actions/login';
 import { RECEIVE_HOST } from './actions/host';
 import {
@@ -279,6 +280,8 @@ function stravaEfforts(state = {}, action) {
       effortState[action.data.id] = action.data.positions;
 
       return Object.assign({}, state, effortState);
+    case RECEIVE_STRAVASEGMENTS:
+      return Object.assign({}, state, { routes: action.segments });
     default:
       return state;
   }

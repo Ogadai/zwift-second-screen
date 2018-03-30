@@ -91,18 +91,22 @@ class Map {
       const worldSettings = Object.assign({}, baseSettings, eventSettings);
 
       const mapImage = worldSettings ? worldSettings.map : null;
+      const roadsFile = worldSettings ? worldSettings.roads : null;
       const background = worldSettings ? worldSettings.background : null;
       const credit = worldSettings && worldSettings.credit ? worldSettings.credit : defaultCredit;
       const viewBoxSettings = worldSettings ? worldSettings.viewBox : null;
+      const rotateSettings = worldSettings ? worldSettings.rotate : null;
+      const translateSettings = worldSettings ? worldSettings.translate : null;
 
       return {
         worldId,
         credit,
         map: mapImage,
+        roads: roadsFile,
         background,
         viewBox: viewBoxSettings ? viewBoxSettings : this.getSvgParam(map, 'viewBox="'),
-        rotate: this.getSvgParam(map, 'transform="rotate'),
-        translate: this.getSvgParam(map, 'transform="translate')
+        rotate: rotateSettings ? rotateSettings : this.getSvgParam(map, 'transform="rotate'),
+        translate: translateSettings ? translateSettings : this.getSvgParam(map, 'transform="translate')
       };
     });
   }

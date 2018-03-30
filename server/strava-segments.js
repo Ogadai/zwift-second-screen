@@ -72,6 +72,23 @@ class StravaSegments {
             })
     }
 
+    segments(token, worldId, segments, userSettings) {
+        const segmentIDs = segments.split(',').map(s => parseInt(s));
+
+        const tracker = this.tracker(token, worldId, userSettings);
+        return Promise.all(
+            segmentIDs.map(segmentId =>
+                tracker.route(segmentId)
+                    .then(positions => {
+                        return {
+                            id: segmentId,
+                            positions
+                        }
+                    })
+            )
+        )
+    }
+
     getRiderPosition(positions) {
         return positions ? positions.find(p => p.me) : null;
     }

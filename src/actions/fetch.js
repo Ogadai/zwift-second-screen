@@ -169,8 +169,14 @@ export function fetchEvents() {
   return dispatchRequest('/events/', receiveEvents);
 }
 
-export function sendRideOn(riderId) {
-  return dispatch => {
-    axios.post(`/rideon/${riderId}`);
-  }
+export const RECEIVE_STRAVASEGMENTS = "RECEIVE_STRAVASEGMENTS";
+
+function receiveStravaSegments(segments) {
+  return {
+    type: RECEIVE_STRAVASEGMENTS,
+    segments
+  };
+}
+export function fetchStravaSegments(segments) {
+  return dispatchRequest(`/strava-segments?ids=${segments}`, receiveStravaSegments);
 }

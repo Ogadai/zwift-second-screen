@@ -153,14 +153,6 @@ class Server {
       return Promise.resolve({});
     }))
 
-    this.app.post('/rideon/:riderId', this.processRider((rider, req) => {
-      const { riderId } = req.params;
-      if (rider.sendRideOn) {
-        return rider.sendRideOn(riderId);
-      }
-      return Promise.resolve({});
-    }))
-
     this.app.get('/strava-effort/:segmentId', this.processRider((rider, req) => {
       const { segmentId } = req.params;
       const token = stravaConnect.getToken(req);
@@ -168,7 +160,20 @@ class Server {
         return this.worldPromise(rider)
           .then(worldId => this.stravaSegments.segmentEffort(token, worldId, segmentId, stravaConnect.getSettings(req)))
       } else {
-				throw new Exception('Not connected to strava')
+				throw new Error('Not connected to strava')
+      }
+    }))
+
+    this.app.get('/strava-segments', this.processRider((rider, req) => {
+      const { ids } = req.query;
+      const token = stravaConnect.getToken(req);
+      if (!token) {
+				throw new Error('Not connected to strava')
+      } else if (!ids) {
+        throw new Error('No segments requested');
+      } else {
+        return this.worldPromise(rider)
+          .then(worldId => this.stravaSegments.segments(token, worldId, ids, stravaConnect.getSettings(req)))
       }
     }))
 
@@ -311,7 +316,12 @@ class Server {
     if (this.siteSettings && this.siteSettings.static) {
       const { route, path } = this.siteSettings.static
       // Static hosting for web client
-      this.app.use(route, express.static(path))
+      this.app.use(route,
+        (req, res, next) => {
+          setAllowOrigin(res);
+          next();
+        },
+        express.static(path))
     }
 
 		// Static hosting for web client
@@ -443,10 +453,7 @@ function respondCORS(req, res) {
 }
 
 function sendJson(res, data) {
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
-  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  res.setHeader('Access-Control-Allow-Credentials', true);
+  setAllowOrigin(res);
   res.setHeader('Cache-Control', 'nocache');
   res.setHeader('Last-Modified', (new Date()).toUTCString());
   res.setHeader("Pragma", "no-cache");
@@ -455,9 +462,15 @@ function sendJson(res, data) {
 }
 
 function sendImg(res, data, contentType) {
+  setAllowOrigin(res);
   res.setHeader('Accept-Ranges', 'bytes');
-  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
-  res.setHeader('Access-Control-Allow-Credentials', true);
   res.setHeader('Content-Type', contentType);
   res.send(data);
+}
+
+function setAllowOrigin(res) {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:8888');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Credentials', true);
 }

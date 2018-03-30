@@ -5,9 +5,12 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 
 import Rider from './rider.jsx';
+import RiderLabel from './rider-label.jsx';
 import PointOfInterest from './pointOfInterest';
 import StravaRoute from './strava-route.jsx';
-import { fetchMapSettings, sendRideOn } from '../actions/fetch';
+import MapSVG from './map-svg.jsx';
+import MapRoads from './map-roads.jsx';
+import { fetchMapSettings } from '../actions/fetch';
 import { startPolling, stopPolling } from '../actions/polling';
 
 import s from './map.css';
@@ -48,12 +51,15 @@ class Map extends Component {
   }
 
   componentDidMount() {
-    const { develop, overlay, worldId, eventName, onFetchSettings, onStartPolling } = this.props;
+    const { develop, overlay, worldId, mapSettings, eventName, onFetchSettings, onStartPolling } = this.props;
     onFetchSettings(worldId, overlay, eventName);
 
     onStartPolling();
 
     if (develop) this.loadDevelop(worldId);
+    if (mapSettings.roads) {
+      this.loadRoads(mapSettings.roads);
+    }
   }
 
   componentWillReceiveProps(props) {
@@ -62,6 +68,9 @@ class Map extends Component {
     if (props.worldId !== worldId || props.eventName !== eventName) {
       onFetchSettings(props.worldId, overlay, props.eventName);
       if (develop) this.loadDevelop(props.worldId);
+    }
+    if (props.mapSettings.roads !== this.props.mapSettings.roads ) {
+      this.loadRoads(props.mapSettings.roads);
     }
 
     const { activityIndex, activityId, activityInterval } = this.state;
@@ -125,6 +134,24 @@ class Map extends Component {
     })
   }
 
+  loadRoads(roadsFile) {
+    this.gettingRoads = roadsFile;
+    if (roadsFile) {
+      axios.get(roadsFile).then(response => {
+        if (this.gettingRoads == roadsFile) {
+          this.setState({
+            roads: response.data
+          });
+          this.gettingRoads = null;
+        }
+      });
+    } else {
+      this.setState({
+        roads: null
+      });
+    }
+  }
+
   viewScale() {
     const { zoomLevel } = this.props;
 
@@ -135,8 +162,8 @@ class Map extends Component {
 
   render() {
     const { develop, worldId, positions, pointsOfInterest, useMetric,
-        mapSettings, displayActivity, riderFilter, interval, sendRideOn } = this.props;
-    const { svgFile } = this.state;
+        mapSettings, displayActivity, riderFilter, interval } = this.props;
+    const { roads, svgFile } = this.state;
     const { credit } = mapSettings;
     const viewBox = this.state.viewBox || mapSettings.viewBox;
     if (!viewBox) return <div className="map"></div>;
@@ -145,6 +172,11 @@ class Map extends Component {
     const labelRotate = this.getLabelRotate();
 
     const scale = this.viewScale();
+    const selectedRider = positions.find(p => p.id === this.state.selected);
+    const svgProps = {
+      mapSettings,
+      viewBox
+    }
 
     return <div
         className={classnames("map", { "custom-map": mapSettings && mapSettings.map })}
@@ -158,46 +190,41 @@ class Map extends Component {
 				: undefined
       }
 
-      <div className="map-riders"
-            onClick={ev => { ev.stopPropagation(); this.selectRider(-1); }}
+      <MapSVG {...svgProps}
+        onClick={ev => { ev.stopPropagation(); this.selectRider(-1); }}
+        defs={this.renderDefs()}
       >
-        <svg className="full-size" viewBox={viewBox}>
-          {this.renderDefs()}
+        { roads && <MapRoads roads={roads} />}
 
-          <g transform={`rotate${mapSettings.rotate}`}>
-            <g transform={`translate${mapSettings.translate}`}>
-
-              { positions
-                ? <g id="riders" className="riders" ref={input => this.riders = input}>
-                    { this.sortRiders(positions).map(p =>
-                      <Rider key={`rider-${p.id}`}
-                        position={p}
-                        labelRotate={labelRotate}
-                        selected={p.id === this.state.selected}
-                        onClick={ev => this.clickRider(ev, p) }
-                        riderFilter={riderFilter}
-                        scale={scale}
-                        useMetric={useMetric}
-                        interval={interval}
-                        onRideOn={sendRideOn}
-                      />)
-                    }
-                  </g>
-                : undefined }
-
-              { (displayActivity && displayActivity.positions)
-                ? this.renderActivity(displayActivity)
-                : undefined }
-
-              <StravaRoute develop={develop} scale={scale} />
+        { positions
+          ? <g id="riders" className="riders" ref={input => this.riders = input}>
+              { this.sortRiders(positions).map(p =>
+                <Rider key={`rider-${p.id}`}
+                  position={p}
+                  labelRotate={labelRotate}
+                  selected={p.id === this.state.selected}
+                  onClick={ev => this.clickRider(ev, p) }
+                  riderFilter={riderFilter}
+                  scale={scale}
+                  useMetric={useMetric}
+                  interval={interval}
+                />)
+              }
             </g>
-          </g>
-        </svg>
-      </div>
+          : undefined }
 
-      {pointsOfInterest ?
-        this.renderPointsOfInterest(viewBox, scale)
+        { (displayActivity && displayActivity.positions)
+          ? this.renderActivity(displayActivity)
+          : undefined }
+
+        <StravaRoute develop={develop} scale={scale} />
+
+        {pointsOfInterest ?
+          this.renderPointsOfInterest(scale)
         : undefined}
+
+        {selectedRider && this.renderSelectedRiderLabel(scale, labelRotate, selectedRider)}
+      </MapSVG>
 
       {develop ?
         <div className="map-develop">
@@ -207,8 +234,8 @@ class Map extends Component {
 		</div>
   }
 
-  renderPointsOfInterest(viewBox, scale) {
-    const { pointsOfInterest, mapSettings } = this.props;
+  renderPointsOfInterest(scale) {
+    const { pointsOfInterest } = this.props;
 
     const displayPOIs = [];
     pointsOfInterest.forEach((poi, index) => {
@@ -228,23 +255,20 @@ class Map extends Component {
       }
     });
 
-    return <div className="map-points-of-interest">
-      <svg className="full-size" viewBox={viewBox}>
-        <filter id="grayscale">
-          <feColorMatrix type="matrix" values="0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0      0      0      1 0"/>
-        </filter>
-        <g transform={`rotate${mapSettings.rotate}`}>
-          <g transform={`translate${mapSettings.translate}`}>
+    return <g id="pointsOfInterest" className="points-of-interest">
+      {displayPOIs.map(poi =>
+        <PointOfInterest key={poi.key} poi={poi} scale={scale} />
+      )}
+    </g>;
+  }
 
-            <g id="pointsOfInterest" className="points-of-iterest">
-              {displayPOIs.map(poi =>
-                <PointOfInterest key={poi.key} poi={poi} scale={scale} />
-              )}
-            </g>
-          </g>
-        </g>
-      </svg>
-    </div>;
+  renderSelectedRiderLabel(scale, labelRotate, selectedRider) {
+    const { useMetric } = this.props;
+    return <g className="map-rider-labels" transform={`translate(${selectedRider.x},${selectedRider.y})`}>
+      <g transform={`rotate(${labelRotate})`}>
+        <RiderLabel position={selectedRider} scale={scale} useMetric={useMetric} />
+      </g>
+    </g>;
   }
 
   clickRider(event, position) {
@@ -269,6 +293,9 @@ class Map extends Component {
             <feMergeNode in="glow"/>
             <feMergeNode in="glow"/>
           </feMerge>
+        </filter>
+        <filter id="grayscale">
+          <feColorMatrix type="matrix" values="0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0.20 0.20 0.20 0.10 0 0      0      0      1 0"/>
         </filter>
       </defs>;
   }
@@ -415,8 +442,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onFetchSettings: (worldId, overlay, eventName) => dispatch(fetchMapSettings(worldId, overlay, eventName)),
     onStartPolling: () => dispatch(startPolling()),
-    onStopPolling: () => dispatch(stopPolling()),
-    sendRideOn: (riderId) => dispatch(sendRideOn(riderId))
+    onStopPolling: () => dispatch(stopPolling())
   }
 }
 

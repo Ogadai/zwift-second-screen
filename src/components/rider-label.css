@@ -1,27 +1,23 @@
 @import 'variables.css';
 
-.map .rider-position .rider-label {
-    z-index: 250;
-
-    & .background {
-        fill: var(--shaded-background);
-        opacity: 0.8;
-    }
-
-    & .rideOn {
-        fill: var(--button-background);
-
-        &.disabled {
-            fill: var(--button-background-disabled);
+.map-rider-labels {
+    pointer-events: none;
+    & .rider-label {
+        & text {
+            font-family: Verdana;
+            font-size: 9000px;
+            font-weight: 600;
+            fill: black;
         }
-    }
 
-    & .rideOn-thumb {
-        pointer-events: none;
-    }
+        & .background {
+            fill: var(--shaded-background);
+            opacity: 0.8;
+        }
 
-    & .label {
-        font-size: 7000px;
-        font-weight: 400;
+        & .label {
+            font-size: 7000px;
+            font-weight: 400;
+        }
     }
 }

@@ -1,0 +1,19 @@
+@import 'variables.css';
+
+.map-roads {
+  pointer-events: none;
+  & polyline {
+    fill: none;
+    stroke-linejoin: round;
+
+    &.route-line {
+      stroke-width: 1500;
+      stroke: #3E3E3E;
+    }
+
+    &.route-glow {
+      stroke-width: 3000;
+      stroke: #D7A073;
+    }
+  }
+}

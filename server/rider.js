@@ -413,10 +413,6 @@ class Rider extends EventEmitter {
           });
     });
   }
-
-  sendRideOn(targetId) {
-    return Promise.resolve();
-  }
 }
 Rider.userCount = () => {
   return userCache.keys().length;

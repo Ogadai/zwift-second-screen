@@ -14,6 +14,7 @@ import Zoom from './zoom';
 
 import { closeApp } from '../actions/host';
 import { setZoomLevel, setEventName } from '../actions/summary';
+import { fetchStravaSegments } from '../actions/fetch';
 
 import s from './app.css';
 
@@ -32,12 +33,16 @@ class App extends Component {
           id: PropTypes.string
         }).isRequired
       }).isRequired,
+      location: PropTypes.shape({
+        search: PropTypes.string
+      }).isRequired,
       worldId: PropTypes.number,
       showInfo: PropTypes.bool,
       eventName: PropTypes.string,
       overlay: PropTypes.bool,
       openfin: PropTypes.bool,
-      onCloseApp: PropTypes.func
+      onCloseApp: PropTypes.func,
+      onFetchStrava: PropTypes.func
     };
   }
 
@@ -50,10 +55,19 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const { match, setEventName } = this.props;
+    const { match, location, setEventName, onFetchStrava } = this.props;
+    const query = location && location.search ? location.search.substring(1).split('&') : [];
+
     const event = match && match.params && match.params.event && (match.params.event !== 'dev')
         ? match.params.event.toLowerCase().trim() : undefined;
+    const strava = query
+        .map(term => term.split('='))
+        .find(pair => pair[0] === 'strava');
+
     setEventName(event);
+    if (strava) {
+      onFetchStrava(strava[1]);
+    }
   }
 
   componentWillUnmount() {
@@ -126,7 +140,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onCloseApp: closeApp,
     onSetZoomLevel: level => dispatch(setZoomLevel(level)),
-    setEventName: event => dispatch(setEventName(event))
+    setEventName: event => dispatch(setEventName(event)),
+    onFetchStrava: segments => dispatch(fetchStravaSegments(segments))
   }
 }
 

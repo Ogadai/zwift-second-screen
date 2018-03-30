@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classnames from 'classnames';
 
-import RiderLabel from './rider-label.jsx';
 import s from './rider.css';
 
 const riderColours = 5;
@@ -32,7 +31,6 @@ class Rider extends Component {
       labelRotate: PropTypes.number,
       selected: PropTypes.bool,
       onClick: PropTypes.func.isRequired,
-      onRideOn: PropTypes.func,
       riderFilter: PropTypes.string,
       scale: PropTypes.number,
       useMetric: PropTypes.bool,
@@ -44,8 +42,7 @@ class Rider extends Component {
     super(props);
 
     this.state = {
-      position: props.position,
-      sentRideOn: false
+      position: props.position
     };
     this.interval = null;
   }
@@ -97,8 +94,8 @@ class Rider extends Component {
   }
 
   render() {
-    const { selected, labelRotate, scale, useMetric, onClick, onRideOn } = this.props;
-    const { position, sentRideOn } = this.state;
+    const { selected, labelRotate, scale, useMetric, onClick } = this.props;
+    const { position } = this.state;
 
     return <g className={this.getRiderClass()}
           transform={`translate(${position.x},${position.y})`}>
@@ -108,23 +105,8 @@ class Rider extends Component {
         <g className="rider-icon" transform={`rotate(${labelRotate})`} onClick={onClick}>
           <circle cx="0" cy="0" r={ 6000 / scale } style={{ strokeWidth: 2000 / scale }} />
           {this.renderName()}
-          { selected ? <RiderLabel position={position}  scale={scale} useMetric={useMetric}
-              onRideOn={onRideOn ? () => this.sendRideOn() : null} sentRideOn={sentRideOn} /> : undefined }
         </g>
       </g>;
-  }
-
-  sendRideOn() {
-    const { onRideOn } = this.props;
-    const { position, sentRideOn } = this.state;
-
-    if (onRideOn && !sentRideOn) {
-      onRideOn(position.id);
-
-      this.setState({
-        sentRideOn: true
-      });
-    }
   }
 
   getRiderClass() {

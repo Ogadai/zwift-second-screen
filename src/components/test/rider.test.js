@@ -14,11 +14,9 @@ const defaultPosition = {
 };
 
 let onClickStub;
-let onRideOnStub;
 
 const createTarget = (position = {}, params) => {
   onClickStub = sinon.stub();
-  onRideOnStub = sinon.stub();
 
   const allParams = Object.assign({
     scale: 1,
@@ -28,7 +26,6 @@ const createTarget = (position = {}, params) => {
   return shallow(<Rider
     position={Object.assign({}, defaultPosition, position)}
     onClick={onClickStub}
-    onRideOn={onRideOnStub}
     {...allParams}
   />);
 }
@@ -98,22 +95,5 @@ describe('power', () => {
   test('renders class for 8wkg power', () => {
     expect(createTarget({ wattsPerKG: 8.1 }).hasClass('rider-power-8')).toBe(true);
     expect(createTarget({ wattsPerKG: 9.1 }).hasClass('rider-power-8')).toBe(true);
-  });
-});
-
-describe('selected', () => {
-  let wrapper;
-  beforeEach(() => {
-    wrapper = createTarget({}, { selected: true });
-  });
-
-  test('renders rider label', () => {
-    expect(wrapper.find(RiderLabel).length).toBe(1);
-    expect(wrapper.find(RiderLabel).prop('sentRideOn')).toBe(false);
-  });
-
-  test('click rideon triggers onRideOn event', () => {
-    wrapper.find(RiderLabel).prop('onRideOn')();
-    expect(onRideOnStub.called).toBe(true);
   });
 });

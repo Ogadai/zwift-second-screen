@@ -178,7 +178,7 @@ class Summary extends Component {
 
             { (user && user.canLogout)
               ? <li>
-                  <a className="feedback" href="http://zwiftblog.com/zwiftgps/" target="_blank">
+                  <a className="feedback" href="http://zwiftblog.com/zwiftgps/" target="_blank" rel="noopener">
                       <span className="zwiftgps-icon icon-feedback">&nbsp;</span>
                       <span>Feedback</span>
                   </a>
@@ -365,7 +365,7 @@ class Summary extends Component {
 
         {credit ?
           <div className="map-attribute">
-            {credit.prompt || 'Map by'} <a href={credit.href} target="_blank">{credit.name}</a>
+            {credit.prompt || 'Map by'} <a href={credit.href} target="_blank" rel="noopener">{credit.name}</a>
           </div>
         : undefined }
       </div>

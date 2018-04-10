@@ -3,6 +3,7 @@ const expressWs = require('express-ws');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 const path = require('path');
+const compression = require('compression');
 const stravaConnect = require('strava-live-segments/connect');
 
 const Map = require('./map');
@@ -48,6 +49,7 @@ class Server {
 
     this.app.use(bodyParser.json())
     this.app.use(cookieParser())
+    this.app.use(compression());
 
     if (this.stravaSettings) {
       const { clientId, clientSecret } = this.stravaSettings

@@ -1,5 +1,6 @@
 {
   "name": "ZwiftGPS",
+  "short_name": "ZwiftGPS",
   "icons": [
     {
       "src": "launcher-icon-2x.png",
@@ -18,5 +19,7 @@
     }
   ],
   "start_url": "/",
-  "display": "standalone"
+  "display": "standalone",
+  "theme_color": "#FC6719",
+  "background_color": "#fff"
 }

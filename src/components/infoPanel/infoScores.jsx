@@ -15,22 +15,44 @@ class InfoScores extends Component {
 
   render() {
     const { scores } = this.props;
+    if (scores.length == 0) {
+      return <div className="info-scores-empty">Collect coins to score points</div>;
+    }
+    else if (!scores[0].rider) {
+      return this.renderTeams(scores, Math.floor(10 / scores.length));
+    } else {
+      return <div className="info-scores">
+       {this.renderScores(scores, 10)}
+      </div>;
+    }
+  }
+
+  renderTeams(teams, limit) {
+    return <div className="info-scores">
+      {teams.map(team =>
+        <div className="info-scores-team" key={team.name}>
+          <h4 className={`info-scores-${team.colour}`}>
+            <span className="info-scores-name">{team.name}</span>
+            <span className="info-scores-score">{team.score}</span>
+          </h4>
+          {this.renderScores(team.scores, limit)}
+        </div>)}
+    </div>;
+  }
+
+  renderScores(scores, limit) {
     const rendered = [];
     const includesMe = scores.find(entry => entry.rider.me);
 
     scores.forEach((entry, index) => {
-      if (index < 10 || !includesMe || entry.rider.me) {
+      if (index < limit || !includesMe || entry.rider.me) {
         rendered.push(Object.assign({ position: index + 1 }, entry));
       }
     });
 
-    if (scores.length == 0) {
-      return <div className="info-scores-empty">Collect coins to score points</div>
-    } else {
-      return <ul className="info-scores">
-        {rendered.map((entry, index) => this.renderScore(entry, index))}
-      </ul>
-    }
+    return <ul style={{ height: rendered.length * 30 }}>
+      {rendered.map((entry, index) => this.renderScore(entry, index))}
+    </ul>
   }
 
   renderScore(entry, index) {

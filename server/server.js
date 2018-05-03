@@ -129,8 +129,11 @@ class Server {
               console.log(`/world: ${Math.round(duration * 10)/10}ms for ${positions.length} positions`);
             }
 
+            const modifiedPositions = this.pointsOfInterest.modifyPositions(worldId, event, positions);
+
             return {
-              worldId, positions, strava, points,
+              worldId, strava, points,
+              positions: modifiedPositions,
               infoPanel: this.pointsOfInterest.getInfoPanel(worldId, event),
               interval
             };

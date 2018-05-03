@@ -119,6 +119,15 @@ class PointsOfInterest {
     }
   }
 
+  modifyPositions(worldId, event, positions) {
+    const pointsProvider = this.getProvider(worldId, event);
+
+    if (pointsProvider && pointsProvider.modifyPositions) {
+      return pointsProvider.modifyPositions(positions);
+    }
+    return positions;
+  }
+
   getProvider(worldId, event) {
     const baseSettings = this.worldSettings && this.worldSettings[worldId];
     const eventSettings = event && this.worldSettings && this.worldSettings.events && this.worldSettings.events[event]

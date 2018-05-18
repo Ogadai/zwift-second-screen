@@ -54,7 +54,7 @@
 
     &.expanded {
         width: 250px;
-        height: 400px;
+        height: 430px;
         max-height: 70%;
         border: 1px solid var(--ghosts-border);
         background-color: var(--ghosts-background);

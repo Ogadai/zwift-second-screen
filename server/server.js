@@ -30,7 +30,6 @@ class Server {
     this.settings = settings;
     this.hostData = settings ? settings.hostData : null;
     this.map = new Map(settings ? settings.worlds : null);
-    this.pointsOfInterest = new PointsOfInterest(settings ? settings.worlds : null);
     this.siteSettings = settings ? settings.site : null;
     this.stravaSettings = settings ? settings.strava : null;
 
@@ -97,6 +96,7 @@ class Server {
 
     this.app.get('/world', this.processRider((rider, req) => {
       const startTime = process.hrtime();
+
       const event = req.query.event || undefined;
 
       const interval = (this.riderProvider.count > 40) ? 10000
@@ -104,7 +104,7 @@ class Server {
       pollInterval.set(interval);
 
       if (event) {
-        rider.setFilter(`event:${event}`);
+        rider.setFilter(`event:${this.getEventName(req, true)}`);
       }
 
       return Promise.all([
@@ -116,11 +116,12 @@ class Server {
               this.stravaSegments.get(token, worldId, positions, stravaConnect.getSettings(req))
               : Promise.resolve(null);
 
-        this.pointsOfInterest.initialiseRiderProvider(worldId, event, this.riderProvider);
+        const pointsOfInterest = new PointsOfInterest(this.settings ? this.settings.worlds : null, worldId, event);
+        pointsOfInterest.initialiseRiderProvider(this.riderProvider);
 
         return Promise.all([
           stravaPromise,
-          this.pointsOfInterest.getPoints(worldId, positions, event)
+          pointsOfInterest.getPoints(positions)
         ]).then(([strava, points]) => {
             const endTime = process.hrtime(startTime);
             const duration = endTime[0] * 1000 + endTime[1] / 1000000;
@@ -129,12 +130,12 @@ class Server {
               console.log(`/world: ${Math.round(duration * 10)/10}ms for ${positions.length} positions`);
             }
 
-            const modifiedPositions = this.pointsOfInterest.modifyPositions(worldId, event, positions);
+            const modifiedPositions = pointsOfInterest.modifyPositions(positions);
 
             return {
               worldId, strava, points,
               positions: modifiedPositions,
-              infoPanel: this.pointsOfInterest.getInfoPanel(worldId, event),
+              infoPanel: pointsOfInterest.getInfoPanel(),
               interval
             };
           })
@@ -263,7 +264,7 @@ class Server {
 
     this.app.get('/mapSettings', this.processRider((rider, req) => {
       const filter = rider.getFilter ? rider.getFilter() : undefined;
-      const event = req.query.event || undefined;
+      const event = this.getEventName(req);
 
       const worldId = req.query.world || undefined;
       const overlay = req.query.overlay === 'true';
@@ -404,7 +405,7 @@ class Server {
 	processRider(callbackFn) {
     return (req, res) => {
 		  const cookie = req.cookies.zssToken;
-      const event = req.query.event || undefined;
+      const event = this.getEventName(req, true);
       const rider = this.riderProvider.getRider(cookie, event);
 			if (rider) {
         callbackFn(rider, req)
@@ -415,7 +416,16 @@ class Server {
 				sendJson(res, { status: 401, statusText: 'Unauthorised' });
 			}
 		}
-	}
+  }
+  
+  getEventName(req, includeCode) {
+    let event = req.query.event || undefined;
+    if (event) {
+      const eventParts = event.split('-');
+      event = (includeCode && eventParts.length > 1) ? `${eventParts[0]}-${eventParts[1]}` : eventParts[0];
+    }
+    return event ? event.toLowerCase() : undefined;
+  }
 
   worldPromise(rider) {
     const worldId = rider.getCurrentWorld ? rider.getCurrentWorld() : rider.getWorld()

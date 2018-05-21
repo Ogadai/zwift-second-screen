@@ -1,6 +1,7 @@
 const NodeCache = require('node-cache')
 
 const poiCache = new NodeCache({ stdTTL: 30 * 60, checkperiod: 120, useClones: false });
+const instanceCache = new NodeCache({ stdTTL: 10 * 60, checkperiod: 120, useClones: false });
 
 const distance = (p1, p2) => Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y - p2.y, 2));
 
@@ -24,32 +25,32 @@ const distance = (p1, p2) => Math.sqrt(Math.pow(p1.x - p2.x, 2) + Math.pow(p1.y 
 // }, 10000);
 
 class PointsOfInterest {
-  constructor(worldSettings) {
+  constructor(worldSettings, worldId, event) {
     this.worldSettings = worldSettings;
+    this.worldId = worldId;
+    this.eventParams = event ? event.split('-') : [];
+    this.pointsProvider = this.getProvider();
   }
 
-  initialiseRiderProvider(worldId, event, riderProvider) {
-    const pointsProvider = this.getProvider(worldId, event);
-    if (pointsProvider.initialiseRiderProvider) {
-      pointsProvider.initialiseRiderProvider(riderProvider);
+  initialiseRiderProvider(riderProvider) {
+    if (this.pointsProvider.initialiseRiderProvider) {
+      this.pointsProvider.initialiseRiderProvider(riderProvider);
     }
   }
 
-  getPoints(worldId, positions, event) {
-    return this.getEventPoints(worldId, event)
-        .then(points => this.customiseForRider(worldId, points, positions, event));
+  getPoints(positions) {
+    return this.getEventPoints()
+        .then(points => this.customiseForRider(points, positions));
   }
 
-  getInfoPanel(worldId, event) {
-    const pointsProvider = this.getProvider(worldId, event);
-
-    if (pointsProvider && pointsProvider.infoPanel) {
-      return pointsProvider.infoPanel();
+  getInfoPanel() {
+    if (this.pointsProvider && this.pointsProvider.infoPanel) {
+      return this.pointsProvider.infoPanel();
     }
     return undefined;
   }
 
-  customiseForRider(worldId, points, positions, event) {
+  customiseForRider(points, positions) {
     const position = positions && positions.find(p => p.me);
 // TODO: Remove
 // const position = { id: 101, x: 0, y: 0 };
@@ -57,9 +58,9 @@ class PointsOfInterest {
     if (!position) {
       return points;
     }
-    this.registerPlayer(worldId, event, position);
+    this.registerPlayer(position, ...this.eventParams);
 
-    const cacheId = `world-${worldId}-rider-${position.id}`;
+    const cacheId = `world-${this.worldId}-rider-${position.id}`;
     const cachedRider = poiCache.get(cacheId) || { points: [], positions: [] };
 
     const riderPoints = [];
@@ -78,7 +79,7 @@ class PointsOfInterest {
 // point.visited = flags[index];
 
         if (point.visited) {
-          this.pointVisited(worldId, event, p, position, pointVisited.time);
+          this.pointVisited(p, position, pointVisited.time);
         }
       }
       riderPoints.push(point);
@@ -93,50 +94,57 @@ class PointsOfInterest {
     return riderPoints;
   }
 
-  getEventPoints(worldId, event) {
-    const pointsProvider = this.getProvider(worldId, event);
-
-    if (pointsProvider) {
-      return pointsProvider.get();
+  getEventPoints() {
+    if (this.pointsProvider) {
+      return this.pointsProvider.get();
     } else {
       return Promise.resolve([]);
     }
   }
 
-  pointVisited(worldId, event, point, rider, time) {
-    const pointsProvider = this.getProvider(worldId, event);
-
-    if (pointsProvider && pointsProvider.visited) {
-      pointsProvider.visited(point, rider, time);
+  pointVisited(point, rider, time) {
+    if (this.pointsProvider && this.pointsProvider.visited) {
+      this.pointsProvider.visited(point, rider, time);
     }
   }
 
-  registerPlayer(worldId, event, rider) {
-    const pointsProvider = this.getProvider(worldId, event);
-
-    if (pointsProvider && pointsProvider.registerPlayer) {
-      pointsProvider.registerPlayer(rider);
+  registerPlayer(rider, ...params) {
+    if (this.pointsProvider && this.pointsProvider.registerPlayer) {
+      this.pointsProvider.registerPlayer(rider, ...params);
     }
   }
 
-  modifyPositions(worldId, event, positions) {
-    const pointsProvider = this.getProvider(worldId, event);
-
-    if (pointsProvider && pointsProvider.modifyPositions) {
-      return pointsProvider.modifyPositions(positions);
+  modifyPositions(positions) {
+    if (this.pointsProvider && this.pointsProvider.modifyPositions) {
+      return this.pointsProvider.modifyPositions(positions);
     }
     return positions;
   }
 
-  getProvider(worldId, event) {
-    const baseSettings = this.worldSettings && this.worldSettings[worldId];
-    const eventSettings = event && this.worldSettings && this.worldSettings.events && this.worldSettings.events[event]
-          ? this.worldSettings.events[event][worldId]
+  getProvider() {
+    const eventName = this.eventParams.length > 0 ? this.eventParams[0] : undefined;
+    const baseSettings = this.worldSettings && this.worldSettings[this.worldId];
+    const eventSettings = eventName && this.worldSettings && this.worldSettings.events && this.worldSettings.events[eventName]
+          ? this.worldSettings.events[eventName][this.worldId]
           : undefined;
 
-    return (eventSettings && eventSettings.points)
+    const provider = (eventSettings && eventSettings.points)
           ? eventSettings.points
           : baseSettings.points;
+
+    if (typeof provider === 'function') {
+      const params = this.eventParams.length > 1 ? this.eventParams.slice(1) : [];
+      const cacheId = `world-${this.worldId}-event-${eventName}-p1-${params.length > 0 ? params[0] : 'default'}`;
+      const cachedProvider = instanceCache.get(cacheId);
+      if (cachedProvider) {
+        return cachedProvider;
+      }
+        
+      const newProvider = provider(...params);
+      instanceCache.set(cacheId, newProvider);
+      return newProvider;
+    }
+    return provider;
   }
 }
 

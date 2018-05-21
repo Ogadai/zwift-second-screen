@@ -22,7 +22,7 @@ class InfoScores extends Component {
       const meTeam = scores.find(team =>
         team.scores.find(entry => entry.rider.me)
       );
-      return this.renderTeams(scores, Math.floor(12 / scores.length) - 1, !meTeam);
+      return this.renderTeams(scores, Math.max(2, Math.floor(12 / scores.length) - 1), !meTeam);
     } else {
       const meScore = scores.find(entry => entry.rider.me);
       return <div className="info-scores">

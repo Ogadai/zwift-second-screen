@@ -59,7 +59,7 @@ class App extends Component {
     const query = location && location.search ? location.search.substring(1).split('&') : [];
 
     const event = match && match.params && match.params.event && (match.params.event !== 'dev')
-        ? match.params.event.toLowerCase().trim() : undefined;
+        ? match.params.event.trim() : undefined;
     const strava = query
         .map(term => term.split('='))
         .find(pair => pair[0] === 'strava');

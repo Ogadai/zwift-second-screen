@@ -22,6 +22,18 @@
   & .info-scores-red {
     color: #C00000;
   }
+  & .info-scores-green {
+    color: #006000;
+  }
+  & .info-scores-purple {
+    color: #800030;
+  }
+  & .info-scores-orange {
+    color: #C03000;
+  }
+  & .info-scores-yellow {
+    color: #A0A000;
+  }
 
   & ul {
     position: relative;

@@ -51,11 +51,11 @@ class Events {
   }
 
   setRidingInEvent(event, rider) {
-    ridersCache.set(`rider-${event}-${rider.id}`, rider);
+    ridersCache.set(`rider_${event}_${rider.id}`, rider);
   }
 
   getRidersInEvent(event) {
-    const prefix =`rider-${event}-`;
+    const prefix =`rider_${event}_`;
     const riderKeys = ridersCache.keys()
         .filter(k => k.indexOf(prefix) === 0);
 

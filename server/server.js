@@ -37,7 +37,11 @@ class Server {
       this.stravaSegments = new StravaSegments(this.stravaSettings);
     }
 
-    this.initialise();
+    if (this.siteSettings.maintenanceMode) {
+      this.maintenanceMode();
+    } else {
+      this.initialise();
+    }
   }
 
   initialise() {
@@ -336,6 +340,27 @@ class Server {
     // Handle 404s (React app routing)
     this.app.use(doForceSSL);
     this.app.use(indexRoute);
+  }
+
+  maintenanceMode() {
+    this.app = express();
+
+    this.app.get('/', (req, res) => {
+      const htmlPath = path.resolve(`${__dirname}/../public/index.html`);
+      res.sendFile(htmlPath);
+    });
+    this.app.use(express.static(`${__dirname}/../public`))
+
+    this.app.use((req, res) => {
+      setAllowOrigin(res);
+      res.status(503);
+      
+      if (this.siteSettings && this.siteSettings.offline) {
+        res.sendFile(this.siteSettings.offline);
+      } else {
+        res.send('Site is offline');
+      }
+    })
   }
 
   allowAnonymous(req, res) {

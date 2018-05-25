@@ -2,6 +2,7 @@
 import { push } from 'react-router-redux';
 
 import { redirectToLogin } from './login';
+import { unregisterServiceWorker } from '../unregister-service-worker';
 
 export const RECEIVE_PROFILE = "RECEIVE_PROFILE";
 
@@ -146,6 +147,12 @@ export function dispatchRequest(path, dispatchFn) {
         if (status === 401) {
 					// Redirect to login
           dispatch(redirectToLogin());
+        } else if (status === 503) {
+          unregisterServiceWorker().then(() => {
+            setTimeout(() => {
+              window.location.replace('/offline');
+            }, 1000);
+          });
         } else {
           if (!status)
             console.error(`Error calling '${path}': ${error.message}`);

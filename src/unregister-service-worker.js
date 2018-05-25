@@ -1,5 +1,5 @@
 export function unregisterServiceWorker() {
-  if ('serviceWorker' in navigator) {
+  if ('serviceWorker' in navigator && location.protocol === 'https:') {
     try {
       return navigator.serviceWorker.getRegistration('/service-worker.js').then(function (registration) {
         if (registration) {

@@ -94,7 +94,7 @@ class Rider extends Component {
   }
 
   render() {
-    const { selected, labelRotate, scale, useMetric, onClick } = this.props;
+    const { labelRotate, scale, onClick } = this.props;
     const { position } = this.state;
 
     return <g className={this.getRiderClass()}
@@ -111,7 +111,10 @@ class Rider extends Component {
 
   getRiderClass() {
     const { selected, position } = this.props;
-    const powerIndex = Math.min(Math.floor(position.wattsPerKG), 8);
+    const { weight, powerOutput } = position;
+
+    const wattsPerKG = weight ? Math.round((10 * powerOutput) / (weight / 1000)) / 10 : undefined
+    const powerIndex = Math.min(Math.floor(wattsPerKG), 8);
     const riderName = this.getName();
 
     return classnames('rider-position', `rider-power-${powerIndex}`,

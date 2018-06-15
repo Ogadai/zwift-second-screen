@@ -10,7 +10,7 @@ const defaultPosition = {
   y: 200,
   firstName: 'Fred',
   lastName: 'Bloggs',
-  wattsPerKG: 2.4
+  weight: 100000
 };
 
 let onClickStub;
@@ -60,40 +60,40 @@ test('click triggers onClick event', () => {
 
 describe('power', () => {
   test('renders class for zero power', () => {
-    expect(createTarget({ wattsPerKG: 0 }).hasClass('rider-power-0')).toBe(true);
-    expect(createTarget({ wattsPerKG: 0.9 }).hasClass('rider-power-0')).toBe(true);
+    expect(createTarget({ powerOutput: 0 }).hasClass('rider-power-0')).toBe(true);
+    expect(createTarget({ powerOutput: 90 }).hasClass('rider-power-0')).toBe(true);
   });
 
   test('renders class for 1wkg power', () => {
-    expect(createTarget({ wattsPerKG: 1.1 }).hasClass('rider-power-1')).toBe(true);
+    expect(createTarget({ powerOutput: 110 }).hasClass('rider-power-1')).toBe(true);
   });
 
   test('renders class for 2wkg power', () => {
-    expect(createTarget({ wattsPerKG: 2.1 }).hasClass('rider-power-2')).toBe(true);
+    expect(createTarget({ powerOutput: 210 }).hasClass('rider-power-2')).toBe(true);
   });
 
   test('renders class for 3wkg power', () => {
-    expect(createTarget({ wattsPerKG: 3.1 }).hasClass('rider-power-3')).toBe(true);
+    expect(createTarget({ powerOutput: 310 }).hasClass('rider-power-3')).toBe(true);
   });
 
   test('renders class for 4wkg power', () => {
-    expect(createTarget({ wattsPerKG: 4.1 }).hasClass('rider-power-4')).toBe(true);
+    expect(createTarget({ powerOutput: 410 }).hasClass('rider-power-4')).toBe(true);
   });
 
   test('renders class for 5wkg power', () => {
-    expect(createTarget({ wattsPerKG: 5.1 }).hasClass('rider-power-5')).toBe(true);
+    expect(createTarget({ powerOutput: 510 }).hasClass('rider-power-5')).toBe(true);
   });
 
   test('renders class for 6wkg power', () => {
-    expect(createTarget({ wattsPerKG: 6.1 }).hasClass('rider-power-6')).toBe(true);
+    expect(createTarget({ powerOutput: 610 }).hasClass('rider-power-6')).toBe(true);
   });
 
   test('renders class for 7wkg power', () => {
-    expect(createTarget({ wattsPerKG: 7.1 }).hasClass('rider-power-7')).toBe(true);
+    expect(createTarget({ powerOutput: 710 }).hasClass('rider-power-7')).toBe(true);
   });
 
   test('renders class for 8wkg power', () => {
-    expect(createTarget({ wattsPerKG: 8.1 }).hasClass('rider-power-8')).toBe(true);
-    expect(createTarget({ wattsPerKG: 9.1 }).hasClass('rider-power-8')).toBe(true);
+    expect(createTarget({ powerOutput: 810 }).hasClass('rider-power-8')).toBe(true);
+    expect(createTarget({ powerOutput: 910 }).hasClass('rider-power-8')).toBe(true);
   });
 });

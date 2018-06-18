@@ -422,8 +422,18 @@ class Server {
 
         if (redirect)
           res.redirect('/login')
-        else
+        else if (err.response && err.response.data === 'partner.not.authorized') {
+          sendJson(res, {
+            statusText: 'Not authorised',
+            alt: {
+              message: 'Please authorise ZwiftGPS to access your Zwift account',
+              link: { addr: 'https://www.zwift.com', caption: 'Zwift' }
+            }
+          });
+        }
+        else {
           sendJson(res, { status, statusText });
+        }
       })
   }
 

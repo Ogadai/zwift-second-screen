@@ -95,13 +95,15 @@ class Summary extends Component {
   render() {
     const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventName, whatsNew,
       showingGameSelector, showingStravaSettings, stravaConnected, onShowStravaSettings,
-      showingRiderFilter, onShowRiderFilter, onSetRiderFilter, onShowGameSelector,
+      showingRiderFilter, onShowRiderFilter, onShowGameSelector,
       onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
-    const { stravaAgeValid, stravaDateValid, stravaSettings, filterType, riderFilter } = this.state;
+    const { stravaAgeValid, stravaSettings, filterType, riderFilter } = this.state;
     const { credit } = mapSettings;
     const disabled = !profile.riding;
 
     const newFeature = !!Object.keys(whatsNew).find(k => !whatsNew[k]);
+    // And for links:
+    // <a className={classnames('gameSelector', { newFeature: !whatsNew.games })}
 
     return (
       <div className="summary">
@@ -144,7 +146,7 @@ class Summary extends Component {
               ? <li>
                   <a className="riderFilter" href="#" onClick={e => this.showRiderFilter(e)}>
                     <span className="zwiftgps-icon icon-riderfilter">&nbsp;</span>
-                    <span>Find riders</span>
+                    <span>Events</span>
                   </a>
                 </li>
               : undefined }
@@ -169,7 +171,7 @@ class Summary extends Component {
 
             { (user && user.canLogout)
               ? <li>
-                  <a className={classnames('gameSelector', { newFeature: !whatsNew.games })} href="#" onClick={e => this.showGameSelector(e)}>
+                  <a className="gameSelector" href="#" onClick={e => this.showGameSelector(e)}>
                     <span className="zwiftgps-icon icon-gameselector">&nbsp;</span>
                     <span>Games</span>
                   </a>
@@ -285,50 +287,33 @@ class Summary extends Component {
                 >
             </div>
             <div className="popup-content rider-filter">
-              <h2>Find riders</h2>
+              <h2>Events</h2>
               <form onSubmit={event => this.applyRiderFilter(event)}>
                 <ul>
-                  {(!profile.anonymous) && <li>
+                  {(!profile.anonymous) && <li className={classnames({ selected: filterType === 0 })}>
                       <input type="radio" name="filternone" id="filternone"
                           checked={filterType === 0}
                           onChange={() => this.setFilterType(0)} />
-                      <label htmlFor="filternone">Myself and friends</label>
-                    </li>
-                  }
-                  <li>
-                    <input type="radio" name="filterset" id="filterset"
-                        checked={filterType === 1}
-                        onChange={() => this.setFilterType(1)} />
-                    <label htmlFor="filterset">Where
-                      <input type="text" value={filterType === 1 ? riderFilter : ''}
-                            className={classnames("riderfilter")}
-                            onChange={event => this.updateRiderFilter(event)}
-                          />
-                    is in last name</label>
-                  </li>
-                  {events &&
-                    <li>
-                      <input type="radio" name="filterevent" id="filterevent"
-                          checked={filterType === 2}
-                          onChange={() => this.setFilterType(2)} />
-                      <label htmlFor="filterevent">Event
-                        <select
-                          value={filterType === 2 ? riderFilter : ''}
-                          onChange={event => this.updateRiderFilter(event)}
-                          className={classnames("eventfilter")}
-                        >
-                          <option value=""></option>
-                          {events.map(e => <option
-                                key={e.id}
-                                value={`${EVENT_PREFIX}${e.id}`}
-                              >{`${moment(e.eventStart).format('LT')} - ${e.name}`}</option>)}
-                        </select>
+                      <label htmlFor="filternone">
+                        <span className="event-name">Free ride</span>
                       </label>
                     </li>
                   }
+                  {events && events.map(e => 
+                    <li className={classnames({ selected: filterType === 2 && riderFilter === `${EVENT_PREFIX}${e.id}` })}>
+                      {e.image_url && <span className="event-img">{e.image_url}</span>}
+                      <input type="radio" name={`filter-${e.id}`} id={`filter-${e.id}`}
+                          checked={filterType === 2 && riderFilter === `${EVENT_PREFIX}${e.id}`}
+                          onChange={() => this.setFilterType(2, `${EVENT_PREFIX}${e.id}`)} />
+                      <label htmlFor={`filter-${e.id}`}>
+                        <span className="event-time">{moment(e.eventStart).format('LT')}</span>
+                        <span className="event-name">{e.name}</span>
+                      </label>
+                    </li>
+                  )}
                 </ul>
                 <div className="filter-buttons">
-                  <input type="submit" value="Search" />
+                  <input type="submit" value="Select" />
                 </div>
               </form>
             </div>
@@ -439,9 +424,10 @@ class Summary extends Component {
     }
   }
 
-  setFilterType(filterType) {
+  setFilterType(filterType, riderFilter) {
     this.setState({
-      filterType
+      filterType,
+      riderFilter
     });
   }
 

@@ -202,7 +202,7 @@ const defaultSummary = {
   zoomLevel: 1,
   showInfoPanel: screenSize.width >= 900,
   eventName: undefined,
-  whatsNew: getCookie('whats-new', { games: false })
+  whatsNew: getCookie('whats-new', {}) // feature: false
 }
 
 function summary(state = defaultSummary, action) {

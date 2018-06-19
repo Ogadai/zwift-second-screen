@@ -52,7 +52,6 @@ class PooledRider {
         this.promise = new Promise(resolve => {
             this.account.getWorld(1).riderStatus(this.riderId)
                 .then(status => {
-console.log(`Rider ${this.riderId} - (${status.x}, ${status.y})`);
                     this.promise = null;
                     if (this.last && status.rideDurationInSeconds === this.last.rideDurationInSeconds) {
                         console.log(`Same time for ${this.riderId}`)

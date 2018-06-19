@@ -330,26 +330,36 @@ class Rider extends EventEmitter {
     return this.riderStatusFn(rider.id)
       .then(status => {
         if (status) {
-console.log(`${rider.firstName} ${rider.lastName} (${status.x}, ${status.y})`);
-          return {
+          return Object.assign({
             id: rider.id,
             me: rider.me,
             firstName: rider.firstName,
             lastName: rider.lastName,
             weight: rider.weight,
             colour: this.colourFromGroup(rider.group),
-            distanceCovered: status.distanceCovered,
-            speedInMillimetersPerHour: status.speedInMillimetersPerHour,
-            powerOutput: status.powerOutput,
-            rideDurationInSeconds: status.rideDurationInSeconds,
-            yaw: status.yaw,
-            x: status.x,
-            y: status.y,
-            z: status.z,
-            heartRateInBpm: status.heartRateInBpm,
-            wattsPerKG: status.wattsPerKG,
+          }, status, {
+            y: status.z,
+            z: status.y
+          });
+          // return {
+          //   id: rider.id,
+          //   me: rider.me,
+          //   firstName: rider.firstName,
+          //   lastName: rider.lastName,
+          //   weight: rider.weight,
+          //   colour: this.colourFromGroup(rider.group),
+          //   distanceCovered: status.distanceCovered,
+          //   speedInMillimetersPerHour: status.speedInMillimetersPerHour,
+          //   powerOutput: status.powerOutput,
+          //   rideDurationInSeconds: status.rideDurationInSeconds,
+          //   yaw: status.yaw,
+          //   x: status.x,
+          //   y: status.y,
+          //   z: status.z,
+          //   heartRateInBpm: status.heartRateInBpm,
+          //   wattsPerKG: status.wattsPerKG,
 
-            world: status.world,
+          //   world: status.world,
 
             // roadID: status.roadID,
             // rideOns: status.rideOns,
@@ -367,7 +377,7 @@ console.log(`${rider.firstName} ${rider.lastName} (${status.x}, ${status.y})`);
             // contryAlpha3: rider.countryAlpha3,
             // countryCode: rider.countryCode,
             // requestTime: status.requestTime
-          };
+          // };
         } else {
           return null;
         }

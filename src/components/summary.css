@@ -255,10 +255,28 @@
             margin: 10px 0;
             padding: 0;
             text-align: left;
+            overflow-y: auto;
+            max-height: 400px;
         }
 
         & li {
-            display: inline-block;
+            display: block;
+            height: 40px;
+            border: 2px solid white;
+
+            & .event-time {
+                display: inline-block;
+                width: 60px;
+                font-weight: bold;
+            }
+        }
+
+        & .selected {
+            border: 2px solid blue;
+        }
+
+        & input[type=radio] {
+            display: none;
         }
 
         & .riderfilter {

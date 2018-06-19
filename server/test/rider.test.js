@@ -23,11 +23,19 @@ const riding = [
   { playerId: 50105 }
 ];
 
-const testStatusFn = id => ({ id, x: id + 10, y: id + 20 });
+const testStatusFn = id => ({ id, x: id + 10, z: id + 20 });
 
 const expectPositions = (positions, ids) => {
   expect(positions.map(p => ({id: p.id, x: p.x, y: p.y })))
-      .toEqual(ids.map(id => isNaN(id) ? id : testStatusFn(id)));
+      .toEqual(ids.map(id => {
+        if (isNaN(id)) return id;
+        const testStatus = testStatusFn(id);
+        return {
+          id: testStatus.id,
+          x: testStatus.x,
+          y: testStatus.z
+        };
+      }));
 }
 
 beforeEach(() => {

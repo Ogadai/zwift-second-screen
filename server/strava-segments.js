@@ -10,13 +10,13 @@ class StravaSegments {
         const startDate = this.getStartDate(userSettings);
 
         const world = worldId || 1
-        const lastLng = latLngMap[world]
+        const latLng = latLngMap[world]
         const config = {
             key: `world-${world}-${token}-${startDate}`,
             segments: this.settings.segments,
             startDate,
             map: point => {
-                return lastLng.toXY(point.lat + lastLng.offset.lat, point.lng + lastLng.offset.long)
+                return latLng.toXY(point.lat + latLng.offset.lat, point.lng + latLng.offset.long)
             }
         }
 
@@ -59,6 +59,33 @@ class StravaSegments {
                     })
                 })
         })
+    }
+
+    activities(token, worldId, userSettings) {
+        return this.tracker(token, worldId, userSettings)
+            .activities()
+            .then(activities => activities.map(activity => ({
+                id: activity.id,
+                name: activity.name,
+                distanceInMeters: activity.distance,
+                duration: `${Math.floor(activity.elapsed_time / 60)}:${activity.elapsed_time % 60}`,
+                totalElevation: activity.total_elevation_gain,
+                startDate: activity.start_date,
+                avgWatts: activity.average_watts
+            })));
+    }
+
+    activity(token, worldId, activityId, userSettings) {
+        const tracker = this.tracker(token, worldId, userSettings);
+        return Promise.all([tracker.activities(), tracker.activity(activityId)])
+            .then((([activities, points]) => {
+                const cached = activities.find(a => a.id == activityId);
+                return {
+                    id: activityId,
+                    name: cached ? cached.name : 'Unknown',
+                    positions: points
+                }
+            }))
     }
 
     segmentEffort(token, worldId, segmentId, userSettings) {

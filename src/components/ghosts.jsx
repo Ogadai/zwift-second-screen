@@ -26,8 +26,9 @@ class Ghosts extends Component {
       riders: PropTypes.array,
       riderId: PropTypes.number,
       loadingActivities: PropTypes.bool,
-      activites: PropTypes.array,
+      activities: PropTypes.array,
       activityId: PropTypes.number,
+      stravaConnected: PropTypes.bool,
       onToggleGhosts: PropTypes.func.isRequired,
       onToggleAddGhost: PropTypes.func.isRequired,
       onFetchRiders: PropTypes.func.isRequired,
@@ -66,8 +67,9 @@ class Ghosts extends Component {
   }
 
   render() {
-    const { profile, showButton, showPanel, addingGhost, onToggleGhosts } = this.props;
-    if (profile.anonymous) {
+    const { profile, stravaConnected, showButton, showPanel, addingGhost, onToggleGhosts } = this.props;
+
+    if (!stravaConnected || profile.anonymous) {
       return <div></div>;
     }
 
@@ -85,6 +87,7 @@ class Ghosts extends Component {
 
     const regroupDisabled = requestingRegroup || ghosts.length == 0
     const addDisabled = !(riders && riders.length)
+
 		return <div className="display-area">
 			<h1>Ghosts</h1>
       <button className="minimize-button" onClick={onToggleGhosts}>
@@ -121,6 +124,7 @@ class Ghosts extends Component {
     const disabled = !activityId || waitingAddGhost
 		return <div className="display-area adding">
       <header>
+        <h1>Activities</h1>
         <button className="back-button" onClick={onToggleAddGhost}>
           <span className="zwiftgps-icon icon-back">&nbsp;</span>
         </button>
@@ -128,9 +132,9 @@ class Ghosts extends Component {
           <span className="zwiftgps-icon icon-minimize">&nbsp;</span>
         </button>
 
-        <select value={riderId || -1} onChange={event => onSelectRider(event.target.value)}>
+        {/* <select value={riderId || -1} onChange={event => onSelectRider(event.target.value)}>
           {riders.map(r => <option key={r.id} value={r.id}>{r.firstName} {r.lastName} Activities</option>)}
-        </select>
+        </select> */}
       </header>
       <div className="list" onClick={() => onChangeActivity(null)}>
         {!activities.length
@@ -238,7 +242,8 @@ const mapStateToProps = (state) => {
     activityId: state.ghosts.activityId,
     waitingAddGhost: state.ghosts.waitingAddGhost,
     ghostId: state.ghosts.ghostId,
-    requestingRegroup: state.ghosts.requestingRegroup
+    requestingRegroup: state.ghosts.requestingRegroup,
+    stravaConnected: (state.world.strava ? state.world.strava.connected : false) || false
   }
 }
 

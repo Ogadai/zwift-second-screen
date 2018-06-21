@@ -13,7 +13,7 @@ function forRider(account, riderId) {
     return cached;
   }
 
-  const ghosts = new Ghosts(account, riderId);
+  const ghosts = new Ghosts(account);
   ghostsCache.set(cacheId, ghosts);
   return ghosts;
 }
@@ -34,10 +34,25 @@ class Ghosts {
       });
   }
 
+  addGhostFromActivity(riderId, worldId, activity) {
+    return this.getStaticData(riderId)
+      .then(staticData => {
+        const ammendedActivity = Object.assign({
+          firstName: staticData.firstName,
+          lastName: staticData.lastName,
+          worldId
+        }, activity);
+        this.removeGhost(activity.id);
+        this.ghostRiders.push(new Ghost(ammendedActivity, activity.id, staticData));
+      });
+  }
+
   getStaticData(riderId) {
-    return this.account.getProfile(this.riderId).profile()
+    return this.account.getProfile(riderId).profile()
         .then(profile => {
           return {
+              firstName: profile.firstName,
+              lastName: profile.lastName,
               weight: profile.weight
           }
         })

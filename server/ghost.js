@@ -58,6 +58,7 @@ class Ghost extends EventEmitter {
       const wattsPerKG = this.getWattsPerKg(power, this.static.weight);
 
       return Object.assign(baseResult, {
+        id: this.activity.id,
         x: getAggregated('x'),
         y: getAggregated('y'),
         speed: getAggregated('speed'),

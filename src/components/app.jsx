@@ -101,7 +101,7 @@ class App extends Component {
           : <Map develop={develop} /> }
           <Summary />
           {showInfo && <InfoPanel />}
-					{/* {!eventName && <Ghosts />} */}
+					{!eventName && <Ghosts />}
           <StravaSegments />
 				</div>
         <Analytics />

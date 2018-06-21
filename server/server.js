@@ -188,16 +188,52 @@ class Server {
     }))
 
     this.app.get('/activities/:playerId', this.processRider((rider, req) => {
-      const { playerId } = req.params;
-      return this.worldPromise(rider)
-        .then(worldId => rider.getActivities(worldId, playerId))
+      // const { playerId } = req.params;
+      // return this.worldPromise(rider)
+      //   .then(worldId => rider.getActivities(worldId, playerId))
+      const token = stravaConnect.getToken(req);
+      if (!token) {
+				throw new Error('Not connected to strava')
+      } else {
+        return this.worldPromise(rider)
+          .then(worldId => {
+            return this.stravaSegments.activities(token, worldId, stravaConnect.getSettings(req))
+          })
+      }
     }))
 
-    this.app.get('/rider/:riderId/activity/:activityId', this.processRider((rider, req) => rider.getGhosts().getActivity(req.params.riderId, req.params.activityId)))
+    this.app.get('/rider/:riderId/activity/:activityId', this.processRider((rider, req) => {
+      // return rider.getGhosts().getActivity(req.params.riderId, req.params.activityId)
+      const { activityId } = req.params;
+      const token = stravaConnect.getToken(req);
+      if (!token) {
+				throw new Error('Not connected to strava')
+      } else {
+        return this.worldPromise(rider)
+          .then(worldId => {
+            return this.stravaSegments.activity(token, worldId, activityId, stravaConnect.getSettings(req))
+          })
+      }
+    }))
 
     this.app.get('/ghosts', this.processRider((rider, req) => Promise.resolve(rider.getGhosts ? rider.getGhosts().getList() : null)))
     this.app.options('/ghosts', respondCORS)
-    this.app.put('/ghosts', this.processRider((rider, req) => rider.getGhosts().addGhost(parseInt(req.body.riderId), parseInt(req.body.activityId))))
+    this.app.put('/ghosts', this.processRider((rider, req) => {
+      // return rider.getGhosts().addGhost(parseInt(req.body.riderId), parseInt(req.body.activityId))
+      const { activityId } = req.body;
+      const token = stravaConnect.getToken(req);
+      if (!token) {
+				throw new Error('Not connected to strava')
+      } else {
+        return this.worldPromise(rider)
+          .then(worldId => {
+            return this.stravaSegments.activity(token, worldId, activityId, stravaConnect.getSettings(req))
+                .then(activity => {
+                  return rider.getGhosts().addGhostFromActivity(rider.riderId, worldId, activity)
+                });
+          })
+      }
+    }))
     this.app.delete('/ghosts', this.processRider((rider, req) => Promise.resolve(rider.getGhosts().removeAll())))
 
     this.app.options('/ghosts/:ghostId', respondCORS)

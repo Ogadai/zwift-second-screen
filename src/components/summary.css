@@ -240,7 +240,7 @@
 
     & .rider-filter {
         box-sizing: border-box;
-        width: 400px;
+        width: 380px;
         top: 30px;
         max-width: 80%;
         padding: 0 25px 25px 25px;
@@ -256,36 +256,99 @@
             padding: 0;
             text-align: left;
             overflow-y: auto;
-            max-height: 400px;
+            max-height: 600px;
         }
 
         & li {
             display: block;
-            height: 40px;
-            border: 2px solid white;
+            width: 300px;
+            height: 105px;
+            border-bottom: 4px solid var(--app-button-background);
+            background-color: var(--input-border);
+            background-size: 100% 100%;
+            position: relative;
+            cursor: pointer;
+
+            & .event-free {
+                position: absolute;
+                box-sizing: border-box;
+                top: 10px;
+                left: 10px;
+                width: 280px;
+                height: 85px;
+                border-radius: 5px;
+                background-color: white;
+                font-weight: bold;
+                padding: 30px 0;
+                text-align: center;
+            }
+
+            & .event-content {
+                position: absolute;
+                box-sizing: border-box;
+                border-top-left-radius: 5px;
+                bottom: 0;
+                right: 0;
+                width: 290px;
+                background-color: white;
+                padding: 5px 5px 0 5px;
+            }
+
+            & .event-line {
+                display: flex;
+                flex-direction: row;
+                justify-content: flex-end;
+                border-top: 1px solid #CCC;
+                padding: 2px 0;
+
+                & .group {
+                    display: inline-block;
+                    font-size: 75%;
+                    min-width: 13px;
+                    background-color: #CCC;
+                    padding: 2px;
+                    border-radius: 8px;
+                    margin-left: 5px;
+                    text-align: center;
+                    color: white;
+                }
+
+                & .group-1 {
+                    background-color: #fc4119;
+                }
+                & .group-2 {
+                    background-color: #58c34e;
+                }
+                & .group-3 {
+                    background-color: #3ec0e9;
+                }
+                & .group-4 {
+                    background-color: #fccf0b;
+                }
+                & .group-5 {
+                    background-color: #943e5e;
+                }
+                
+            }
+            & .event-line:first-child {
+                border-top: none;
+            }
 
             & .event-time {
                 display: inline-block;
                 width: 60px;
                 font-weight: bold;
+                flex: 0 0 auto;
             }
-        }
 
-        & .selected {
-            border: 2px solid blue;
-        }
-
-        & input[type=radio] {
-            display: none;
-        }
-
-        & .riderfilter {
-            width: 120px;
-        }
-
-        & .eventfilter {
-            width: 250px;
-            max-width: 80%;
+            & .event-name {
+                display: inline-block;
+                flex: 1 1 auto;
+                text-align: right;
+                white-space: nowrap;
+                overflow-x: hidden;
+                text-overflow: ellipsis;
+            }
         }
     }
 

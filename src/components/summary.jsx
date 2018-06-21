@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import moment from 'moment';
 
-import { fetchProfile, fetchRiderFilterIfNeeded, fetchEvents } from '../actions/fetch';
+import { fetchProfile, fetchEvents } from '../actions/fetch';
 import { requestLoginType } from '../actions/login';
 import { setMenuState, showWorldSelector, setWorld, showStravaSettings, showRiderFilter, setRiderFilter, showGameSelector } from '../actions/summary';
 import { connectStrava, disconnectStrava, saveStravaSettings } from '../actions/strava';
@@ -29,6 +29,7 @@ class Summary extends Component {
       showingRiderFilter: PropTypes.bool,
       showingGameSelector: PropTypes.bool,
       events: PropTypes.array,
+      eventsFetching: PropTypes.bool,
       eventName: PropTypes.string,
       whatsNew: PropTypes.object,
       onSetMenuState: PropTypes.func.isRequired,
@@ -75,7 +76,7 @@ class Summary extends Component {
   }
 
   render() {
-    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventName, whatsNew,
+    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventsFetching, eventName, whatsNew,
       showingGameSelector, showingStravaSettings, stravaConnected, onShowStravaSettings,
       showingRiderFilter, onShowRiderFilter, onShowGameSelector,
       onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
@@ -296,6 +297,7 @@ class Summary extends Component {
                     </li>
                   )}
               </ul>
+              {eventsFetching && <div>Loading...</div>}
             </div>
           </div>
         : undefined }
@@ -443,6 +445,7 @@ const mapStateToProps = (state) => {
     showingGameSelector: state.summary.showGameSelector,
     eventName: state.summary.eventName,
     events: state.summary.events,
+    eventsFetching: state.summary.eventsFetching,
     whatsNew: state.summary.whatsNew
   }
 }

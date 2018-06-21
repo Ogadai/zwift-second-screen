@@ -138,8 +138,11 @@ export function dispatchRequestIfNeeded(path, shouldGetFn, dispatchFn) {
   }
 }
 
-export function dispatchRequest(path, dispatchFn) {
+export function dispatchRequest(path, dispatchFn, fetchingFn) {
   return dispatch => {
+    if (fetchingFn) {
+      dispatch(fetchingFn());
+    }
     axios.get(path)
       .then(response => dispatch(dispatchFn(response.data)))
       .catch(error => {
@@ -163,6 +166,14 @@ export function dispatchRequest(path, dispatchFn) {
   }
 }
 
+export const FETCHING_EVENTS = "FETCHING_EVENTS";
+
+export function fetchingEvents() {
+  return {
+    type: FETCHING_EVENTS
+  };
+}
+
 export const RECEIVE_EVENTS = "RECEIVE_EVENTS";
 
 export function receiveEvents(data) {
@@ -173,7 +184,7 @@ export function receiveEvents(data) {
 }
 
 export function fetchEvents() {
-  return dispatchRequest('/events/', receiveEvents);
+  return dispatchRequest('/events/', receiveEvents, fetchingEvents);
 }
 
 export const RECEIVE_STRAVASEGMENTS = "RECEIVE_STRAVASEGMENTS";

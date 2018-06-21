@@ -269,6 +269,10 @@
             position: relative;
             cursor: pointer;
 
+            &:last-child {
+                border-bottom: none;
+            }
+
             & .event-free {
                 position: absolute;
                 box-sizing: border-box;

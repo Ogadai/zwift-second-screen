@@ -2,7 +2,7 @@
 import { routerReducer } from 'react-router-redux';
 
 import { RECEIVE_PROFILE, RECEIVE_POSITIONS, RECEIVE_WORLD, RECEIVE_STRAVA, RECEIVE_MAPSETTINGS,
-    RECEIVE_RIDERS, RECEIVE_STRAVA_EFFORT, RECEIVE_RIDERFILTER, RECEIVE_EVENTS, RECEIVE_STRAVASEGMENTS } from './actions/fetch';
+    RECEIVE_RIDERS, RECEIVE_STRAVA_EFFORT, RECEIVE_RIDERFILTER, FETCHING_EVENTS, RECEIVE_EVENTS, RECEIVE_STRAVASEGMENTS } from './actions/fetch';
 import { RECEIVE_LOGINTYPE, RECEIVE_LOGINFAILURE } from './actions/login';
 import { RECEIVE_HOST } from './actions/host';
 import {
@@ -199,6 +199,7 @@ const defaultSummary = {
   stravaSettings: {},
   riderFilter: undefined,
   events: [],
+  eventsFetching: false,
   zoomLevel: 1,
   showInfoPanel: screenSize.width >= 900,
   eventName: undefined,
@@ -248,9 +249,14 @@ function summary(state = defaultSummary, action) {
       return Object.assign({}, state, {
         stravaSettings: action.settings
       });
+    case FETCHING_EVENTS:
+      return Object.assign({}, state, {
+        eventsFetching: true
+      });
     case RECEIVE_EVENTS:
       return Object.assign({}, state, {
-        events: action.events
+        events: action.events,
+        eventsFetching: false
       });
     case SET_ZOOM_LEVEL:
       return Object.assign({}, state, {

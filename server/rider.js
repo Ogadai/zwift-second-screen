@@ -302,7 +302,9 @@ class Rider extends EventEmitter {
   }
 
   friendMap(friend) {
-    return friend.followeeProfile;
+    return {
+      id: friend
+    };
   }
 
   getPositions() {

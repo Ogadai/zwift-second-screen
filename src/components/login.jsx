@@ -81,10 +81,20 @@ class Login extends Component {
                   {error.alt.message}&nbsp;
 
                   {error.alt.link ?
-                    <a href={error.alt.link.addr}>{error.alt.link.caption}</a>
+                    <a href={error.alt.link.addr} target="_blank">{error.alt.link.caption}</a>
                     : undefined}
                 </div>
                 : undefined}
+            </div>
+            : undefined}
+
+          {!error ?
+            <div class="how-to">
+              <h3>Step 1</h3>
+              <div>Opt-In to sharing your Zwift activities with Zwift GPS</div>
+              <a href="https://my.zwift.com/profile/connections" target="_blank">OPT-IN: Zwift Connections</a>
+              <h3>Step 2</h3>
+              <div>Enter your Zwift ID and Log In</div>
             </div>
             : undefined}
 

@@ -34,7 +34,7 @@
         border: 1px solid #bfbebe;
 
         & fieldset {
-            margin: 20px auto 0 auto;
+            margin: 10px auto 0 auto;
             border: none;
             width: 90%;
         }
@@ -84,6 +84,16 @@
         }
     }
 
+    & .how-to {
+        padding: 0 20px;
+
+        & a {
+            display: block;
+            text-align: center;
+            margin-top: 10px;
+        }
+    }
+
     & .error {
         margin-top: 20px;
         text-align: center;
@@ -93,6 +103,11 @@
             margin-top: 20px;
             font-size: 0.8em;
             color: #3e3e3e;
+        }
+
+        & a {
+            display: block;
+            margin-top: 20px;
         }
     }
 

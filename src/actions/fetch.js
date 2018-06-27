@@ -47,7 +47,10 @@ export function receiveWorld(data) {
 export function fetchWorld() {
   return (dispatch, getState) => {
     const eventName = getState().summary.eventName;
-    const params = eventName ? `?event=${eventName}` : '';
+    let params = '';
+    if (eventName) {
+      params = (eventName === 'allusers') ? '?all=users' : `?event=${eventName}`;
+    }
 
     return dispatch(dispatchRequest(`/world/${params}`, receiveWorld));
   }
@@ -58,7 +61,8 @@ export const RECEIVE_RIDERFILTER = "RECEIVE_RIDERFILTER";
 export function receiveRiderFilter(data) {
   return {
     type: RECEIVE_RIDERFILTER,
-    filter: data.filter || ''
+    filter: data.filter || '',
+    eventName: data.eventName
   };
 }
 
@@ -89,7 +93,7 @@ export function fetchMapSettings(worldId, overlay, eventName) {
   const params = [];
   if (worldId) params.push(`world=${worldId}`);
   if (overlay) params.push('overlay=true');
-  if (eventName) params.push(`event=${eventName}`);
+  if (eventName && eventName !== 'allusers') params.push(`event=${eventName}`);
 
   const queryParams = params.length ? `?${params.join('&')}` : '';
   return dispatchRequest(`/mapSettings/${queryParams}`, receiveMapSettings);

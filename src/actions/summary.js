@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import { getStravaSettings } from './strava';
+import { receiveRiderFilter } from './fetch';
 
 export const SET_MENU_STATE = "SET_MENU_STATE";
 
@@ -71,8 +72,10 @@ export function setRiderFilter(filter) {
     });
 
     axios.post(`/riderfilter`, { filter })
-      .then(() => {
+      .then(response => {
         dispatch(showRiderFilter(false));
+        
+        dispatch(receiveRiderFilter(response.data));
       })
       .catch(error => {
         if (error.response) {

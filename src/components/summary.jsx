@@ -30,6 +30,7 @@ class Summary extends Component {
       showingGameSelector: PropTypes.bool,
       events: PropTypes.array,
       eventsFetching: PropTypes.bool,
+      riderFilterEvent: PropTypes.string,
       eventName: PropTypes.string,
       whatsNew: PropTypes.object,
       onSetMenuState: PropTypes.func.isRequired,
@@ -76,7 +77,7 @@ class Summary extends Component {
   }
 
   render() {
-    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventsFetching, eventName, whatsNew,
+    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventsFetching, eventName, riderFilterEvent, whatsNew,
       showingGameSelector, showingStravaSettings, stravaConnected, onShowStravaSettings,
       showingRiderFilter, onShowRiderFilter, onShowGameSelector,
       onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
@@ -96,6 +97,7 @@ class Summary extends Component {
           <span className="zwiftgps-icon icon-menu">&nbsp;</span>
         </button>
         {newFeature && <div className="menu-button-new newFeature">&nbsp;</div>}
+        {riderFilterEvent && <div className="summary-filtered-event">{riderFilterEvent}</div>}
 
         <div className={classnames("menu-overlay", { hide: !showingMenu })}
               onMouseDown={() => onSetMenuState(false)}
@@ -277,11 +279,11 @@ class Summary extends Component {
                       <span className="event-name">Free ride</span>
                     </div>
                   </li>
-                  {events && events.map(e => 
+                  {events && events.reverse().map(e => 
                     <li key={`event-${e.id}`}
                         onClick={() => this.setFilterType(2, `${EVENT_PREFIX}${e.id}`)}
                         className="event-item"
-                        style={{ backgroundImage: e.image_url ? `url(${e.image_url})` : '' }}
+                        style={{ backgroundImage: e.imageUrl ? `url(${e.imageUrl})` : '' }}
                       >
                       <div className="event-content">
                         <div className="event-line">
@@ -290,7 +292,7 @@ class Summary extends Component {
                         </div>
                         <div className="event-line">
                           {e.eventSubgroups && e.eventSubgroups.map(g => 
-                            <span className={classnames('group', `group-${g.label}`)}>{g.totalEntrantCount}</span>
+                            <span key={`event-grp-${g.id}`} className={classnames('group', `group-${g.label}`)}>{g.totalEntrantCount}</span>
                           )}
                         </div>
                       </div>
@@ -444,6 +446,7 @@ const mapStateToProps = (state) => {
     showingRiderFilter: state.summary.showRiderFilter,
     showingGameSelector: state.summary.showGameSelector,
     eventName: state.summary.eventName,
+    riderFilterEvent: state.summary.riderFilterEvent,
     events: state.summary.events,
     eventsFetching: state.summary.eventsFetching,
     whatsNew: state.summary.whatsNew

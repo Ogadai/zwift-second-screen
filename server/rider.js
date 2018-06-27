@@ -78,6 +78,22 @@ class Rider extends EventEmitter {
     return this.state.filter;
   }
 
+  getFilterDetails() {
+    if (this.state.filter && this.state.filter.indexOf(EVENT_PREFIX) === 0) {
+      const eventSearch = this.state.filter.substring(EVENT_PREFIX.length);
+      return this.events.findMatchingEvent(eventSearch).then(event => {
+        return {
+          filter: this.state.filter,
+          eventName: event && event.name
+        };
+      });
+    }
+
+    return Promise.resolve({
+      filter: this.state.filter
+    });
+  }
+
   getCurrentWorld() {
     return this.state.worldId || this.state.statusWorldId;
   }
@@ -145,13 +161,18 @@ class Rider extends EventEmitter {
 
       profile.me = true;
       return this.getFriends(profile.id).then(friends => {
-        return [profile].concat(friends.map(this.friendMap));
+        return [profile].concat(friends.map(r => this.mapWorldRider(r)));
       });
 		});
   }
 
 	getFriends(riderId) {
-    return this.profile.getFollowees(riderId);
+    return Promise.all([
+      this.profile.getFollowees(riderId),
+      this.allRiders.get()
+    ]).then(([friendIDs, worldRiders]) => {
+      return worldRiders.filter(rider => friendIDs.find(id => id === rider.playerId));
+    });
 	}
 
   getActivities(worldId, riderId) {

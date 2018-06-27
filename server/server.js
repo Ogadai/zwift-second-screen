@@ -109,6 +109,8 @@ class Server {
 
       if (event) {
         rider.setFilter(`event:${this.getEventName(req, true)}`);
+      } else if (req.query.all) {
+        rider.setFilter(`all:${req.query.all}`);
       }
 
       return Promise.all([
@@ -155,12 +157,12 @@ class Server {
 
     this.app.options('/riderfilter', respondCORS)
     this.app.get('/riderfilter', this.processRider((rider, req) => {
-      return Promise.resolve({ filter: rider.getFilter() });
+      return rider.getFilterDetails();
     }))
     this.app.post('/riderfilter', this.processRider((rider, req) => {
       const filter = req.body.filter;
       rider.setFilter(filter && filter.length >= 2 ? filter.toLowerCase() : undefined);
-      return Promise.resolve({});
+      return rider.getFilterDetails();
     }))
 
     this.app.get('/strava-effort/:segmentId', this.processRider((rider, req) => {

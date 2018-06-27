@@ -8,6 +8,13 @@
         z-index: 250;
     }
 
+    & .summary-filtered-event {
+        position: absolute;
+        top: 27px;
+        left: 70px;
+        color: #444;
+    }
+
     & .menu-button-new {
         position: absolute;
         width: 32px;

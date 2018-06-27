@@ -198,6 +198,7 @@ const defaultSummary = {
   showGameSelector: false,
   stravaSettings: {},
   riderFilter: undefined,
+  riderFilterEvent: undefined,
   events: [],
   eventsFetching: false,
   zoomLevel: 1,
@@ -235,7 +236,8 @@ function summary(state = defaultSummary, action) {
     }
     case RECEIVE_RIDERFILTER:
       return Object.assign({}, state, {
-        riderFilter: action.filter
+        riderFilter: action.filter,
+        riderFilterEvent: action.eventName
       });
     case SET_RIDER_FILTER:
       return Object.assign({}, state, {

@@ -92,11 +92,7 @@ describe('state', () => {
 
 describe('getPositions', () => {
   describe('without filter', () => {
-    const friends = [
-      { followeeProfile: { id: 20102 } },
-      { followeeProfile: { id: 30103 } },
-      { followeeProfile: { id: 40104 } }
-    ];
+    const friends = [ 20102, 30103, 40104 ];
 
     beforeEach(() => {
       mockProfile.getFollowees.returns(Promise.resolve(friends));

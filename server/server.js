@@ -305,7 +305,6 @@ class Server {
     })
 
     this.app.get('/mapSettings', this.processRider((rider, req) => {
-      const filter = rider.getFilter ? rider.getFilter() : undefined;
       const event = this.getEventName(req);
 
       const worldId = req.query.world || undefined;
@@ -481,9 +480,12 @@ class Server {
       const event = this.getEventName(req, true);
       const rider = this.riderProvider.getRider(cookie, event);
 			if (rider) {
-        callbackFn(rider, req)
-          .then(respondJson(res))
-          .catch(responseError(res, req.url));
+        const promise = rider.restorePromise ? rider.restorePromise : Promise.resolve();
+        promise.then(() => {
+          callbackFn(rider, req)
+            .then(respondJson(res))
+            .catch(responseError(res, req.url));
+        });
 			} else {
 				res.status(401);
 				sendJson(res, { status: 401, statusText: 'Unauthorised' });
@@ -503,7 +505,7 @@ class Server {
   worldPromise(rider) {
     const worldId = rider.getCurrentWorld ? rider.getCurrentWorld() : rider.getWorld()
     if (worldId) {
-      return Promise.resolve(worldId)
+      return Promise.resolve(worldId);
     } else {
       return this.map.getSettings().then(settings => parseInt(settings.worldId))
     }

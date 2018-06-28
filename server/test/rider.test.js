@@ -59,8 +59,8 @@ beforeEach(() => {
   };
   stubStatusFn = sinon.spy(id => Promise.resolve(testStatusFn(id)));
 
-  Rider.userCache.flushAll();
-  Rider.riderCache.flushAll();
+  Rider.clearUsers();
+  Rider.clearRiders();
 
   testRider = new Rider(mockAccount, riderId, stubStatusFn);
   testRider.allRiders = mockAllRiders;

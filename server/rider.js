@@ -4,9 +4,10 @@ const Ghosts = require('./ghosts');
 const AllRiders = require('./allRiders');
 const Events = require('./events');
 const Profile = require('./profile');
+const Store = require('./store');
 
-const userCache = new NodeCache({ stdTTL: 30, checkperiod: 10, useClones: false });
-const riderCache = new NodeCache({ stdTTL: 10 * 60, checkperiod: 10, useClones: false });
+const userStore = new Store({ ttl: 30, name: 'all-rider-list', list: true });
+const riderStore = new Store({ ttl: 10 * 60, name: 'logged-in-riders' });
 
 const MAX_RIDERS = 40;
 
@@ -33,21 +34,23 @@ class Rider extends EventEmitter {
     this.riderStatusFn = riderStatusFn || this.fallbackRiderStatusFn
 
     this.cacheKey = `rider-${riderId}`;
-
-    this.state = riderCache.get(this.cacheKey);
-    if (this.state) {
-      riderCache.ttl(this.cacheKey);
-    } else {
-      this.state = {
-        worldId: undefined,
-        statusWorldId: undefined,
-        filter: undefined
-      };
-    }
+    this.restorePromise = riderStore.get(this.cacheKey)
+      .then(state => {
+        if (state) {
+          riderStore.ttl(this.cacheKey);
+          this.state = state;
+        } else {
+          this.state = {
+            worldId: undefined,
+            statusWorldId: undefined,
+            filter: undefined
+          };
+        }
+      });
   }
 
   store() {
-    riderCache.set(this.cacheKey, this.state);
+    riderStore.set(this.cacheKey, this.state);
   }
 
   setRiderId(riderId, riderStatusFn) {
@@ -56,11 +59,13 @@ class Rider extends EventEmitter {
   }
 
   setWorld(worldId) {
-    if (this.state.worldId !== worldId) {
-      this.state.worldId = worldId;
-      this.store();
-      this.emit('world', this.state.worldId);
-    }
+    this.restorePromise.then(() => {
+      if (this.state.worldId !== worldId) {
+        this.state.worldId = worldId;
+        this.store();
+        this.emit('world', this.state.worldId);
+      }
+    });
   }
 
   getWorld() {
@@ -68,10 +73,12 @@ class Rider extends EventEmitter {
   }
 
   setFilter(filter) {
-    if (this.state.filter !== filter) {
-      this.state.filter = filter;
-      this.store();
-    }
+    this.restorePromise.then(() => {
+      if (this.state.filter !== filter) {
+        this.state.filter = filter;
+        this.store();
+      }
+    });
   }
 
   getFilter() {
@@ -79,18 +86,20 @@ class Rider extends EventEmitter {
   }
 
   getFilterDetails() {
-    if (this.state.filter && this.state.filter.indexOf(EVENT_PREFIX) === 0) {
-      const eventSearch = this.state.filter.substring(EVENT_PREFIX.length);
-      return this.events.findMatchingEvent(eventSearch).then(event => {
-        return {
-          filter: this.state.filter,
-          eventName: event && event.name
-        };
-      });
-    }
+    return this.restorePromise.then(() => {
+      if (this.state.filter && this.state.filter.indexOf(EVENT_PREFIX) === 0) {
+        const eventSearch = this.state.filter.substring(EVENT_PREFIX.length);
+        return this.events.findMatchingEvent(eventSearch).then(event => {
+          return {
+            filter: this.state.filter,
+            eventName: event && event.name
+          };
+        });
+      }
 
-    return Promise.resolve({
-      filter: this.state.filter
+      return {
+        filter: this.state.filter
+      };
     });
   }
 
@@ -136,7 +145,7 @@ class Rider extends EventEmitter {
       this.getProfileRequest = this.profile.getProfile(this.riderId)
           .then(profile => {
             if (profile) {
-              userCache.set(`rider-${this.riderId}`, profile);
+              userStore.set(`rider-${this.riderId}`, profile);
             }
 
             this.getProfileRequest = null;
@@ -161,7 +170,7 @@ class Rider extends EventEmitter {
 
       profile.me = true;
       return this.getFriends(profile.id).then(friends => {
-        return [profile].concat(friends.map(r => this.mapWorldRider(r)));
+        return [profile].concat(friends);
       });
 		});
   }
@@ -170,9 +179,11 @@ class Rider extends EventEmitter {
     return Promise.all([
       this.profile.getFollowees(riderId),
       this.allRiders.get()
-    ]).then(([friendIDs, worldRiders]) => {
-      return worldRiders.filter(rider => friendIDs.find(id => id === rider.playerId));
-    });
+    ]).then(([friendIDs, worldRiders]) => Promise.all(
+      friendIDs
+        .filter(id => worldRiders.find(rider => id === rider.playerId))
+        .map(id => this.profile.getProfile(id))
+    ));
 	}
 
   getActivities(worldId, riderId) {
@@ -297,10 +308,7 @@ class Rider extends EventEmitter {
 
   requestAll(allSearch) {
     if (allSearch == 'users') {
-      const allUsers = userCache.keys()
-          .map(key => userCache.get(key))
-          .filter(user => user && user.id);
-      return Promise.resolve(allUsers);
+      return userStore.getAll()
     }
     return Promise.resolve([]);
   }
@@ -329,23 +337,25 @@ class Rider extends EventEmitter {
   }
 
   getPositions() {
-    return new Promise(resolve => {
-      // id, firstName, lastName
-      this.requestRidingNow()
-        .then(riders => this.filterByCurrentlyRiding(riders))
-        .then(riders => {
-          const promises = riders
-              .slice(0, MAX_RIDERS)
-              .map(r => this.riderPromise(r));
+    return this.restorePromise.then(() => {
+      return new Promise(resolve => {
+        // id, firstName, lastName
+        this.requestRidingNow()
+          .then(riders => this.filterByCurrentlyRiding(riders))
+          .then(riders => {
+            const promises = riders
+                .slice(0, MAX_RIDERS)
+                .map(r => this.riderPromise(r));
 
-          Promise.all(promises)
-            .then(positions => this.filterByWorld(positions))
-            .then(positions => this.addGhosts(positions.filter(p => p !== null)))
-            .then(positions => resolve(positions));
-        }).catch(ex => {
-          console.log(`Failed to get positions for ${this.riderId}${errorMessage(ex)}`);
-          resolve(null);
-        });
+            Promise.all(promises)
+              .then(positions => this.filterByWorld(positions))
+              .then(positions => this.addGhosts(positions.filter(p => p !== null)))
+              .then(positions => resolve(positions));
+          }).catch(ex => {
+            console.log(`Failed to get positions for ${this.riderId}${errorMessage(ex)}`);
+            resolve(null);
+          });
+      });
     });
   }
 
@@ -450,10 +460,14 @@ class Rider extends EventEmitter {
   }
 }
 Rider.userCount = () => {
-  return userCache.keys().length;
+  return userStore.lastCount;
 }
-Rider.userCache = userCache;
-Rider.riderCache = riderCache;
+Rider.clearUsers = () => {
+  userStore.clear();
+}
+Rider.clearRiders = () => {
+  riderStore.clear();
+}
 module.exports = Rider;
 
 function errorMessage(ex) {

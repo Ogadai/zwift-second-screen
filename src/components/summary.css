@@ -1,5 +1,35 @@
 ﻿@import 'variables.css';
 
+@keyframes evslidein {
+    from {
+        left: -300px;
+        opacity: 1;
+        width: 440px;
+    }
+
+    3% {
+        left: 10px;
+        opacity: 1;
+    }
+
+    20% {
+        opacity: 1;
+    }
+    30% {
+        opacity: 0.4;
+    }
+
+    90% {
+        width: 440px;
+        opacity: 0.4;
+    }
+
+    to {
+        width: 40px;
+        opacity: 0.4;
+    }
+}
+
 .summary {
     & .menu-button {
         position: absolute;
@@ -13,6 +43,10 @@
         top: 27px;
         left: 70px;
         color: #444;
+        width: 200px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
     }
 
     & .menu-button-new {
@@ -265,104 +299,120 @@
             overflow-y: auto;
             max-height: 600px;
         }
-
-        & li {
-            display: block;
-            width: 300px;
-            height: 105px;
-            border-bottom: 4px solid var(--app-button-background);
-            background-color: var(--input-border);
-            background-size: 100% 100%;
-            position: relative;
-            cursor: pointer;
-
-            &:last-child {
-                border-bottom: none;
-            }
-
-            & .event-free {
-                position: absolute;
-                box-sizing: border-box;
-                top: 10px;
-                left: 10px;
-                width: 280px;
-                height: 85px;
-                border-radius: 5px;
-                background-color: white;
-                font-weight: bold;
-                padding: 30px 0;
-                text-align: center;
-            }
-
-            & .event-content {
-                position: absolute;
-                box-sizing: border-box;
-                border-top-left-radius: 5px;
-                bottom: 0;
-                right: 0;
-                width: 290px;
-                background-color: white;
-                padding: 5px 5px 0 5px;
-            }
-
-            & .event-line {
-                display: flex;
-                flex-direction: row;
-                justify-content: flex-end;
-                border-top: 1px solid #CCC;
-                padding: 2px 0;
-
-                & .group {
-                    display: inline-block;
-                    font-size: 75%;
-                    min-width: 13px;
-                    background-color: #CCC;
-                    padding: 2px;
-                    border-radius: 8px;
-                    margin-left: 5px;
-                    text-align: center;
-                    color: white;
-                }
-
-                & .group-1 {
-                    background-color: #fc4119;
-                }
-                & .group-2 {
-                    background-color: #58c34e;
-                }
-                & .group-3 {
-                    background-color: #3ec0e9;
-                }
-                & .group-4 {
-                    background-color: #fccf0b;
-                }
-                & .group-5 {
-                    background-color: #943e5e;
-                }
-                
-            }
-            & .event-line:first-child {
-                border-top: none;
-            }
-
-            & .event-time {
-                display: inline-block;
-                width: 60px;
-                font-weight: bold;
-                flex: 0 0 auto;
-            }
-
-            & .event-name {
-                display: inline-block;
-                flex: 1 1 auto;
-                text-align: right;
-                white-space: nowrap;
-                overflow-x: hidden;
-                text-overflow: ellipsis;
-            }
-        }
     }
 
+    & .event-item {
+        display: block;
+        width: 300px;
+        height: 105px;
+        border-bottom: 4px solid var(--app-button-background);
+        background-color: var(--input-border);
+        background-size: 100% 100%;
+        position: relative;
+        cursor: pointer;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        & .event-free {
+            position: absolute;
+            box-sizing: border-box;
+            top: 10px;
+            left: 10px;
+            width: 280px;
+            height: 85px;
+            border-radius: 5px;
+            background-color: white;
+            font-weight: bold;
+            padding: 30px 0;
+            text-align: center;
+        }
+
+        & .event-content {
+            position: absolute;
+            box-sizing: border-box;
+            border-top-left-radius: 5px;
+            bottom: 0;
+            right: 0;
+            width: 290px;
+            background-color: white;
+            padding: 5px 5px 0 5px;
+        }
+
+        & .event-line {
+            display: flex;
+            flex-direction: row;
+            justify-content: flex-end;
+            border-top: 1px solid #CCC;
+            padding: 2px 0;
+
+            & .group {
+                display: inline-block;
+                font-size: 75%;
+                min-width: 13px;
+                background-color: #CCC;
+                padding: 2px;
+                border-radius: 8px;
+                margin-left: 5px;
+                text-align: center;
+                color: white;
+            }
+
+            & .group-1 {
+                background-color: #fc4119;
+            }
+            & .group-2 {
+                background-color: #58c34e;
+            }
+            & .group-3 {
+                background-color: #3ec0e9;
+            }
+            & .group-4 {
+                background-color: #fccf0b;
+            }
+            & .group-5 {
+                background-color: #943e5e;
+            }
+            
+        }
+        & .event-line:first-child {
+            border-top: none;
+        }
+
+        & .event-time {
+            display: inline-block;
+            width: 60px;
+            font-weight: bold;
+            flex: 0 0 auto;
+        }
+
+        & .event-name {
+            display: inline-block;
+            flex: 1 1 auto;
+            text-align: right;
+            white-space: nowrap;
+            overflow-x: hidden;
+            text-overflow: ellipsis;
+        }
+    }
+    
+    & .summary-quick-links {
+        position: absolute;
+        top: 80px;
+        left: 10px;
+        list-style: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+
+        animation-duration: 15s;
+        animation-iteration-count: 1;
+        animation-name: evslidein;
+
+        width: 40px;
+        opacity: 0.4;
+    }
 
     & .game-selector {
         box-sizing: border-box;

@@ -24,13 +24,14 @@ const screenSize = {
 function world(state = { positions: [], strava: { connected: false }, infoPanel: undefined, interval: 0 }, action) {
   switch (action.type) {
     case RECEIVE_WORLD:
-      const { worldId, positions, strava, points, infoPanel, interval } = action.data;
+      const { worldId, positions, strava, points, infoPanel, interval, currentEvent } = action.data;
 
       const newState = { worldId };
       if (positions) newState.positions = positions;
       if (strava) newState.strava = strava;
       if (points) newState.points = points;
       if (interval) newState.interval = interval;
+      if (currentEvent) newState.currentEvent = currentEvent;
       newState.infoPanel = infoPanel;
 
       return Object.assign({}, state, newState);

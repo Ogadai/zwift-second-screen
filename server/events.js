@@ -36,6 +36,14 @@ class Events {
     });
   }
 
+  findEventForSubgroup(subgroupId) {
+    return this.getEvents().then(events => {
+      return events.find(event =>
+        event.eventSubgroups && event.eventSubgroups.find(group => group.id === subgroupId)
+      );
+    });
+  }
+
   getRiders(subGroupId) {
     const cached = this.ridersFromCache(subGroupId);
 

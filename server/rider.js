@@ -106,6 +106,15 @@ class Rider extends EventEmitter {
     return this.state.worldId || this.state.statusWorldId;
   }
 
+  getCurrentEventFromPositions(positions) {
+    const mePosition = positions && positions.find(p => p && p.me);
+    if (mePosition && mePosition.currentEventSubgroupId) {
+      return this.events.findEventForSubgroup(mePosition.currentEventSubgroupId);
+    }
+
+    return Promise.resolve(null);
+  }
+
   pollPositions() {
     this.getPositions()
       .then(positions => {

@@ -29,6 +29,7 @@ class Summary extends Component {
       showingRiderFilter: PropTypes.bool,
       showingGameSelector: PropTypes.bool,
       events: PropTypes.array,
+      currentEvent: PropTypes.object,
       eventsFetching: PropTypes.bool,
       riderFilterEvent: PropTypes.string,
       eventName: PropTypes.string,
@@ -77,7 +78,8 @@ class Summary extends Component {
   }
 
   render() {
-    const { showingMenu, showingWorldSelector, profile, mapSettings, user, events, eventsFetching, eventName, riderFilterEvent, whatsNew,
+    const { showingMenu, showingWorldSelector, profile, mapSettings, user,
+      events, currentEvent, eventsFetching, eventName, riderFilterEvent, whatsNew,
       showingGameSelector, showingStravaSettings, stravaConnected, onShowStravaSettings,
       showingRiderFilter, onShowRiderFilter, onShowGameSelector,
       onSetMenuState, onShowWorldSelector, onSetWorld, onSaveStravaSettings } = this.props;
@@ -98,6 +100,10 @@ class Summary extends Component {
         </button>
         {newFeature && <div className="menu-button-new newFeature">&nbsp;</div>}
         {riderFilterEvent && <div className="summary-filtered-event">{riderFilterEvent}</div>}
+
+        {currentEvent && !riderFilterEvent && <ul className="summary-quick-links">
+          {this.renderEventDetail(currentEvent)}
+        </ul>}
 
         <div className={classnames("menu-overlay", { hide: !showingMenu })}
               onMouseDown={() => onSetMenuState(false)}
@@ -274,30 +280,12 @@ class Summary extends Component {
             <div className="popup-content rider-filter">
               <h2>Events</h2>
                 <ul>
-                  <li onClick={() => this.setFilterType(0)}>
+                  <li className="event-item" onClick={() => this.setFilterType(0)}>
                     <div className="event-free">
                       <span className="event-name">Free ride</span>
                     </div>
                   </li>
-                  {events && events.reverse().map(e => 
-                    <li key={`event-${e.id}`}
-                        onClick={() => this.setFilterType(2, `${EVENT_PREFIX}${e.id}`)}
-                        className="event-item"
-                        style={{ backgroundImage: e.imageUrl ? `url(${e.imageUrl})` : '' }}
-                      >
-                      <div className="event-content">
-                        <div className="event-line">
-                          <span className="event-time">{moment(e.eventStart).format('LT')}</span>
-                          <span className="event-name">{e.name}</span>
-                        </div>
-                        <div className="event-line">
-                          {e.eventSubgroups && e.eventSubgroups.map(g => 
-                            <span key={`event-grp-${g.id}`} className={classnames('group', `group-${g.label}`)}>{g.totalEntrantCount}</span>
-                          )}
-                        </div>
-                      </div>
-                    </li>
-                  )}
+                  {events && events.reverse().map(e => this.renderEventDetail(e))}
               </ul>
               {eventsFetching && <div>Loading...</div>}
             </div>
@@ -339,6 +327,27 @@ class Summary extends Component {
         : undefined }
       </div>
     )
+  }
+
+  renderEventDetail(e) {
+    return (
+      <li key={`event-${e.id}`}
+        onClick={() => this.setFilterType(2, `${EVENT_PREFIX}${e.id}`)}
+        className="event-item"
+        style={{ backgroundImage: e.imageUrl ? `url(${e.imageUrl})` : '' }}
+      >
+      <div className="event-content">
+        <div className="event-line">
+          <span className="event-time">{moment(e.eventStart).format('LT')}</span>
+          <span className="event-name">{e.name}</span>
+        </div>
+        <div className="event-line">
+          {e.eventSubgroups && e.eventSubgroups.map(g => 
+            <span key={`event-grp-${g.id}`} className={classnames('group', `group-${g.label}`)}>{g.totalEntrantCount}</span>
+          )}
+        </div>
+      </div>
+    </li>);
   }
 
   onTouchStart(event) {
@@ -449,7 +458,8 @@ const mapStateToProps = (state) => {
     riderFilterEvent: state.summary.riderFilterEvent,
     events: state.summary.events,
     eventsFetching: state.summary.eventsFetching,
-    whatsNew: state.summary.whatsNew
+    whatsNew: state.summary.whatsNew,
+    currentEvent: state.world.currentEvent
   }
 }
 

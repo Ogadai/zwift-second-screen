@@ -127,8 +127,9 @@ class Server {
 
         return Promise.all([
           stravaPromise,
-          pointsOfInterest.getPoints(positions)
-        ]).then(([strava, points]) => {
+          pointsOfInterest.getPoints(positions),
+          rider.getCurrentEventFromPositions && rider.getCurrentEventFromPositions(positions)
+        ]).then(([strava, points, currentEvent]) => {
             const endTime = process.hrtime(startTime);
             const duration = endTime[0] * 1000 + endTime[1] / 1000000;
 
@@ -142,7 +143,8 @@ class Server {
               worldId, strava, points,
               positions: modifiedPositions,
               infoPanel: pointsOfInterest.getInfoPanel(),
-              interval
+              interval,
+              currentEvent
             };
           })
       })

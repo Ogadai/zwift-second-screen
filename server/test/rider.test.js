@@ -38,7 +38,7 @@ const expectPositions = (positions, ids) => {
       }));
 }
 
-beforeEach(() => {
+beforeEach(async () => {
   mockAccount = {};
   mockAllRiders = {
     get: sinon.stub().returns(Promise.resolve(riding))
@@ -50,8 +50,7 @@ beforeEach(() => {
     getRidersInEvent: sinon.stub()
   };
   mockProfile = {
-    getProfile: sinon.stub().withArgs(riderId)
-        .returns(Promise.resolve(meProfile)),
+    getProfile: sinon.spy(id => Promise.resolve({ id, me: id === riderId })),
     getFollowees: sinon.stub()
   };
   mockGhosts = {
@@ -63,6 +62,9 @@ beforeEach(() => {
   Rider.clearRiders();
 
   testRider = new Rider(mockAccount, riderId, stubStatusFn);
+  await testRider.restorePromise;
+  await testRider.setFilter('');
+  
   testRider.allRiders = mockAllRiders;
   testRider.events = mockEvents;
   testRider.profile = mockProfile;
@@ -73,18 +75,20 @@ beforeEach(() => {
 });
 
 describe('state', () => {
-  test('restores filter for same rider id', () => {
-    testRider.setFilter('test');
+  test('restores filter for same rider id', async () => {
+    await testRider.setFilter('test');
 
     const newRider = new Rider(mockAccount, riderId, stubStatusFn);
+    await newRider.restorePromise;
 
     expect(newRider.getFilter()).toEqual('test');
   });
 
-  test('doesn\'t restore filter for different rider id', () => {
-    testRider.setFilter('test');
+  test('doesn\'t restore filter for different rider id', async () => {
+    await testRider.setFilter('test');
 
     const newRider = new Rider(mockAccount, 20102, stubStatusFn);
+    await newRider.restorePromise;
 
     expect(newRider.getFilter()).toBe(undefined);
   });

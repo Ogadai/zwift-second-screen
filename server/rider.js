@@ -1,5 +1,4 @@
-﻿const NodeCache = require('node-cache')
-const EventEmitter = require('events');
+﻿const EventEmitter = require('events');
 const Ghosts = require('./ghosts');
 const AllRiders = require('./allRiders');
 const Events = require('./events');
@@ -50,7 +49,7 @@ class Rider extends EventEmitter {
   }
 
   store() {
-    riderStore.set(this.cacheKey, this.state);
+    return riderStore.set(this.cacheKey, this.state);
   }
 
   setRiderId(riderId, riderStatusFn) {
@@ -73,10 +72,10 @@ class Rider extends EventEmitter {
   }
 
   setFilter(filter) {
-    this.restorePromise.then(() => {
+    return this.restorePromise.then(() => {
       if (this.state.filter !== filter) {
         this.state.filter = filter;
-        this.store();
+        return this.store();
       }
     });
   }

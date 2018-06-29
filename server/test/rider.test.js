@@ -231,7 +231,7 @@ describe('getPositions', () => {
 
       mockEvents.getRiders.withArgs(91).returns(Promise.resolve(subEvent91));
       mockEvents.getRiders.withArgs(92).returns(Promise.resolve(subEvent92));
-      mockEvents.getRidersInEvent.returns([]);
+      mockEvents.getRidersInEvent.returns(Promise.resolve([]));
     });
 
     test('gets all name matches and adds me', async () => {
@@ -279,7 +279,7 @@ describe('getPositions', () => {
       mockEvents.findMatchingEvent.withArgs('test')
           .returns(Promise.resolve(null));
 
-      mockEvents.getRidersInEvent.returns(eventRiders);
+      mockEvents.getRidersInEvent.returns(Promise.resolve(eventRiders));
     });
 
     test('gets players in event and doesn\'t add me twice', async () => {
@@ -289,7 +289,7 @@ describe('getPositions', () => {
     });
 
     test('gets other players in event and adds me twice', async () => {
-      mockEvents.getRidersInEvent.returns([eventRiders[2]]);
+      mockEvents.getRidersInEvent.returns(Promise.resolve([eventRiders[2]]));
 
       const positions = await testRider.getPositions();
 

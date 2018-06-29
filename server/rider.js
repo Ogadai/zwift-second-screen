@@ -256,11 +256,15 @@ class Rider extends EventEmitter {
 
     if (eventSearch && isNaN(eventSearch) && riders.length === 0) {
       // Add people tracking the same event if no riders in Zwift event
-      return mePromise.then(riders => {
-        const eventRiders = this.events.getRidersInEvent(eventSearch)
+      return Promise.all([
+        mePromise,
+        this.events.getRidersInEvent(eventSearch)
+      ]).then(([riders, eventRiders]) => {
+        return riders.concat(
+          eventRiders
             .filter(er => er && !riders.find(r => r.id === er.id))
-            .map(er => Object.assign({}, er, { me: false }));
-        return riders.concat(eventRiders);
+            .map(er => Object.assign({}, er, { me: false }))
+        );
       });
     } else {
       return mePromise;

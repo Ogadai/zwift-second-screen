@@ -1,9 +1,13 @@
 const NodeCache = require('node-cache')
+const Store = require('./store');
+
 const eventsCache = new NodeCache({ stdTTL: 10 * 60, checkperiod: 120, useClones: false });
 const ridersCache = new NodeCache({ stdTTL: 2 * 60, checkperiod: 30, useClones: false });
 
 const BEFORE_MINUTES = 180;
 const AFTER_MINUTES = 20;
+
+const getEventRiderStore = (event) => new Store({ ttl: 2 * 60, name: `event-${event}-rider-list`, list: true });
 
 class Events {
   constructor(account) {
@@ -59,31 +63,31 @@ class Events {
   }
 
   setRidingInEvent(event, rider) {
-    ridersCache.set(`rider_${event}_${rider.id}`, rider);
+    getEventRiderStore(event).set(`rider-${rider.id}`, rider);
   }
 
   getRidersInEvent(event) {
-    const prefix =`rider_${event}_`;
-    const riderKeys = ridersCache.keys()
-        .filter(k => k.indexOf(prefix) === 0);
-
-    return riderKeys.map(k => ridersCache.get(k));
+    return getEventRiderStore(event).getAll();
   }
 
   downloadEvents() {
-    const timeNow = Date.now();
-    const params = {
-      eventStartsAfter: timeNow - BEFORE_MINUTES * 60 * 1000,
-      eventStartsBefore: timeNow + AFTER_MINUTES * 60 * 1000
-    };
+    if (!this.eventsPromise) {
+      const timeNow = Date.now();
+      const params = {
+        eventStartsAfter: timeNow - BEFORE_MINUTES * 60 * 1000,
+        eventStartsBefore: timeNow + AFTER_MINUTES * 60 * 1000
+      };
 
-    return this.account.getEvent().search(params)
-      .then(events => {
-        console.log(`${events.length} events`);
+      this.eventsPromise = this.account.getEvent().search(params)
+        .then(events => {
+          console.log(`${events.length} events`);
 
-        eventsCache.set(this.eventsCacheId(), events);
-        return events;
-      });
+          eventsCache.set(this.eventsCacheId(), events);
+          this.eventsPromise = null;
+          return events;
+        });
+    }
+    return this.eventsPromise;
   }
 
   eventsCacheId() {

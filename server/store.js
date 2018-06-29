@@ -74,6 +74,18 @@ class RedisStore {
     });
   }
 
+  add(key, value) {
+    const storeKey = this.key(key);
+    return Promise.all([
+      toPromise('incrby', storeKey, value),
+      this.config.list && toPromise('zadd', this.config.name, Date.now(), storeKey),
+    ]).then(([setRes]) => {
+      this.ttl(key);
+      this.cleanList();
+      return setRes;
+    });
+  }
+
   ttl(key) {
     return toPromise('expire', this.key(key), this.config.ttl);
   }
@@ -139,6 +151,12 @@ class CacheStore {
 
   set(key, value) {
     this.cache.set(this.key(key), value);
+    return Promise.resolve();
+  }
+
+  add(key, value) {
+    const oldValue = this.get(key) || 0;
+    this.set(key, oldValue + value);
     return Promise.resolve();
   }
 

@@ -101,7 +101,7 @@ class Summary extends Component {
         {newFeature && <div className="menu-button-new newFeature">&nbsp;</div>}
         {riderFilterEvent && <div className="summary-filtered-event">{riderFilterEvent}</div>}
 
-        {currentEvent && !riderFilterEvent && <ul className="summary-quick-links">
+        {currentEvent && !riderFilterEvent && !eventName && <ul className="summary-quick-links">
           {this.renderEventDetail(currentEvent)}
         </ul>}
 

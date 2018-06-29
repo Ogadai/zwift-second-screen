@@ -405,6 +405,7 @@
         margin: 0;
         padding: 0;
         overflow: hidden;
+        z-index: 200;
 
         animation-duration: 15s;
         animation-iteration-count: 1;

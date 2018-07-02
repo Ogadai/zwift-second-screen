@@ -28,19 +28,26 @@ class RedisStore {
   }
 
   get(key) {
-    return this.internalGet(this.key(key));
+    return this.internalGet([this.key(key)])
+        .then(([val]) => val);
   }
 
-  internalGet(storeKey) {
-    return toPromise('get', storeKey)
+  getMulti(keys) {
+    return this.internalGet(keys.map(k => this.key(k)));
+  }
+
+  internalGet(storeKeys) {
+    return toPromise('mget', storeKeys)
       .then(res => {
-        let jsonValue;
-        try {
-          jsonValue = res ? JSON.parse(res) : null;
-        } catch (ex) {
-          console.log(`Failed to parse redis result "${res}"`);
-        }
-        return jsonValue;
+        return res.map(val => {
+          let jsonValue;
+          try {
+            jsonValue = val ? JSON.parse(val) : null;
+          } catch (ex) {
+            console.log(`Failed to parse redis result "${val}"`);
+          }
+          return jsonValue;
+        });
       });
   }
 
@@ -53,11 +60,7 @@ class RedisStore {
       ])
         .then(([keys]) => {
           this.lastCount = keys.length;
-          const allValues = keys
-            .map(key => this.internalGet(key))
-            .filter(value => !!value);
-          
-          return Promise.all(allValues);
+          return keys.length ? this.internalGet(keys) : [];
         });
     }
     throw new Error('Cannot getAll() unless { list: true }');
@@ -135,6 +138,12 @@ class CacheStore {
 
   get(key) {
     return Promise.resolve(this.cache.get(this.key(key)))
+  }
+
+  getMulti(keys) {
+    return Promise.all(
+      keys.map(k => this.get(k))
+    );
   }
 
   getAll() {

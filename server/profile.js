@@ -10,7 +10,11 @@ class Profile {
     const cached = this.profileFromCache(riderId);
 
     if (cached) {
-      return Promise.resolve(cached);
+      if (cached.id == riderId) {
+        return Promise.resolve(cached);
+      } else {
+        return Promise.reject(cached);
+      }
     } else {
       return this.downloadProfile(riderId);
     }
@@ -35,6 +39,10 @@ class Profile {
       .then(profile => {
         cache.set(this.profileCacheId(riderId), profile);
         return profile;
+      })
+      .catch(err => {
+        cache.set(this.profileCacheId(riderId), err, 60);
+        return err;
       });
   }
 

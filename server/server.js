@@ -134,7 +134,7 @@ class Server {
             const duration = endTime[0] * 1000 + endTime[1] / 1000000;
 
             if (duration > 100) {
-              console.log(`/world: ${Math.round(duration * 10)/10}ms for ${positions.length} positions`);
+              console.log(`/world: ${Math.round(duration * 10)/10}ms for ${positions ? positions.length : 0} positions`);
             }
 
             const modifiedPositions = pointsOfInterest.modifyPositions(positions);
@@ -486,7 +486,7 @@ class Server {
         promise.then(() => {
           callbackFn(rider, req)
             .then(respondJson(res))
-            .catch(responseError(res, req.url));
+            .catch(responseError(res, req.url, rider));
         });
 			} else {
 				res.status(401);
@@ -516,10 +516,10 @@ class Server {
 }
 module.exports = Server;
 
-function responseError(res, url = 'unknown') {
+function responseError(res, url = 'unknown', rider) {
   return function (err) {
     const message = errorMessage(err);
-    console.log(`Error at url "${url}": ${message}`);
+    console.log(`Error for ${rider ? rider.riderId : '{unknown}'} at url "${url}": ${message}`);
     if (err.response) {
       res.status(err.response.status).send(message);
     } else {

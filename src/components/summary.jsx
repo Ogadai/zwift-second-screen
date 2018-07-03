@@ -99,7 +99,12 @@ class Summary extends Component {
           <span className="zwiftgps-icon icon-menu">&nbsp;</span>
         </button>
         {newFeature && <div className="menu-button-new newFeature">&nbsp;</div>}
-        {riderFilterEvent && <div className="summary-filtered-event">{riderFilterEvent}</div>}
+        {riderFilterEvent && <div className="summary-filtered-event">
+          <span className="event-name">{riderFilterEvent}</span>
+          <button className="cancel-event" onClick={() => this.setFilterType(0)}>
+            <span className="zwiftgps-icon icon-minimize">&nbsp;</span>
+          </button>
+        </div>}
 
         {currentEvent && !riderFilterEvent && !eventName && <ul className="summary-quick-links">
           {this.renderEventDetail(currentEvent)}

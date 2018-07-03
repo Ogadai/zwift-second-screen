@@ -40,13 +40,36 @@
 
     & .summary-filtered-event {
         position: absolute;
-        top: 27px;
+        top: 15px;
         left: 70px;
         color: #444;
-        width: 200px;
+        width: 250px;
         white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        display: flex;
+        flex-direction: row;
+        background-color: var(--button-background);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 30px;
+        opacity: 0.5;
+        box-shadow: 0 3px 4px 0 rgba(0,0,0,0.14), 0 2px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+        z-index: 200;
+
+        &:hover {
+            opacity: 1;
+        }
+
+        & .event-name {
+            flex: 1 1 auto;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin: auto 0;
+        }
+
+        & .cancel-event {
+            background-color: transparent;
+            padding: 0;
+        }
     }
 
     & .menu-button-new {
@@ -303,7 +326,7 @@
 
     & .event-item {
         display: block;
-        width: 300px;
+        width: 100%;
         height: 105px;
         border-bottom: 4px solid var(--app-button-background);
         background-color: var(--input-border);
@@ -320,8 +343,8 @@
             box-sizing: border-box;
             top: 10px;
             left: 10px;
-            width: 280px;
-            height: 85px;
+            right: 10px;
+            bottom: 10px;
             border-radius: 5px;
             background-color: white;
             font-weight: bold;
@@ -335,7 +358,7 @@
             border-top-left-radius: 5px;
             bottom: 0;
             right: 0;
-            width: 290px;
+            width: 100%;
             background-color: white;
             padding: 5px 5px 0 5px;
         }

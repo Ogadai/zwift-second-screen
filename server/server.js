@@ -531,7 +531,7 @@ function responseError(res, url = 'unknown') {
 function errorMessage(ex) {
   return (ex && ex.response && ex.response.status)
       ? `- ${ex.response.status} (${ex.response.statusText})`
-      : ex.message;
+      : `${ex.message}\r\n${ex.stack}`;
 }
 
 function respondJson(res) {

@@ -21,6 +21,10 @@
         border-top-left-radius: 20px;
     }
 
+    & h3 {
+        margin: 20px 0 10px 0;
+    }
+
     & form, & .host, & .download, & .about-content {
         -webkit-app-region: no-drag;
         background-color: white;
@@ -180,6 +184,7 @@
         top: 0;
         left: 0;
         transition: opacity 5s;
+        z-index: 100;
     }
 
     & .about-content {
@@ -219,7 +224,11 @@
 @media (max-width: 1000px) {
     .login {
         & form {
-            margin-top: 75px;
+            margin-top: 65px;
+        }
+
+        & h2 {
+            padding: 15px;
         }
 
         & .download {
@@ -233,15 +242,20 @@
 
         & .about-item {
             display: inline-block;
-            margin-right: 20px;
+            margin-right: 10px;
+
+            &:last-child {
+                margin-right: 0;
+            }
 
             & .game-image {
                 background-size: 100%;
-                width: 30px;
-                height: 30px;
+                width: 20px;
+                height: 20px;
+                border-radius: 5px;
 
                 &.game-goldrush {
-                    background-position: 0 -150px;
+                    background-position: 0 -160px;
                 }
             }
 

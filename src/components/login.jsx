@@ -176,7 +176,7 @@ class Login extends Component {
               </ul>
 
               <div className="about-notes">
-                You'll need to opt-in to sharing Zwift activities with ZwiftGPS.
+                You'll need to opt-in to share Zwift activities with ZwiftGPS.
                 No activity data is stored after your session ends.
               </div>
             </div>
@@ -196,13 +196,12 @@ class Login extends Component {
 
               <ul>
                 <li>New game starts every hour</li>
-                <li>Ride over coins on the map to get points</li>
-                <li>Ride over a chest to reveal some bonus coins</li>
-                <li>Team games when there are 4 or more players</li>
+                <li>Ride over coins to get points</li>
+                <li>Team games for 4 or more players</li>
               </ul>
 
               <div className="about-notes">
-                You'll need to opt-in to sharing Zwift activities with ZwiftGPS.
+                You'll need to opt-in to share Zwift activities with ZwiftGPS.
                 No activity data is stored after your session ends.
               </div>
             </div>

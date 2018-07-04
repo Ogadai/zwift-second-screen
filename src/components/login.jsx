@@ -39,7 +39,9 @@ class Login extends Component {
     this.state = {
       username: props.user ? props.user.username : '',
       password: '',
-      id: props.user ? props.user.id : ''
+      id: props.user ? props.user.id : '',
+      aboutZwiftGPS: false,
+      aboutGoldRush: false
     };
   }
 
@@ -59,7 +61,7 @@ class Login extends Component {
 
   render() {
     const { user, overlay, host, error, onRunHost, onCloseApp } = this.props;
-    const { username, password, id } = this.state;
+    const { username, password, id, aboutZwiftGPS, aboutGoldRush } = this.state;
     const loginType = user ? user.type : '';
 
     return (
@@ -70,7 +72,9 @@ class Login extends Component {
           { overlay ? <a className="close-button" href="#" onClick={onCloseApp}>X</a> : undefined }
 				</h1>
 
-        <form onSubmit={evt => this.onSubmitForm(evt)}>
+        {this.renderAbout()}
+
+        <form className={classnames({ hide: aboutZwiftGPS || aboutGoldRush })} onSubmit={evt => this.onSubmitForm(evt)}>
           <h2>Log In</h2>
           {error ?
             <div className="error">
@@ -89,7 +93,7 @@ class Login extends Component {
             : undefined}
 
           {!error ?
-            <div class="how-to">
+            <div className="how-to">
               <h3>Step 1</h3>
               <div>Opt-In to sharing your Zwift activities with Zwift GPS</div>
               <a href="https://my.zwift.com/profile/connections" target="_blank">OPT-IN: Zwift Connections</a>
@@ -144,6 +148,68 @@ class Login extends Component {
         </div>
       </div>
     )
+  }
+
+  onToggleAbout(name) {
+    const newState = {};
+    newState[name] = !this.state[name];
+    this.setState(newState);
+  }
+
+  renderAbout() {
+    const { aboutZwiftGPS, aboutGoldRush } = this.state;
+    return <ul className="about-menu">
+      <li className="about-item" onClick={() => this.onToggleAbout('aboutZwiftGPS')}>
+        <span className="game-image game-zwiftgps"></span>
+        <span className="game-name">About ZwiftGPS</span>
+        {aboutZwiftGPS && <div className="about-frame">
+          <div className="about-content">
+            <h2>About ZwiftGPS</h2>
+            <div className="about-desc">
+              ZwiftGPS is a companion application for when you're riding in Zwift.
+
+              <img src="/img/about-zwiftgps.png" alt="ZwiftGPS Screenshot" />
+
+              <ul>
+                <li>See your position and any friends you're following in Zwift</li>
+                <li>Follow riders taking part in Zwift events</li>
+              </ul>
+
+              <div className="about-notes">
+                You'll need to opt-in to sharing Zwift activities with ZwiftGPS.
+                No activity data is stored after your session ends.
+              </div>
+            </div>
+          </div>
+        </div>}
+      </li>
+      <li className="about-item" onClick={() => this.onToggleAbout('aboutGoldRush')}>
+        <span className="game-image game-goldrush"></span>
+        <span className="game-name">About GoldRush</span>
+        {aboutGoldRush && <div className="about-frame">
+          <div className="about-content">
+            <h2>About GoldRush</h2>
+            <div className="about-desc">
+              GoldRush is a game you can play while riding in Zwift
+
+              <img src="/img/about-goldrush.png" alt="ZwiftGPS Screenshot" />
+
+              <ul>
+                <li>New game starts every hour</li>
+                <li>Ride over coins on the map to get points</li>
+                <li>Ride over a chest to reveal some bonus coins</li>
+                <li>Team games when there are 4 or more players</li>
+              </ul>
+
+              <div className="about-notes">
+                You'll need to opt-in to sharing Zwift activities with ZwiftGPS.
+                No activity data is stored after your session ends.
+              </div>
+            </div>
+          </div>
+        </div>}
+      </li>
+    </ul>;
   }
 
   onSubmitForm(evt) {

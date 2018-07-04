@@ -21,7 +21,7 @@
         border-top-left-radius: 20px;
     }
 
-    & form, & .host, & .download {
+    & form, & .host, & .download, & .about-content {
         -webkit-app-region: no-drag;
         background-color: white;
         border-top-left-radius: 20px;
@@ -32,6 +32,10 @@
         width: 450px;
         max-width: 95%;
         border: 1px solid #bfbebe;
+
+        &.hide {
+            display: none;
+        }
 
         & fieldset {
             margin: 10px auto 0 auto;
@@ -133,5 +137,117 @@
         padding: var(--padding);
         left: 0;
         bottom: 0;
+    }
+
+    & .about-menu {
+        position: absolute;
+        top: 50px;
+        left: 10px;
+        right: 10px;
+
+        padding: 0;
+        margin: 0;
+        list-style: none;
+    }
+
+    & .about-item {
+        cursor: pointer;
+        margin: 10px 0;
+        padding: 10px;
+        max-width: 250px;
+        border-radius: 10px;
+        background-color: var(--button-background);
+
+        & .game-image {
+            display: inline-block;
+            vertical-align: middle;
+            width: 60px;
+            height: 60px;
+        }
+
+        & .game-name {
+            display: inline-block;
+            vertical-align: middle;
+            margin-left: 10px;
+            font-weight: bold;
+            color: white;
+        }
+    }
+
+    & .about-frame {
+        width: 100%;
+        position: absolute;
+        top: 0;
+        left: 0;
+        transition: opacity 5s;
+    }
+
+    & .about-content {
+        margin: 20px auto;
+        background-color: white;
+        max-width: 800px;
+        border: 1px solid #bfbebe;
+
+        & .about-desc {
+            padding: 20px;
+            text-align: left;
+
+            & img {
+                width: 100%;
+                margin: 10px 0;
+            }
+
+            & ul {
+                margin: 0 0 0 20px;
+                padding: 0;
+                list-style: disc;
+            }
+
+            & li {
+                margin: 5px 0;
+            }
+        }
+
+        & .about-notes {
+            font-size: 80%;
+            color: #4d4d4d;
+            margin-top: 20px;
+        }
+    }
+}
+
+@media (max-width: 1000px) {
+    .login {
+        & form {
+            margin-top: 75px;
+        }
+
+        & .download {
+            display: none;
+        }
+
+        & .about-menu {
+            width: auto;
+            text-align: center;
+        }
+
+        & .about-item {
+            display: inline-block;
+            margin-right: 20px;
+
+            & .game-image {
+                background-size: 100%;
+                width: 30px;
+                height: 30px;
+
+                &.game-goldrush {
+                    background-position: 0 -150px;
+                }
+            }
+
+            & .game-name {
+                font-size: 80%;
+            }
+        }
     }
 }

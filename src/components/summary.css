@@ -471,19 +471,6 @@
                 width: 60px;
                 height: 60px;
                 border-radius: 10px;
-                background: url(/img/games.png);
-
-                &.game-zwiftgps {
-                    background-position: 0 0;
-                }
-
-                &.game-zwiftquest {
-                    background-position: 0 -60px;
-                }
-
-                &.game-goldrush {
-                    background-position: 0 -120px;
-                }
             }
 
             & .game-name {
@@ -492,6 +479,22 @@
                 font-weight: bold;
             }
         }
+    }
+}
+
+.game-image {
+    background: url(/img/games.png);
+
+    &.game-zwiftgps {
+        background-position: 0 0;
+    }
+
+    &.game-zwiftquest {
+        background-position: 0 -60px;
+    }
+
+    &.game-goldrush {
+        background-position: 0 -120px;
     }
 }
 

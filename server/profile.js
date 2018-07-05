@@ -41,8 +41,17 @@ class Profile {
         return profile;
       })
       .catch(err => {
-        cache.set(this.profileCacheId(riderId), err, 60);
-        return err;
+        const resErr = {
+          message: err.message,
+          stack: err.stack,
+          response: {
+            status: err.response.status,
+            statusText: err.response.statusText,
+            data: err.response.data
+          }
+        };
+        cache.set(this.profileCacheId(riderId), resErr, 60);
+        throw resErr;
       });
   }
 

@@ -461,7 +461,7 @@ class Server {
 
         if (redirect)
           res.redirect('/login')
-        else if (err.response /* && err.response.data === 'partner.not.authorized'*/) {
+        else if (err.response.data === 'partner.not.authorized') {
           sendJson(res, {
             statusText: 'Please opt-in to sharing Zwift activities with ZwiftGPS',
             alt: {
@@ -521,7 +521,11 @@ function responseError(res, url = 'unknown', rider) {
     const message = errorMessage(err);
     console.log(`Error for ${rider ? rider.riderId : '{unknown}'} at url "${url}": ${message}`);
     if (err.response) {
-      res.status(err.response.status).send(message);
+      if (err.response.data === 'partner.not.authorized') {
+        res.status(401).send(message);
+      } else {
+        res.status(err.response.status).send(message);
+      }
     } else {
       res.status(500).send(message);
     }

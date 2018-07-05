@@ -290,7 +290,7 @@ class Summary extends Component {
                       <span className="event-name">Free ride</span>
                     </div>
                   </li>
-                  {events && events.reverse().map(e => this.renderEventDetail(e))}
+                  {events && events.slice().reverse().map(e => this.renderEventDetail(e))}
               </ul>
               {eventsFetching && <div>Loading...</div>}
             </div>

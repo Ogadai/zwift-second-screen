@@ -509,7 +509,7 @@ class Server {
     if (worldId) {
       return Promise.resolve(worldId);
     } else {
-      return this.map.getSettings().then(settings => parseInt(settings.worldId))
+      return this.map.getWorld()
     }
   }
 

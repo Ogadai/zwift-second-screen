@@ -39,6 +39,7 @@
     "nosleep.js": "^0.7.0",
     "redis": "^2.8.0",
     "strava-live-segments": "latest",
+    "xml2js": "^0.4.19",
     "zwift-mobile-api": "latest"
   },
   "devDependencies": {

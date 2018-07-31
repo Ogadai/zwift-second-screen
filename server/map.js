@@ -1,6 +1,8 @@
 ﻿const axios = require('axios');
 const fs = require('fs');
 const NodeCache = require('node-cache')
+const xml2js = require('xml2js')
+const moment = require('moment')
 
 const downloadUrl = '/zwiftmap/svg/world',
   downloadParam = '', // use value 0 to disable background
@@ -18,6 +20,14 @@ const requesOptions = {
   }
 };
 
+const scheduleUrl = 'http://cdn.zwift.com/gameassets/MapSchedule.xml';
+const scheduleMaps = {
+  WATOPIA: 1,
+  RICHMOND: 2,
+  LONDON: 3,
+  INNSBRUCK: 4
+};
+
 const defaultCredit = {
   name: 'ZwiftHacks',
   href: 'http://zwifthacks.com'
@@ -32,6 +42,27 @@ class Map {
 
   key(worldId) {
     return worldId || 'default';
+  }
+
+  getSchedule() {
+    const key = 'zwift-schedule';
+    const cached = mapCache.get(key);
+    if (cached) {
+      return Promise.resolve(cached);
+    } else {
+      return this.downloadSchedule().then(scheduleXML => {
+        return new Promise(resolve => {
+          xml2js.parseString(scheduleXML, (err, schedule) => {
+            mapCache.set(key, schedule);
+            resolve(schedule);
+          })
+        })
+      });
+    }
+  }
+
+  downloadSchedule() {
+    return axios.get(scheduleUrl).then(response => response.data);
   }
 
   getSvg(worldId) {
@@ -79,10 +110,29 @@ class Map {
     return `${styleStart}${styleData}${styleEnd}`;
   }
 
-  getSettings(requestWorldId, overlay, event) {
-    return this.getSvg(requestWorldId).then(map => {
-      const worldId = this.getSvgParam(map, 'id="world_');
+  getWorld() {
+    return this.getSchedule().then(schedule => {
+      const list = schedule.MapSchedule.appointments[0].appointment.map(a => {
+        return {
+          world: scheduleMaps[a.$.map],
+          start: moment(a.$.start)
+        };
+      });
+      const now = moment();
+      const latest = list.reduce((current, a) => {
+        if ((!current || current.start.isBefore(a)) && a.start.isBefore(now)) {
+          return a;
+        }
+        return current;
+      }, null);
+      return latest ? latest.world : 1;
+    });
+  }
 
+  getSettings(requestWorldId, overlay, event) {
+    const worldPromise = requestWorldId ? Promise.resolve(requestWorldId) : this.getWorld();
+
+    return worldPromise.then(worldId => {
       const baseSettings = (!overlay && this.worldSettings) ? this.worldSettings[worldId] : null;
       const eventSettings = event && this.worldSettings.events && this.worldSettings.events[event]
             ? this.worldSettings.events[event][worldId]
@@ -104,12 +154,44 @@ class Map {
         map: mapImage,
         roads: roadsFile,
         background,
-        viewBox: viewBoxSettings ? viewBoxSettings : this.getSvgParam(map, 'viewBox="'),
-        rotate: rotateSettings ? rotateSettings : this.getSvgParam(map, 'transform="rotate'),
-        translate: translateSettings ? translateSettings : this.getSvgParam(map, 'transform="translate')
+        viewBox: viewBoxSettings,
+        rotate: rotateSettings,
+        translate: translateSettings
       };
     });
   }
+
+  // getSettings(requestWorldId, overlay, event) {
+  //   return this.getSvg(requestWorldId).then(map => {
+  //     const worldId = this.getSvgParam(map, 'id="world_');
+
+  //     const baseSettings = (!overlay && this.worldSettings) ? this.worldSettings[worldId] : null;
+  //     const eventSettings = event && this.worldSettings.events && this.worldSettings.events[event]
+  //           ? this.worldSettings.events[event][worldId]
+  //           : undefined;
+
+  //     const worldSettings = Object.assign({}, baseSettings, eventSettings);
+
+  //     const mapImage = worldSettings ? worldSettings.map : null;
+  //     const roadsFile = worldSettings ? worldSettings.roads : null;
+  //     const background = worldSettings ? worldSettings.background : null;
+  //     const credit = worldSettings && worldSettings.credit ? worldSettings.credit : defaultCredit;
+  //     const viewBoxSettings = worldSettings ? worldSettings.viewBox : null;
+  //     const rotateSettings = worldSettings ? worldSettings.rotate : null;
+  //     const translateSettings = worldSettings ? worldSettings.translate : null;
+
+  //     return {
+  //       worldId,
+  //       credit,
+  //       map: mapImage,
+  //       roads: roadsFile,
+  //       background,
+  //       viewBox: viewBoxSettings ? viewBoxSettings : this.getSvgParam(map, 'viewBox="'),
+  //       rotate: rotateSettings ? rotateSettings : this.getSvgParam(map, 'transform="rotate'),
+  //       translate: translateSettings ? translateSettings : this.getSvgParam(map, 'transform="translate')
+  //     };
+  //   });
+  // }
 
   getSvgParam(map, searchTerm) {
     const pos = map.indexOf(searchTerm);

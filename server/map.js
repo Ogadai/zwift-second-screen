@@ -25,7 +25,7 @@ const scheduleMaps = {
   WATOPIA: 1,
   RICHMOND: 2,
   LONDON: 3,
-  INNSBRUCK: 4
+  INNSBRUCK: 5
 };
 
 const defaultCredit = {

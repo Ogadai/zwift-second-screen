@@ -49,7 +49,12 @@ export function fetchWorld() {
     const eventName = getState().summary.eventName;
     let params = '';
     if (eventName) {
-      params = (eventName === 'allusers') ? '?all=users' : `?event=${eventName}`;
+      if (eventName === 'allusers')
+        params = "?all=users";
+      else if (eventName === 'allriders')
+        params = "?all=riders";
+      else
+        params = `?event=${eventName}`;
     }
 
     return dispatch(dispatchRequest(`/world/${params}`, receiveWorld));
@@ -93,7 +98,7 @@ export function fetchMapSettings(worldId, overlay, eventName) {
   const params = [];
   if (worldId) params.push(`world=${worldId}`);
   if (overlay) params.push('overlay=true');
-  if (eventName && eventName !== 'allusers') params.push(`event=${eventName}`);
+  if (eventName && eventName !== 'allusers' && eventName !== 'allriders') params.push(`event=${eventName}`);
 
   const queryParams = params.length ? `?${params.join('&')}` : '';
   return dispatchRequest(`/mapSettings/${queryParams}`, receiveMapSettings);

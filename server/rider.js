@@ -17,6 +17,15 @@ const GROUP_COLOURS = [
   'yellow'
 ];
 
+const COURSE_TO_WORLD = {
+  3: 1,
+  4: 2,
+  5: 3,
+  6: 1,
+  7: 3,
+  9: 5
+}
+
 const EVENT_PREFIX = "event:";
 const ALL_PREFIX = "all:";
 
@@ -321,7 +330,10 @@ class Rider extends EventEmitter {
   requestAll(allSearch) {
     if (allSearch == 'users') {
       return userStore.getAll()
+    } else if (allSearch == 'riders') {
+      return this.allRiders.get().then(riders => riders.map(r => this.mapWorldRider(r)))
     }
+
     return Promise.resolve([]);
   }
 
@@ -375,12 +387,16 @@ class Rider extends EventEmitter {
     return this.riderStatusFn(rider.id)
       .then(status => {
         if (status) {
+          const course = ((status.aux2 & 0xff0000) >> 16);
+          const world = course in COURSE_TO_WORLD ? COURSE_TO_WORLD[course] : course;  
+          
           return Object.assign({
             id: rider.id,
             me: rider.me,
             firstName: rider.firstName,
             lastName: rider.lastName,
             weight: rider.weight,
+            world,
             colour: this.colourFromGroup(rider.group),
           }, status, {
             y: status.z,
@@ -436,7 +452,7 @@ class Rider extends EventEmitter {
   filterByWorld(positions) {
     const worldId = this.state.worldId || this.getWorldFromPositions(positions);
     if (worldId) {
-      return positions.filter(p => p && p.world === worldId)
+      return positions.filter(p => p && (!p.world || p.world === worldId))
     } else {
       return positions;
     }

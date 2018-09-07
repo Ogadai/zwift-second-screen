@@ -44,11 +44,11 @@ class Profile {
         const resErr = {
           message: err.message,
           stack: err.stack,
-          response: {
+          response: err.response ? {
             status: err.response.status,
             statusText: err.response.statusText,
             data: err.response.data
-          }
+          } : null
         };
         cache.set(this.profileCacheId(riderId), resErr, 60);
         throw resErr;

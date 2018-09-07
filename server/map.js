@@ -20,7 +20,7 @@ const requesOptions = {
   }
 };
 
-const scheduleUrl = 'http://cdn.zwift.com/gameassets/MapSchedule.xml';
+const scheduleUrl = 'https://whatsonzwift.com/cached/MapSchedule.xml';
 const scheduleMaps = {
   WATOPIA: 1,
   RICHMOND: 2,
@@ -33,7 +33,7 @@ const defaultCredit = {
   href: 'http://zwifthacks.com'
 }
 
-const mapCache = new NodeCache({ stdTTL: 30 * 60, checkperiod: 120, useClones: false });
+const mapCache = new NodeCache({ stdTTL: 4 * 60 * 60, checkperiod: 120, useClones: false });
 
 class Map {
   constructor(worldSettings) {

@@ -23,6 +23,7 @@ const COURSE_TO_WORLD = {
   5: 3,
   6: 1,
   7: 3,
+  8: 4,
   9: 5
 }
 

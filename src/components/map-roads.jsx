@@ -19,8 +19,8 @@ export default class MapRoads extends Component {
     const { roads } = this.props;
 
     return <g className="map-roads">
-        { roads.filter(r => r.glow).map(r => this.renderRoute(r, 'route-glow'))}
-        { roads.map(r => this.renderRoute(r, 'route-line'))}
+        { roads.filter(r => !r.hide && r.glow).map(r => this.renderRoute(r, 'route-glow'))}
+        { roads.filter(r => !r.hide).map(r => this.renderRoute(r, 'route-line'))}
     </g>
   }
 

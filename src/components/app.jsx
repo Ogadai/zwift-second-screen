@@ -21,7 +21,9 @@ import s from './app.css';
 const mapZoomLevels = {
   1: 3.5,
   2: 1,
-  3: 1
+  3: 1,
+  5: 1,
+  8: 2
 };
 
 class App extends Component {

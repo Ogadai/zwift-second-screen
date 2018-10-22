@@ -198,7 +198,7 @@
 
     & .world-selector {
         box-sizing: border-box;
-        width: 550px;
+        width: 700px;
         top: 30px;
         max-width: 80%;
         padding: 0 25px 25px 25px;
@@ -244,6 +244,10 @@
                 }
 
                 &.world-5 {
+                    background-position: 0 -180px;
+                }
+
+                &.world-4 {
                     background-position: 0 -180px;
                 }
             }

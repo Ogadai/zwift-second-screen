@@ -12,6 +12,7 @@ class Zoom extends Component {
   static get propTypes() {
     return {
       defaultZoom: PropTypes.number,
+      defaultCenter: PropTypes.shape({ x: PropTypes.number, y: PropTypes.number }),
       followSelector: PropTypes.string,
       onChangeZoomLevel: PropTypes.func
     };
@@ -22,7 +23,7 @@ class Zoom extends Component {
 
         this.state = {
             scale: props.defaultZoom || 1,
-            center: { x: 0.5, y: 0.5 },
+            center: props.defaultCenter || { x: 0.5, y: 0.5 },
             dragging: false,
             touchStart: {},
             touchLast: {},
@@ -34,9 +35,7 @@ class Zoom extends Component {
         let { follow, scale } = this.state;
 
         if (props.defaultZoom && props.defaultZoom !== this.props.defaultZoom) {
-            const center = (props.defaultZoom && props.defaultZoom !== 1)
-                    ? { x: 0.63, y: 0.18 }
-                    : { x: 0.5, y: 0.5 };
+            const center = props.defaultCenter || { x: 0.5, y: 0.5 };
             scale = props.defaultZoom;
             follow = true;
             this.setZoom({ scale, center, follow });

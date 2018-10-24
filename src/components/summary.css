@@ -201,17 +201,24 @@
         width: 700px;
         top: 30px;
         max-width: 80%;
+        max-height: calc(100% - 60px);
         padding: 0 25px 25px 25px;
         text-align: center;
 
+        display: flex;
+        flex-direction: column;
+
         & h2 {
             margin: 20px 0 10px 0;
+            flex: 0 0 auto;
         }
 
         & ul {
             list-style: none;
             margin: 0;
             padding: 0;
+            flex: 0 1 auto;
+            overflow-y: auto;
         }
 
         & li {

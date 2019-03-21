@@ -1,6 +1,6 @@
 {
   "name": "zwift-second-screen",
-  "version": "0.1.31",
+  "version": "0.1.28",
   "description": "Second Screen companion application for Zwift",
   "main": "main.js",
   "scripts": {
@@ -19,12 +19,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ogadai/zwift-second-screen",
-    "directory": "tst-git"
+    "url": "https://github.com/Ogadai/zwift-second-screen"
   },
   "author": "Andy Lee",
   "license": "MIT",
-  "homepage": "https://github.com/Ogadai/zwift-second-screen/tree/master/tst-home",
+  "homepage": "https://github.com/Ogadai/zwift-second-screen",
   "engines": {
     "node": ">=7.0.0"
   },

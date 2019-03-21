@@ -6,7 +6,7 @@
 </div>
 <div>
   <h4>test-git relative to root</h4>
-  <img src="tst-git/decorate.png"/>
+  <img src="decorate.png"/>
 </div>
 <div>
   <h4>test-git root</h4>

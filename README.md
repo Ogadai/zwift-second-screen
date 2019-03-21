@@ -1,5 +1,23 @@
 # Docs
 
+<div>
+  <h4>test-git relative</h4>
+  <img src="decorate.png"/>
+</div>
+<div>
+  <h4>test-git root</h4>
+  <img src="/tst-git/decorate.png"/>
+</div>
+
+<div>
+  <h4>test-home relative</h4>
+  <img src="heatmap.png"/>
+</div>
+<div>
+  <h4>test-home root</h4>
+  <img src="/tst-home/heatmap.png"/>
+</div>
+
 ## Getting stated
 
 Install the dependencies

@@ -19,11 +19,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ogadai/zwift-second-screen"
+    "url": "https://github.com/Ogadai/zwift-second-screen/tree/master/tst-git"
   },
   "author": "Andy Lee",
   "license": "MIT",
-  "homepage": "https://github.com/Ogadai/zwift-second-screen",
+  "homepage": "https://github.com/Ogadai/zwift-second-screen/tree/master/tst-home",
   "engines": {
     "node": ">=7.0.0"
   },

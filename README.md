@@ -1,12 +1,8 @@
 # Docs
 
 <div>
-  <h4>test-git relative to subfolder</h4>
-  <img src="decorate.png"/>
-</div>
-<div>
-  <h4>test-git relative to root</h4>
-  <img src="decorate.png"/>
+  <h4>test-git relative</h4>
+  <img src="tst-git/decorate.png"/>
 </div>
 <div>
   <h4>test-git root</h4>

@@ -26,7 +26,8 @@ const scheduleMaps = {
   RICHMOND: 2,
   LONDON: 3,
   NEWYORK: 4,
-  INNSBRUCK: 5
+  INNSBRUCK: 5,
+  YORKSHIRE: 7
 };
 
 const defaultCredit = {

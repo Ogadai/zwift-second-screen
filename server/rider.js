@@ -24,7 +24,8 @@ const COURSE_TO_WORLD = {
   6: 1,
   7: 3,
   8: 4,
-  9: 5
+  9: 5,
+  11: 7
 }
 
 const EVENT_PREFIX = "event:";

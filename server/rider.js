@@ -195,14 +195,22 @@ class Rider extends EventEmitter {
   }
 
 	getFriends(riderId) {
-    return Promise.all([
-      this.profile.getFollowees(riderId),
-      this.allRiders.get()
-    ]).then(([friendIDs, worldRiders]) => Promise.all(
-      friendIDs
-        .filter(id => worldRiders.find(rider => id === rider.playerId))
-        .map(id => this.profile.getProfile(id))
-    ));
+    return this.profile.getFollowees(riderId)
+      .then(friendIDs => 
+          Promise.all(friendIDs.map(id => this.checkOnline(id).then(isOnline => isOnline ? id : null)))
+          .then(friends => friends.filter(f => !!f))
+      )
+      .then(friendIDs => {
+        return Promise.all(friendIDs.map(id => this.profile.getProfile(id)));
+      });
+    // return Promise.all([
+    //   this.profile.getFollowees(riderId),
+    //   this.allRiders.get()
+    // ]).then(([friendIDs, worldRiders]) => Promise.all(
+    //   friendIDs
+    //     .filter(id => worldRiders.find(rider => id === rider.playerId))
+    //     .map(id => this.profile.getProfile(id))
+    // ));
 	}
 
   getActivities(worldId, riderId) {
@@ -239,9 +247,8 @@ class Rider extends EventEmitter {
   }
 
   filterByCurrentlyRiding(riders) {
-    return this.allRiders.get().then(worldRiders =>
-      riders.filter(r => worldRiders.filter(wr => wr.playerId === r.id).length > 0)
-    );
+    return Promise.all(riders.map(rider => this.checkOnline(rider.id).then(isOnline => isOnline ? rider : null)))
+        .then(responses => responses.filter(r => !!r));
   }
 
   addMeToRiders(riders) {
@@ -383,6 +390,10 @@ class Rider extends EventEmitter {
           });
       });
     });
+  }
+
+  checkOnline(id) {
+    return this.riderStatusFn(id).then(status => !!status);
   }
 
   riderPromise(rider) {

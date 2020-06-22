@@ -69,7 +69,7 @@ class PooledRider {
                     console.log(`Failed to get status for ${this.riderId}${errorMessage(ex)}`);
                     this.promise = null;
                     this.last = null;
-                    this.skip = 5;
+                    this.skip = 15;
                     resolve(null);
                 });
         });

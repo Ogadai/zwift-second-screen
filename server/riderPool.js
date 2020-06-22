@@ -47,7 +47,7 @@ class RiderPool {
 
     function refreshNext() {
         if (refreshList.length > 0) {
-            const chunk = Math.max(1, Math.ceil(refreshList.length / 5));
+            const chunk = Math.max(1, Math.ceil(Math.min(refreshList.length / 5, 2 * MAX_RATE)));
             const riders = refreshList.splice(0, chunk);
             const promises = riders.map(r => r.refresh());
             Promise.all(promises).then(() => refreshNext());

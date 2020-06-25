@@ -66,7 +66,9 @@ class Profile {
   downloadFollowees(riderId) {
     return this.account.getProfile(riderId).followees()
       .then(followees => {
-        cache.set(this.followeesCacheId(riderId), followees);
+        if (followees.length > 0) {
+          cache.set(this.followeesCacheId(riderId), followees);
+        }
         return followees;
       });
   }

@@ -37,7 +37,7 @@ class Server {
       this.stravaSegments = new StravaSegments(this.stravaSettings);
     }
 
-    if (this.siteSettings.maintenanceMode) {
+    if (this.siteSettings && this.siteSettings.maintenanceMode) {
       this.maintenanceMode();
     } else {
       this.initialise();

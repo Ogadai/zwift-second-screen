@@ -224,9 +224,25 @@ class Summary extends Component {
                   <span className="world-image world-5"></span>
                   <span className="world-name">Innsbruck</span>
                 </li>
+                <li onClick={() => onSetWorld(6)}>
+                  <span className="world-image world-6"></span>
+                  <span className="world-name">Bologna</span>
+                </li>
                 <li onClick={() => onSetWorld(7)}>
                   <span className="world-image world-7"></span>
                   <span className="world-name">Yorkshire</span>
+                </li>
+                <li onClick={() => onSetWorld(8)}>
+                  <span className="world-image world-8"></span>
+                  <span className="world-name">Crit City</span>
+                </li>
+                <li onClick={() => onSetWorld(10)}>
+                  <span className="world-image world-10"></span>
+                  <span className="world-name">France</span>
+                </li>
+                <li onClick={() => onSetWorld(11)}>
+                  <span className="world-image world-11"></span>
+                  <span className="world-name">Paris</span>
                 </li>
               </ul>
             </div>

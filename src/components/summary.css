@@ -258,8 +258,24 @@
                     background-position: 0 -180px;
                 }
 
+                &.world-6 {
+                    background-position: 0 -360px;
+                }
+
                 &.world-7 {
                     background-position: 0 -300px;
+                }
+                
+                &.world-8 {
+                    background-position: 0 -420px;
+                }
+                
+                &.world-10 {
+                    background-position: 0 -480px;
+                }
+                
+                &.world-11 {
+                    background-position: 0 -540px;
                 }
             }
 

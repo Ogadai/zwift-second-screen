@@ -27,7 +27,8 @@ const scheduleMaps = {
   LONDON: 3,
   NEWYORK: 4,
   INNSBRUCK: 5,
-  YORKSHIRE: 7
+  YORKSHIRE: 7,
+  FRANCE: 10
 };
 
 const defaultCredit = {

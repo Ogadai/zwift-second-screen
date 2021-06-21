@@ -28,7 +28,8 @@ const scheduleMaps = {
   NEWYORK: 4,
   INNSBRUCK: 5,
   YORKSHIRE: 7,
-  FRANCE: 10
+  FRANCE: 10,
+  MAKURIISLANDS: 9
 };
 
 const defaultCredit = {

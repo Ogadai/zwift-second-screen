@@ -89,6 +89,6 @@
     "webpack": "1.14.0",
     "webpack-cleanup-plugin": "^0.4.1",
     "webpack-dashboard": "^0.2.1",
-    "webpack-dev-server": "1.16.2"
+    "webpack-dev-server": "3.1.11"
   }
 }

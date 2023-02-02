@@ -25,7 +25,8 @@ const mapZoomLevels = {
   4: 1.7,
   5: 2,
   7: 1.5,
-  9: 1.5
+  9: 1.5,
+  13: 2.3
 };
 const mapDefaultCenter = {
   1: { x: 0.6, y: 0.23 },
@@ -34,7 +35,8 @@ const mapDefaultCenter = {
   4: { x: 0.53, y: 0.4 },
   5: { x: 0.47, y: 0.3 },
   7: { x: 0.4, y: 0.4 },
-  9: { x: 0.7, y: 0.5 }
+  9: { x: 0.6, y: 0.6 },
+  13: { x: 0.5, y: 0.5 }
 };
 
 class App extends Component {

@@ -29,7 +29,8 @@ const scheduleMaps = {
   INNSBRUCK: 5,
   YORKSHIRE: 7,
   FRANCE: 10,
-  MAKURIISLANDS: 9
+  MAKURIISLANDS: 9,
+  SCOTLAND: 13
 };
 
 const defaultCredit = {

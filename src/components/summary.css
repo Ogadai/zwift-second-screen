@@ -281,6 +281,10 @@
                 &.world-9 {
                     background-position: 0 -600px;
                 }
+                
+                &.world-13 {
+                    background-position: 0 -660px;
+                }
             }
 
             & .world-name {

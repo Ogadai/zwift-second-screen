@@ -248,8 +248,8 @@ class Summary extends Component {
                   <span className="world-image world-9"></span>
                   <span className="world-name">Makuri</span>
                 </li>
-                <li onClick={() => onSetWorld(13)}>
-                  <span className="world-image world-13"></span>
+                <li onClick={() => onSetWorld(17)}>
+                  <span className="world-image world-17"></span>
                   <span className="world-name">Scotland</span>
                 </li>
               </ul>

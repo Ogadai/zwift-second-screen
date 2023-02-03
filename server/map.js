@@ -116,22 +116,27 @@ class Map {
   }
 
   getWorld() {
-    return this.getSchedule().then(schedule => {
-      const list = schedule.MapSchedule.appointments[0].appointment.map(a => {
-        return {
-          world: scheduleMaps[a.$.map],
-          start: moment(a.$.start)
-        };
-      });
-      const now = moment();
-      const latest = list.reduce((current, a) => {
-        if ((!current || current.start.isBefore(a)) && a.start.isBefore(now)) {
-          return a;
-        }
-        return current;
-      }, null);
-      return latest ? latest.world : 1;
-    });
+    return Promise.resolve(scheduleMaps.WATOPIA);
+
+    // Disable trying to get the current world from the "Schedule", since
+    // Watopia is always the first available world now.
+
+    // return this.getSchedule().then(schedule => {
+    //   const list = schedule.MapSchedule.appointments[0].appointment.map(a => {
+    //     return {
+    //       world: scheduleMaps[a.$.map],
+    //       start: moment(a.$.start)
+    //     };
+    //   });
+    //   const now = moment();
+    //   const latest = list.reduce((current, a) => {
+    //     if ((!current || current.start.isBefore(a)) && a.start.isBefore(now)) {
+    //       return a;
+    //     }
+    //     return current;
+    //   }, null);
+    //   return latest ? latest.world : 1;
+    // });
   }
 
   getSettings(requestWorldId, overlay, event) {

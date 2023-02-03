@@ -1,5 +1,7 @@
 import standard from './standard.png';
+import sprintstart from './sprintstart.png';
 import sprint from './sprint.png';
+import climbstart from './climbstart.png';
 import kom from './kom.png';
 import kompink from './kompink.png';
 import mountain from './mountain.png';
@@ -15,7 +17,9 @@ import goldrush_chest from './goldrush/chest.png';
 
 const images = {
   standard,
+	sprintstart,
   sprint,
+	climbstart,
   kom,
   kompink,
   mountain,

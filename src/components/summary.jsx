@@ -10,6 +10,7 @@ import { setMenuState, showWorldSelector, setWorld, showStravaSettings, showRide
 import { connectStrava, disconnectStrava, saveStravaSettings } from '../actions/strava';
 import { toggleFullScreen } from './full-screen';
 
+
 import s from './summary.css';
 
 const EVENT_PREFIX = "event:";

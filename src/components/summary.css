@@ -112,7 +112,6 @@
         right: 0;
         margin: 0 auto;
         background-color: var(--menu-background);
-        border: 2px solid var(--activity-color);
         border-radius: 25px;
         z-index: 400;
     }
@@ -134,40 +133,43 @@
             left: -300px;
         }
 
-        & .actions {
-            margin: 10px 0 0 0;
-            padding: 10px 0 0 0;
-            list-style: none;
-            border-top: 2px solid var(--activity-color);
+         .actions {
+              list-style: none;
+              margin: 10px 0 0 0;
+              padding: 10px;
+              border-top: 2px solid var(--highlight-color);
 
-            & li a {
-                display: flex;
-                flex-direction: row;
-                box-sizing: border-box;
-                padding: var(--padding) 20px;
-                -webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+              & li {
+                  margin: 15px 0 10px 0;
+              }
 
-                & span {
-                    flex: 1;
-                    padding: 7px;
-                }
-                & img, & .zwiftgps-icon {
-                    flex: 0;
-                    padding: 0;
-                    display: inline-block;
-                    margin-right: 10px;
-                }
+              & a {
+                  display: flex;
+                  align-items: center;
+                  text-decoration: none;
+                  color: #757575;
+                  transition: 0.2s;
+              }
 
-                &:hover, &:active {
-                    background-color: var(--shaded-background);
-                }
+              & a:hover {
+                  color: var(--wtrl-gold);
+              }
 
-                &.newFeature {
-                    background-position: 180px 10px;
-                }
-            }
-        }
-    }
+              & span {
+                  display: inline-block;
+                  text-align: center;
+              }
+
+              .icon-container {
+                  width: 30px;
+                  text-align: center;
+                  padding: 1px 10px 0 0;
+              }
+
+              & i {
+                  margin-right: 5px;
+              }
+         }
 
     & .logo {
         width: 100px;
@@ -193,7 +195,7 @@
         padding: var(--padding);
         z-index: 100;
 
-        color: #808080;
+        color: white;
     }
 
     & .world-selector {
@@ -225,8 +227,6 @@
             display: inline-block;
             width: 80px;
             height: 80px;
-            margin: 10px;
-            background-color: var(--button-background);
             border-radius: 25px;
             padding: 10px;
             cursor: pointer;
@@ -289,7 +289,7 @@
 
             & .world-name {
                 font-size: 0.9em;
-                color: white;
+                color: var(--wtrl-gold);
                 font-weight: bold;
             }
         }

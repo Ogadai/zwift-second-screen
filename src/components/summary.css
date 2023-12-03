@@ -170,8 +170,8 @@
     }
 
     & .logo {
-        width: 90%;
-        height: 80px;
+        width: 100px;
+        height: 100px;
         background-image: url(/img/zwift.png);
         background-size: 100% 100%;
         background-repeat: no-repeat;

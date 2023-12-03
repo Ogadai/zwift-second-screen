@@ -1,4 +1,4 @@
-﻿import React, { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -122,9 +122,9 @@ class Summary extends Component {
               onClick={() => onSetMenuState(false)}
           >
           <div className="header">
-            <div className={classnames("logo", { disabled })}></div>
+            <div className={classnames("logo")}></div>
             <div className="player-name">
-              <span className={classnames("name", { disabled })}>
+              <span className={classnames("name")}>
                 {profile.firstName} {profile.lastName}
               </span>
             </div>

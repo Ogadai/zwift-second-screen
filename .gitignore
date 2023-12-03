@@ -30,6 +30,7 @@ node_modules
 public
 
 # dotenv environment variables file
+process.env
 
 .vs/
 npm-debug.log*

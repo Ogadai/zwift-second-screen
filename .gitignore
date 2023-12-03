@@ -29,6 +29,10 @@ node_modules
 # Ignore build files
 public
 
+# dotenv environment variables file
+process.env
+.env
+
 .vs/
 npm-debug.log*
 web.config

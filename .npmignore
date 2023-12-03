@@ -8,6 +8,8 @@ node_modules
 npm-debug.log*
 .editorconfig
 
+process.env
+
 .vs
 /img
 /src

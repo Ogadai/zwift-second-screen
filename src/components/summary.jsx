@@ -1,4 +1,4 @@
-﻿import React, { Component } from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
@@ -9,6 +9,7 @@ import { requestLoginType } from '../actions/login';
 import { setMenuState, showWorldSelector, setWorld, showStravaSettings, showRiderFilter, setRiderFilter, showGameSelector } from '../actions/summary';
 import { connectStrava, disconnectStrava, saveStravaSettings } from '../actions/strava';
 import { toggleFullScreen } from './full-screen';
+
 
 import s from './summary.css';
 
@@ -122,9 +123,9 @@ class Summary extends Component {
               onClick={() => onSetMenuState(false)}
           >
           <div className="header">
-            <div className={classnames("logo", { disabled })}></div>
+            <div className={classnames("logo")}></div>
             <div className="player-name">
-              <span className={classnames("name", { disabled })}>
+              <span className={classnames("name")}>
                 {profile.firstName} {profile.lastName}
               </span>
             </div>
@@ -133,7 +134,7 @@ class Summary extends Component {
           <ul className="actions">
             <li>
               <a className="fullScreen" href="#" onClick={e => this.toggleFullScreen(e)}>
-                <span className="zwiftgps-icon icon-fullscreen">&nbsp;</span>
+                <span class="icon-container"><i class="fa-regular fa-expand fa-lg"></i></span>
                 <span>Full Screen</span>
               </a>
             </li>
@@ -141,7 +142,7 @@ class Summary extends Component {
             { (user && user.canFilterRiders && !eventName)
               ? <li>
                   <a className="riderFilter" href="#" onClick={e => this.showRiderFilter(e)}>
-                    <span className="zwiftgps-icon icon-riderfilter">&nbsp;</span>
+                    <span class="icon-container"><i class="fa-kit fa-zwift fa-lg"></i></span>
                     <span>Events</span>
                   </a>
                 </li>
@@ -150,7 +151,7 @@ class Summary extends Component {
             { (user && user.canSetWorld)
               ? <li>
                   <a className="world" href="#" onClick={e => this.showWorldSelector(e)}>
-                      <span className="zwiftgps-icon icon-setworld">&nbsp;</span>
+                      <span class="icon-container"><i class="fa-light fa-earth-americas fa-lg"></i></span>
                       <span>Change World</span>
                   </a>
                 </li>
@@ -159,7 +160,7 @@ class Summary extends Component {
             { (user && user.canStrava && !profile.anonymous)
               ? <li>
                   <a className="world" href="#" onClick={e => this.showStravaSettings(e)}>
-                      <span className="zwiftgps-icon icon-strava">&nbsp;</span>
+                      <span class="icon-container"></span>
                       <span>Strava</span>
                   </a>
                 </li>
@@ -168,17 +169,26 @@ class Summary extends Component {
             { (user && user.canLogout)
               ? <li>
                   <a className="gameSelector" href="#" onClick={e => this.showGameSelector(e)}>
-                    <span className="zwiftgps-icon icon-gameselector">&nbsp;</span>
+                    <span class="icon-container"><i class="fa-light fa-gamepad-modern fa-lg"></i></span>
                     <span>Games</span>
+                  </a>
+                </li>
+              : undefined }
+
+						{ (user && user.canLogout)
+              ? <li>
+                  <a className="feedback" href="https://support.wtrl.racing" target="_blank" rel="noopener">
+                    <span class="icon-container"><i class="fa-light fa-question"></i></span>
+                    <span>Help Centre</span>
                   </a>
                 </li>
               : undefined }
 
             { (user && user.canLogout)
               ? <li>
-                  <a className="feedback" href="http://zwiftblog.com/zwiftgps/" target="_blank" rel="noopener">
-                      <span className="zwiftgps-icon icon-feedback">&nbsp;</span>
-                      <span>Feedback</span>
+                  <a className="feedback" href="mailto:racecontrol@wtrl.racing" target="_blank" rel="noopener">
+                     <span class="icon-container"><i class="fa-light fa-envelope fa-lg"></i></span>
+										 <span>Contact WTRL</span>
                   </a>
                 </li>
               : undefined }
@@ -186,7 +196,7 @@ class Summary extends Component {
             { (user && user.canLogout)
               ? <li>
                   <a className="logout" href={eventName ? `/login/${eventName}` : '/login'}>
-                    <span className={classnames('zwiftgps-icon', profile.anonymous ? 'icon-login' : 'icon-logout')}>&nbsp;</span>
+                    <span class="icon-container">{( profile.anonymous ? <i class="fa-light fa-right-to-bracket fa-lg"></i> : <i class="fa-light fa-right-from-bracket fa-lg"></i>)}</span>
                     <span>{profile.anonymous ? 'Login' : 'Logout'}</span>
                   </a>
                 </li>

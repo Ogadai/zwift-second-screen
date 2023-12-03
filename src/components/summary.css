@@ -133,7 +133,7 @@
             left: -300px;
         }
 
-         .actions {
+        .actions {
               list-style: none;
               margin: 10px 0 0 0;
               padding: 10px;
@@ -170,7 +170,7 @@
                   margin-right: 5px;
               }
          }
-
+    }
     & .logo {
         width: 100px;
         height: 100px;

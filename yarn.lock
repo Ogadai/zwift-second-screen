@@ -9535,3 +9535,22 @@ zwift-mobile-api@latest:
     easy-fit "0.0.6"
     protobufjs "^6.8.0"
     qs "^6.5.0"
+
+"zwift-second-screen@file:":
+  version "0.2.02"
+  resolved "file:"
+  dependencies:
+    body-parser "^1.16.0"
+    compression "^1.7.2"
+    cookie-parser "^1.4.3"
+    express "^4.14.1"
+    express-ws "^2.0.0"
+    guid "0.0.12"
+    moment "^2.17.1"
+    node-cache "^4.1.1"
+    nosleep.js "^0.7.0"
+    redis "^2.8.0"
+    strava-live-segments latest
+    xml2js "^0.4.19"
+    zwift-mobile-api latest
+    zwift-second-screen "file:"

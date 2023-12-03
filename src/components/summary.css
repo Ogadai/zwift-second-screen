@@ -184,7 +184,7 @@
         text-align: center;
         padding: var(--padding);
         font-weight: bold;
-        color: var(--activity-color);
+        color: var(--wtrl-gold);
     }
 
     & .map-attribute {

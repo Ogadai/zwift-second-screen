@@ -1,4 +1,4 @@
-﻿const {app, BrowserWindow} = require('electron');
+npm publishconst {app, BrowserWindow} = require('electron');
 const path = require('path');
 const url = require('url');
 const open = require('open');

@@ -1,6 +1,6 @@
 {
-  "name": "ZwiftGPS",
-  "short_name": "ZwiftGPS",
+  "name": "WTRL - ZwiftGPS",
+  "short_name": "WTRL - ZwiftGPS",
   "icons": [
     {
       "src": "launcher-icon-2x.png",
@@ -20,6 +20,6 @@
   ],
   "start_url": "/",
   "display": "standalone",
-  "theme_color": "#FC6719",
-  "background_color": "#fff"
+  "theme_color": "#D4AF37",
+  "background_color": "#35363A"
 }

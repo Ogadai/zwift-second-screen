@@ -34,8 +34,8 @@ const scheduleMaps = {
 };
 
 const defaultCredit = {
-  name: 'ZwiftHacks',
-  href: 'http://zwifthacks.com'
+  name: 'Zwift',
+  href: 'http://www.zwift.com'
 }
 
 const mapCache = new NodeCache({ stdTTL: 4 * 60 * 60, checkperiod: 120, useClones: false });

@@ -1,6 +1,6 @@
 {
   "name": "zwift-second-screen",
-  "version": "0.1.48",
+  "version": "0.2.8",
   "description": "Second Screen companion application for Zwift",
   "main": "main.js",
   "scripts": {
@@ -19,11 +19,11 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/Ogadai/zwift-second-screen"
+    "url": "https://github.com/wtrl-Racing/zwift-second-screen"
   },
-  "author": "Andy Lee",
+  "author": "WTRL Racing",
   "license": "MIT",
-  "homepage": "https://github.com/Ogadai/zwift-second-screen",
+  "homepage": "https://github.com/wtrl-Racing/zwift-second-screen",
   "engines": {
     "node": ">=7.0.0"
   },

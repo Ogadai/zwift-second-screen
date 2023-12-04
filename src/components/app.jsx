@@ -29,7 +29,7 @@ const mapZoomLevels = {
   17: 2.3
 };
 const mapDefaultCenter = {
-  1: { x: 0.5, y: 0.6 },
+  1: { x: 0.6, y: 0.2 },
   2: { x: 0.5, y: 0.4 },
   3: { x: 0.6, y: 0.4 },
   4: { x: 0.53, y: 0.4 },
